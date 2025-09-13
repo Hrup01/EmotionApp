@@ -1,0 +1,13 @@
+ spring:
+   application:
+     name: EmotionApp
+ #数据库的连接信息
+ datasource:
+   url: jdbc:mysql://localhost:3306/emotionApp
+   driver-class-name: com.mysql.cj.jdbc.Driver
+   username: public_user
+   password: 123456
+ #mybatis的相关配置
+ mybatis:
+   configuration:
+     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
