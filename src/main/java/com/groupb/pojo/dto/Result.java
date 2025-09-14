@@ -1,4 +1,4 @@
-package com.groupb.pojo;
+package com.groupb.pojo.dto;
 
 import lombok.Data;
 
