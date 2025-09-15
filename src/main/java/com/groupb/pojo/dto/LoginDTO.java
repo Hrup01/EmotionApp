@@ -1,21 +1,23 @@
 package com.groupb.pojo.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 /**
  * 登录数据传输对象
- * 用于封装用户登录所需的信息
+ * 封装账号密码登录所需的信息
  */
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginDTO {
-    @NotBlank(message = "手机号不能为空")
-    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
-    private String phone;
+    private long id;
+    private String username;
+    private String password;
+    private String token;
 
-    @NotBlank(message = "验证码不能为空")
-    @Pattern(regexp = "\\d{6}$", message = "验证码格式错误")
-    private String code;
 }
