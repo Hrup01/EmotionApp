@@ -1,0 +1,153 @@
+package com.groupb.service.serviceImpl;
+
+import com.groupb.mapper.EmotionDiaryMapper;
+import com.groupb.pojo.EmotionDiary;
+import com.groupb.pojo.dto.*;
+import com.groupb.service.EmotionService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+public class EmotionServiceImpl implements EmotionService {
+
+    @Autowired
+    private EmotionDiaryMapper emotionDiaryMapper;
+    
+     //@Autowired
+     //private RestTemplate restTemplate; // 暂时注释，实际使用时需要配置
+
+    @Override
+    public void saveDiary(Long userId, EmotionDTO dto) {
+        EmotionDiary diary = new EmotionDiary();
+        BeanUtils.copyProperties(dto, diary);
+        diary.setUserId(userId);
+        
+        // 如果日期为空，设置为今天
+        if (diary.getDiaryDate() == null) {
+            diary.setDiaryDate(LocalDate.now());
+        }
+        
+        // 检查是否已存在该日期的日记
+        EmotionDiary existingDiary = emotionDiaryMapper.findByUserAndDate(userId, diary.getDiaryDate());
+        
+        if (existingDiary != null) {
+            // 更新现有日记，保持原有的打卡天数
+            diary.setId(existingDiary.getId());
+            diary.setCheckInCount(existingDiary.getCheckInCount());
+            emotionDiaryMapper.update(diary);
+        } else {
+            // 插入新日记，计算打卡天数
+            int checkInCount = calculateCheckInCount(userId, diary.getDiaryDate());
+            diary.setCheckInCount(checkInCount);
+            emotionDiaryMapper.insert(diary);
+        }
+    }
+
+    @Override
+    public EmotionDTO getDiaryByDate(Long userId, LocalDate date) {
+        EmotionDiary diary = emotionDiaryMapper.findByUserAndDate(userId, date);
+        if (diary == null) {
+            return null;
+        }
+        
+        EmotionDTO dto = new EmotionDTO();
+        BeanUtils.copyProperties(diary, dto);
+        return dto;
+    }
+
+    @Override
+    public List<EmotionDTO> getRecentDiaries(Long userId, Integer limit) {
+        List<EmotionDiary> diaries = emotionDiaryMapper.findRecentByUser(userId, limit);
+        return diaries.stream()
+                .map(diary -> {
+                    EmotionDTO dto = new EmotionDTO();
+                    BeanUtils.copyProperties(diary, dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteDiaryById(Long userId, Long diaryId) {
+        // 先检查日记是否存在且属于该用户
+        EmotionDiary diary = emotionDiaryMapper.findById(diaryId);
+        if (diary == null || !diary.getUserId().equals(userId)) {
+            return false;
+        }
+        
+        emotionDiaryMapper.deleteById(diaryId, userId);
+        return true;
+    }
+    
+    @Override
+    public boolean deleteDiaryByDate(Long userId, LocalDate date) {
+        // 先检查该日期是否有日记
+        EmotionDiary diary = emotionDiaryMapper.findByUserAndDate(userId, date);
+        if (diary == null) {
+            return false;
+        }
+        
+        emotionDiaryMapper.deleteById(diary.getId(), userId);
+        return true;
+    }
+
+    /*
+     * 周报功能 - 设计组构思中，暂时注释
+     * 
+    @Override
+    public WeeklyReportDTO getWeeklyReport(Long userId, LocalDate weekStart) {
+        // 周报功能实现代码已注释
+        return null;
+    }
+    */
+
+
+    @Override
+    public List<EmotionDTO> getDiariesByDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<EmotionDiary> diaries = emotionDiaryMapper.findByUserBetween(userId, startDate, endDate);
+        return diaries.stream()
+                .map(diary -> {
+                    EmotionDTO dto = new EmotionDTO();
+                    BeanUtils.copyProperties(diary, dto);
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer getCurrentCheckInCount(Long userId) {
+        Integer lastCheckInCount = emotionDiaryMapper.getLastCheckInCount(userId);
+        return lastCheckInCount != null ? lastCheckInCount : 0;
+    }
+
+    /**
+     * 计算打卡天数
+     * 如果中间有断档，则从1开始重新计算
+     */
+    private int calculateCheckInCount(Long userId, LocalDate currentDate) {
+        // 获取最后一次打卡的日期
+        LocalDate lastCheckInDate = emotionDiaryMapper.getLastCheckInDate(userId);
+        
+        if (lastCheckInDate == null) {
+            // 第一次打卡
+            return 1;
+        }
+        
+        // 计算日期差
+        long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(lastCheckInDate, currentDate);
+        
+        if (daysBetween == 1) {
+            // 连续打卡，获取上次的打卡天数并加1
+            Integer lastCount = emotionDiaryMapper.getLastCheckInCount(userId);
+            return (lastCount != null ? lastCount : 0) + 1;
+        } else {
+            // 断档了，重新从1开始
+            return 1;
+        }
+    }
+}

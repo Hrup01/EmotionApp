@@ -30,14 +30,16 @@ public class JwtTokenProvider {
 
     /**
      * 生成JWT令牌
-     * */
-    public String generateToken(Long username, String phone){
-        //基于传递的用户名以及电话号生成令牌
+     * @param userId 用户ID
+     * @param username 用户名
+     * @return JWT令牌
+     */
+    public String generateToken(Long userId, String username){
+        //基于用户ID和用户名生成令牌
         Map<String,Object> claims = new HashMap<>();
-        claims.put("username",username);
-        claims.put("phone",phone);
-        return createToken(claims,phone);
-
+        claims.put("userId", userId);
+        claims.put("username", username);
+        return createToken(claims, username);
     }
 
     /**
@@ -48,12 +50,12 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtProperties.getExpiration());
 
         return Jwts.builder()
-                .setClaims(claims)
+                .setClaims(claims)//添加自定义信息
                 .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .setIssuedAt(now)//创建时间
+                .setExpiration(expiryDate)//过期时间
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)//签名算法
+                .compact();//构建令牌
     }
 
     /**
@@ -73,24 +75,53 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 从令牌中获取手机号
+     * 从令牌中获取用户名
      * */
-    public String getPhoneFromToken(String token) {
+    public String getUsernameFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         if (claims != null){
             return claims.getSubject();
         }
         return null;
     }
+
+    /**
+     * 从令牌中获取用户ID
+     * */
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        if (claims != null && claims.get("userId") != null){
+            return Long.valueOf(claims.get("userId").toString());
+        }
+        return null;
+    }
     /**
      * 验证令牌
-     * */
-    public boolean validateToken(String token,String phone){
+     * @param token JWT令牌
+     * @param username 用户名
+     * @return 是否有效
+     */
+    public boolean validateToken(String token, String username){
         try {
             Claims claims = getClaimsFromToken(token);
             return claims != null
-                    && claims.getSubject().equals(phone)
+                    && claims.getSubject().equals(username)
                     && !isTokenExpired(claims);
+        }catch (Exception e){
+            log.error("JWT令牌验证错误:{}",e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 验证令牌（仅验证格式和过期时间）
+     * @param token JWT令牌
+     * @return 是否有效
+     */
+    public boolean validateToken(String token){
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return claims != null && !isTokenExpired(claims);
         }catch (Exception e){
             log.error("JWT令牌验证错误:{}",e.getMessage());
             return false;
@@ -112,9 +143,9 @@ public class JwtTokenProvider {
         try {
             Claims claims = getClaimsFromToken(token);
             if (claims != null && !isTokenExpired(claims)){
-                Long username = Long.valueOf(claims.get("username").toString());
-                String phone = claims.getSubject();
-                return generateToken(username,phone);
+                Long userId = Long.valueOf(claims.get("userId").toString());
+                String username = claims.getSubject();
+                return generateToken(userId, username);
             }
         } catch (Exception e) {
             log.error("JWT令牌刷新错误:{}",e.getMessage());

@@ -36,7 +36,11 @@ public class SecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/login").permitAll()
+				.requestMatchers("/api/auth/**").permitAll()   // 允许认证相关接口无需认证
+				.requestMatchers("/api/emotion/types").permitAll() // 允许获取情绪类型无需认证
+				.requestMatchers("/api/emotion/recent").permitAll() // 允许获取最近情绪无需认证（开发阶段）
+				.requestMatchers("/api/test/**").permitAll()   // 允许测试接口无需认证
+				.requestMatchers("/api/doc").permitAll()       // 允许API文档无需认证
 						.requestMatchers("/static/**", "/resources/**").permitAll()
 						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 						.anyRequest().authenticated()
