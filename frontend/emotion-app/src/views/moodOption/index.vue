@@ -1,6 +1,8 @@
 <template>
   <div id="moodOption">
-
+    <div class="title">
+      <img src="../../assets/image/" alt="">
+    </div>
   </div>
 </template>
 
@@ -10,6 +12,9 @@ export default {
 }
 </script>
 
-<style lang="less">
-
+<style lang="less" scoped>
+#moodOption {
+  height: 844px;
+  background-color: #FEF8EC;
+}
 </style>

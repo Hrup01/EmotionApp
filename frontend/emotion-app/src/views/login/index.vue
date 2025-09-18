@@ -79,12 +79,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "苹方";
-    box-sizing: border-box;
-}
 #loginPage {
     padding-top: 105px;
     padding-left: 24px;
@@ -126,6 +120,7 @@ export default {
         text-align: center;
         height: 60px;
         line-height: 60px;
+        cursor: pointer;
         .login {
             position: relative;
             width: 171px;
@@ -231,6 +226,7 @@ button {
     width: 342px;
     color: #4781b3;
     font-size: 12px;
+    cursor: pointer;
     .left,
     .right {
         height: 12px;
