@@ -5,19 +5,22 @@
       <div class="right"><h3>选择心情</h3></div>
     </div>
     <div class="top wrapper">
+      <!-- 上方的表情 -->
       <div class="pic"><img :src="currentEmojiUrl" alt="" class="optionMood"></div>
       <div class="mood">
-        <h3>{{ currentEmojiName }}</h3>
-        <img src="@/assets/image/pen.png" alt="">
+        <!-- 上方表情对应的文字 -->
+        <h3 v-if="flag">{{ currentEmojiName }}</h3>
+        <input type="text" name="emojiName" v-else v-model="currentEmojiName" @keydown="confirmText" ref="editText">
+        <img src="@/assets/image/pen.png" alt="" @click="changeText" v-show="flag">
       </div>
       <div class="text" @click="$router.push(`/log/${currentEmojiEnglish}`)">就这样</div>
       <div class="recentlyOption">
         <ul>
           <!-- 后面用 js 渲染 -->
-          <li><img src="@/assets/image/11.png" alt=""></li>
-          <li><img src="@/assets/image/8.png" alt=""></li>
-          <li><img src="@/assets/image/7.png" alt=""></li>
-          <li><img src="@/assets/image/11.png" alt=""></li>
+          <li><img src="@/assets/image/11.png" alt="" @click="currentEmojiUrl = require('@/assets/image/11.png');currentEmojiName = '困'"></li>
+          <li><img src="@/assets/image/8.png" alt="" @click="currentEmojiUrl = require('@/assets/image/8.png');currentEmojiName = '生气'"></li>
+          <li><img src="@/assets/image/7.png" alt="" @click="currentEmojiUrl = require('@/assets/image/7.png');currentEmojiName = '自责'"></li>
+          <li><img src="@/assets/image/11.png" alt="" @click="currentEmojiUrl = require('@/assets/image/11.png');currentEmojiName = '困'"></li>
         </ul>
         <p>最近</p>
       </div>
@@ -38,6 +41,7 @@ export default {
     name: 'moodOption',
     data () {
       return {
+        flag: 'ture',
         currentEmojiUrl: require('@/assets/image/10.png'),
         currentEmojiName: '开心',
         currentEmojiEnglish: 'happy',
@@ -64,8 +68,26 @@ export default {
         this.currentEmojiUrl = this.moodList[e.target.dataset.id].url
         this.currentEmojiName = this.moodList[e.target.dataset.id].name
         this.currentEmojiEnglish = this.moodList[e.target.dataset.id].english
+      },
+      changeText () {
+        this.flag = false
+        this.$nextTick(() => {
+          this.$refs.editText.focus()
+          this.currentEmojiName = ''
+        })
+      },
+      confirmText (e) {
+        // console.log(e.key)
+        if (e.key === 'Enter') {
+          // console.log(11)
+          this.flag = true 
+          // 修改对应对象中的 name 属性 --- arr.findIndex() --- 返回下标索引
+          const index = this.moodList.findIndex(item => item.url === this.currentEmojiUrl)
+          this.moodList[index].name = this.currentEmojiName
+          // console.log(this.moodList)
+        }
       }
-    }
+    },
 }
 </script>
 
@@ -108,7 +130,8 @@ export default {
   }
   .mood {
     display: flex;
-    margin-left: 154px;
+    // margin-left: 154px;
+    justify-content: center;
     text-align: center;
     font-size: 20px;
     img {
@@ -116,6 +139,14 @@ export default {
       margin-left: 3px;
       width: 18px;
       height: 17px;
+    }
+    [name = emojiName] {
+      border: 0;
+      background-color: #FEF8EC;
+      font-size: 24px;
+      font-weight: 600;
+      text-align: center;
+      overflow: hidden;
     }
   }
   .text {

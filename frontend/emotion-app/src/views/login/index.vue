@@ -2,7 +2,7 @@
   <div id="loginPage">
     <div class="call">
         <h1>HELLO ^ ^</h1>
-        <p>欢迎使用_______ </p>
+        <p>欢迎使用情绪小栈 </p>
     </div>
     <div class="subject">
         <div class="top">
@@ -109,7 +109,7 @@ export default {
     }
     p {
         margin-top: 4px;
-        width: 135px;
+        // width: 135px;
         height: 26px;
         color: #00000099;
         font-size: 18px;
@@ -245,7 +245,7 @@ button {
     cursor: pointer;
     .left,
     .right {
-        height: 12px;
+        height: 15px;
     }
     .left {
         border-bottom:1px #4781b3 solid;

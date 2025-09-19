@@ -31,7 +31,7 @@ export default {
         return {
             exactDate: '',
             week: '',
-            content: ''
+            content: '',
         }
     },
     mounted () {

@@ -9,6 +9,7 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   routes: [
+    { path: '/', redirect: '/moodOption' },
     { path: '/login', component: Login },
     { path: '/weeklyReports', component: WeeklyReports },
     { path: '/moodOption', component: MoodOption },
