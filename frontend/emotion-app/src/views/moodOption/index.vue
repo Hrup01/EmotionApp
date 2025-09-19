@@ -1,6 +1,6 @@
 <template>
   <div id="moodOption">
-    <div class="title">
+    <div class="NaVBar">
       <div class="left"><img src="@/assets/image/jt_left.png" alt=""></div>
       <div class="right"><h3>选择心情</h3></div>
     </div>
@@ -101,7 +101,7 @@ export default {
   margin: 0 auto;
   width: 366px;
 }
-.title {
+.NaVBar {
   margin-left: 12px;
   display: flex;
   .left {
@@ -110,8 +110,8 @@ export default {
     width: 24px;
     img {
       margin-left: 9px;
-      margin-top: 7px;
-      width: 8px;
+      margin-top: 1px;
+      width: 24px;
     }
   }
   h3 {

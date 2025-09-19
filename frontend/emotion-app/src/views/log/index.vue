@@ -57,7 +57,7 @@ export default {
 }
 .top {
     padding-top: 50px;
-    padding-left: 13px;
+    padding-left: 12px;
     width: 390px;
     height: 106px;
     background: #d3e4c3;
@@ -68,8 +68,8 @@ export default {
         width: 24px;
         img {
         margin-left: 9px;
-        margin-top: 7px;
-        width: 8px;
+        margin-top: 1px;
+        width: 24px;
         }
     }
     h3 {
