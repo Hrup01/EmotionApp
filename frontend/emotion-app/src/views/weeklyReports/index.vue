@@ -1,9 +1,6 @@
 <template>
   <div id="weeklyReports">
-    <div class="NaVBar">
-        <div class="left"><img src="@/assets/image/jt_left.png" alt=""></div>
-        <div class="right"><h3>心情周报</h3></div>
-    </div>
+    <NavBar :title="title" :toUrl="toUrl"></NavBar>
     <div class="record wrapper">
       <h5>本周心情记录</h5>
       <ul>
@@ -54,8 +51,12 @@
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue'
 export default {
     name: 'weeklyReports',
+    components: {
+      NavBar
+    },
     data () {
       return {
         moodList: [
@@ -75,14 +76,16 @@ export default {
         total: 7,
         time: 4,
         moodText: '开心',
-        emojiUrl: require('@/assets/image/icon_1.png')
+        emojiUrl: require('@/assets/image/icon_1.png'),
+        title: '心情周报',
+        toUrl: ''
       }
     },
     mounted () {
       const progress = this.time / (this.total * 3.5)
       const endDeg = progress * 360
-      console.log(endDeg)
-      this.$refs.outer.style.background = `conic-gradient(#22c55e 0% ${endDeg}%, #F0FAF2 ${endDeg}% 360%)`
+      // console.log(endDeg)
+      this.$refs.outer.style.background = `conic-gradient(#A3EBAF 0% ,#BEF3A5 ${endDeg}%, #F0FAF2 ${endDeg}% 360%)`
     }
 }
 </script>
@@ -95,27 +98,6 @@ export default {
 #weeklyReports {
   height: 844px;
   background-color: #FEF8EC;
-}
-.NaVBar {
-    padding-top: 50px;
-    padding-left: 12px;
-    // width: 390px;
-    // height: 106px;
-    // background: #d3e4c3;
-    display: flex;
-    .left {
-        margin-right: 14px;
-        height: 24px;
-        width: 24px;
-        img {
-        margin-left: 9px;
-        margin-top: 1px;
-        width: 24px;
-        }
-    }
-    h3 {
-        font-size: 18px;
-    }
 }
 .record {
   margin-top: 12px;
@@ -214,10 +196,9 @@ export default {
       border-radius: 123px;
       background: conic-gradient(rgb(34,197,94) 0%, rgb(34,197,94) 58%, rgb(209,240,220) 58%, rgb(5,228,42) 360%);
       transition: all 0.5s;
+      box-shadow: 0 4px 4px 0 #00000040;
       .inner {
         position: absolute;
-        // top: 12px;
-        // left: 12px;
         top: 50%;
         left: 50%;
         transform: translate(-50%,-50%);
@@ -225,6 +206,7 @@ export default {
         height: 85%;
         border-radius: 99px;
         background-color: #fff;
+        box-shadow: 0 4px 4px 0 #00000040 inset;
         p {
           position: absolute;
           top: 50%;

@@ -1,14 +1,14 @@
 <template>
   <div id="NaVBar">
-    <div class="left" @click="$router.push('/moodOption')"><img src="../../assets/image/jt_left.png" alt=""></div>
-    <div class="right"><h3>日志打卡</h3></div>
+    <div class="left" @click="$router.push(`${toUrl}`)"><img src="@/assets/image/jt_left.png" alt=""></div>
+    <div class="right"><h3>{{ title }}</h3></div>
   </div>
 </template>
 
 <script>
 
 export default {
-  
+  props: ['title','toUrl']
 }
 </script>
 
@@ -16,9 +16,6 @@ export default {
 #NaVBar {
     padding-top: 50px;
     padding-left: 13px;
-    // width: 390px;
-    // height: 106px;
-    // background: #d3e4c3;
     display: flex;
     .left {
         margin-right: 14px;
@@ -26,8 +23,8 @@ export default {
         width: 24px;
         img {
         margin-left: 9px;
-        margin-top: 7px;
-        width: 8px;
+        margin-top: 1px;
+        width: 24px;
         }
     }
     h3 {

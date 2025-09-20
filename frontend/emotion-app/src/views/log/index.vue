@@ -1,8 +1,7 @@
 <template>
   <div id="logPage">
     <div class="top">
-        <div class="left" @click="$router.push('/moodOption')"><img src="../../assets/image/jt_left.png" alt=""></div>
-        <div class="right"><h3>日志打卡</h3></div>
+        <NavBar :title="title" :toUrl="toUrl"></NavBar>
     </div>
     <div class="title">
         <img src="../../assets/image/icon_notebook.png" alt="">
@@ -24,14 +23,19 @@
 </template>
 
 <script>
-
+import NavBar from '@/components/NavBar.vue'
 export default {
     name: "logPage",
+    components: {
+        NavBar
+    },
     data () {
         return {
             exactDate: '',
             week: '',
             content: '',
+            title: '日志打卡',
+            toUrl: '/moodOption'
         }
     },
     mounted () {
@@ -56,25 +60,9 @@ export default {
     width: 257px;
 }
 .top {
-    padding-top: 50px;
-    padding-left: 12px;
-    width: 390px;
-    height: 106px;
+    height: 95px;
     background: #d3e4c3;
-    display: flex;
-    .left {
-        margin-right: 14px;
-        height: 24px;
-        width: 24px;
-        img {
-        margin-left: 9px;
-        margin-top: 1px;
-        width: 24px;
-        }
-    }
-    h3 {
-        font-size: 18px;
-    }
+
 }
 .title {
     margin-top: 20px;

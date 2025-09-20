@@ -1,9 +1,6 @@
 <template>
   <div id="moodOption">
-    <div class="NaVBar">
-      <div class="left"><img src="@/assets/image/jt_left.png" alt=""></div>
-      <div class="right"><h3>选择心情</h3></div>
-    </div>
+    <NavBar :title="title" :toUrl="toUrl"></NavBar>
     <div class="top wrapper">
       <!-- 上方的表情 -->
       <div class="pic"><img :src="currentEmojiUrl" alt="" class="optionMood"></div>
@@ -37,8 +34,12 @@
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue'
 export default {
     name: 'moodOption',
+    components: {
+      NavBar
+    },
     data () {
       return {
         flag: 'ture',
@@ -59,7 +60,9 @@ export default {
           { id: 10, url: require('@/assets/image/11.png'), name: '困', english: 'tired' },
           { id: 11, url: require('@/assets/image/12.png'), name: '晕', english: 'faint' }
         ],
-        lastOption: []
+        lastOption: [],
+        title: '选择心情',
+        toUrl: ''
       }
     },
     methods: {
@@ -93,30 +96,12 @@ export default {
 
 <style lang="less" scoped>
 #moodOption {
-  padding-top: 60px;
   height: 844px;
   background-color: #FEF8EC;
 }
 .wrapper {
   margin: 0 auto;
   width: 366px;
-}
-.NaVBar {
-  margin-left: 12px;
-  display: flex;
-  .left {
-    margin-right: 14px;
-    height: 24px;
-    width: 24px;
-    img {
-      margin-left: 9px;
-      margin-top: 1px;
-      width: 24px;
-    }
-  }
-  h3 {
-    font-size: 18px;
-  }
 }
 .top {
   height: 320px;
