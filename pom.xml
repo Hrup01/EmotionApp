@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.GroupB</groupId>
     <artifactId>EmotionApp</artifactId>
@@ -90,14 +90,13 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version> <!-- 请检查最新版本 -->
+            <version>3.0.2</version>
         </dependency>
-
         <!-- Bean Validation 实现 (Hibernate Validator) -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>8.0.1.Final</version> <!-- 请检查最新版本 -->
+            <version>8.0.1.Final</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>

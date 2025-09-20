@@ -3,16 +3,45 @@ spring:
     name: EmotionApp
   #数据库的连接信息
   datasource:
-    url: jdbc:mysql://localhost:3306/emotionApp
+    url: jdbc:mysql://localhost:3306/emotionApp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: Hrup041001.
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 #mybatis的相关配置
 mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名映射的开关：可以将表中的下划线映射为驼峰命名
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.groupb.pojo
 
-#redis配置
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+
+# 日志配置
+logging:
+  level:
+    com.groupb: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 # JWT配置
 jwt:
