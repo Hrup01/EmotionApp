@@ -4,7 +4,7 @@
         <NavBar :title="title" :toUrl="toUrl"></NavBar>
     </div>
     <div class="title">
-        <img src="../../assets/image/icon_notebook.png" alt="">
+        <img src="@/assets/image/icon_notebook.png" alt="">
         <h3>记录情绪日志</h3>
     </div>
     <div class="write">
@@ -15,7 +15,14 @@
             </div>
             <div class="border"></div>
             <textarea name="moodLog" id="" placeholder="输入心得，记录你的情绪变化" v-model="content"></textarea>
-            <img src="../../assets/image/icon_add_pic.png" alt="" class="pic">
+            <!-- 需求：可以上转图片 -->
+            <div class="custom-file-upload">
+                <!-- 隐藏原生 input -->
+                <input type="file" ref="fileInput" style="display: none;" @change="postPic">
+                <!-- 自定义上传区域（这里用 div 演示，可替换为背景图的元素） -->
+                <div class="upload-btn" @click="upLoadPic"></div>
+                <!-- <img src="@/assets/image/icon_add_pic.png" alt="" class="pic"> -->
+            </div>
         </div>
     </div>
     <button>完成</button>
@@ -36,6 +43,17 @@ export default {
             content: '',
             title: '日志打卡',
             toUrl: '/moodOption'
+        }
+    },
+    methods: {
+        upLoadPic () {
+            this.$refs.fileInput.click()
+            // console.log(11)
+        },
+        postPic (e) {
+            const fd = new FormData()
+            fd.append('img',e.target.files[0])
+            // 发请求 --- post
         }
     },
     mounted () {
@@ -107,15 +125,21 @@ export default {
         width: 257px;
         height: 280px;
         // background-color: pink;
-        background: url(../../assets/image/bianji.png) no-repeat;
+        background: url(@/assets/image/bianji.png) no-repeat;
         background-size: 18px;
         border: 0;
         color: #c0bdb7;
         font-size: 12px;
         font-weight: 550;
     }
-    .pic {
+    .upload-btn {
+        background-image: url("@/assets/image/icon_add_pic.png");
+        background-size: 75px;
+        /* 无边框 */
+        border: none;
         width: 75px;
+        height: 75px;
+        cursor: pointer;
     }
 }
 button {

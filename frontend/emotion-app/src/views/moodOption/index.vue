@@ -6,9 +6,9 @@
       <div class="pic"><img :src="currentEmojiUrl" alt="" class="optionMood"></div>
       <div class="mood">
         <!-- 上方表情对应的文字 -->
-        <h3 v-if="flag">{{ currentEmojiName }}</h3>
-        <input type="text" name="emojiName" v-else v-model="currentEmojiName" @keydown="confirmText" ref="editText">
-        <img src="@/assets/image/pen.png" alt="" @click="changeText" v-show="flag">
+        <h3>{{ currentEmojiName }}</h3>
+        <!-- <input type="text" name="emojiName" v-else v-model="currentEmojiName" @keydown="confirmText" ref="editText"> -->
+        <!-- <img src="@/assets/image/pen.png" alt="" @click="changeText" v-show="flag"> -->
       </div>
       <div class="text" @click="$router.push(`/log/${currentEmojiEnglish}`)">就这样</div>
       <div class="recentlyOption">
@@ -79,17 +79,20 @@ export default {
           this.currentEmojiName = ''
         })
       },
-      confirmText (e) {
-        // console.log(e.key)
-        if (e.key === 'Enter') {
-          // console.log(11)
-          this.flag = true 
-          // 修改对应对象中的 name 属性 --- arr.findIndex() --- 返回下标索引
-          const index = this.moodList.findIndex(item => item.url === this.currentEmojiUrl)
-          this.moodList[index].name = this.currentEmojiName
-          // console.log(this.moodList)
-        }
-      }
+      // confirmText (e) {
+      //   // console.log(e.key)
+      //   if (e.key === 'Enter') {
+      //     // console.log(11)
+      //     this.flag = true 
+      //     // 修改对应对象中的 name 属性 --- arr.findIndex() --- 返回下标索引
+      //     const index = this.moodList.findIndex(item => item.url === this.currentEmojiUrl)
+      //     // console.log(this.moodList)
+      //     if (this.currentEmojiName !== '') {
+      //       this.currentEmojiName = this.moodList[index].name
+      //       console.log(11)
+      //     }
+      //   }
+      // }
     },
 }
 </script>

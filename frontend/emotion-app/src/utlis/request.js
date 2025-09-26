@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { Toast } from 'vant'
+
 const instance = axios.create({
   timeout: 5000
 })
@@ -15,7 +17,13 @@ instance.interceptors.request.use(function (config) {
 instance.interceptors.response.use(function (response) {
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
-    return response.data
+    const res = response.data
+    if (res.status !== 200) {
+        Toast(res.message)
+        // 抛出一个错误的 promise --> await 只有成功是才会往下走
+        return Promise.reject(res.message)
+    }
+    return res
 }, function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-// import { postUserMessage } from '@/api/login'
+// import { userLogin } from '@/api/login'
 export default {
     name: 'loginPage',
     data () {
@@ -69,7 +69,19 @@ export default {
                 this.$refs.cir.classList.remove('check')
             }
         },
-        login () {
+        // 校验账户和密码
+        // vaildFn () {
+        //     if (!/^[a-zA-Z0-9]&/.test(this.account)) {
+        //         this.$toast('请输入正确的账号')
+        //         return false
+        //     } 
+        //     if (!/^[a-zA-Z0-9]&/.test(this.password)) {
+        //         this.$toast('请输入正确的密码')
+        //         return false
+        //     }
+        //     return true
+        // }, // 感觉没必要
+        async login () {
             // 1.判断
             // 2.重置表单
             this.account = ''
@@ -78,10 +90,12 @@ export default {
             // 3.改变效果
             // this.$refs.login.classList.add('active')
             // 4.提交用户信息
-            // const res = await postUserMessage()
+            // const res = await userLogin(this.account, this.password)
             // console.log(res)
-            // 5.存储 userInfo (token信息)
+            // 5.存储 userInfo (token、id等信息)
+            // this.$store.commit('user/setUserInfo', resizeBy.data)
             // 6.跳转页面
+            // this.$router.push('/')
         }
     },
 }
