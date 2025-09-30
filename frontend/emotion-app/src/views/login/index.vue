@@ -2,15 +2,18 @@
   <div id="loginPage">
     <div class="call">
         <h1>HELLO ^ ^</h1>
-        <p>欢迎使用_______ </p>
+        <p>欢迎使用情绪小栈 </p>
     </div>
     <div class="subject">
         <div class="top">
             <div class="login">
                 <p>账号登录</p>
-                <img src="../../assets/image/line.png" alt="">
+                <img src="@/assets/image/line.png" alt="">
             </div>
-            <div class="register">注册账号</div>
+            <div class="register">
+                <p>注册账号</p>
+                <img src="@/assets/image/line.png" alt="" v-show="false">
+            </div>
         </div>
         <div class="center">
             <input type="text" placeholder="请输入账号" name="account" class="account-icon" v-model="account">
@@ -23,7 +26,7 @@
             <p>已经阅读并同意<span>用户协议、隐私政策</span></p>
         </div>
     </div>
-    <button @click="postMessage" ref="login">登录</button>
+    <button @click="login" ref="login">登录</button>
     <div class="other">
         <div class="left">验证码登录</div>
         <div class="right">
@@ -35,6 +38,7 @@
 </template>
 
 <script>
+// import { postUserMessage } from '@/api/login'
 export default {
     name: 'loginPage',
     data () {
@@ -65,26 +69,25 @@ export default {
                 this.$refs.cir.classList.remove('check')
             }
         },
-        postMessage () {
-            //判断
-            //重置表单
+        login () {
+            // 1.判断
+            // 2.重置表单
             this.account = ''
             this.password = ''
             this.$refs.cir.classList.remove('check')
-            //改变效果
+            // 3.改变效果
             // this.$refs.login.classList.add('active')
+            // 4.提交用户信息
+            // const res = await postUserMessage()
+            // console.log(res)
+            // 5.存储 userInfo (token信息)
+            // 6.跳转页面
         }
-    }
+    },
 }
 </script>
 
 <style lang="less" scoped>
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "苹方";
-    box-sizing: border-box;
-}
 #loginPage {
     padding-top: 105px;
     padding-left: 24px;
@@ -106,7 +109,7 @@ export default {
     }
     p {
         margin-top: 4px;
-        width: 135px;
+        // width: 135px;
         height: 26px;
         color: #00000099;
         font-size: 18px;
@@ -126,6 +129,7 @@ export default {
         text-align: center;
         height: 60px;
         line-height: 60px;
+        cursor: pointer;
         .login {
             position: relative;
             width: 171px;
@@ -141,9 +145,16 @@ export default {
         }
         .register {
             flex: 1;
+            position: relative;
             color: #00000080;
             // background-color: #FFE5AD;
             // border-radius: 0 30px 0 20px;
+            img {
+                position: absolute;
+                top: 47px;
+                left: 72px;
+                width: 28px;
+            }
         }
         .login,
         .register {
@@ -231,9 +242,10 @@ button {
     width: 342px;
     color: #4781b3;
     font-size: 12px;
+    cursor: pointer;
     .left,
     .right {
-        height: 12px;
+        height: 15px;
     }
     .left {
         border-bottom:1px #4781b3 solid;

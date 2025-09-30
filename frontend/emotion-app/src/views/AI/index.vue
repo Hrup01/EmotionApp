@@ -1,13 +1,12 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div id="ai">
   </div>
 </template>
 
 <script>
 
 export default {
-  
+  name: 'AIPage'
 }
 </script>
 
