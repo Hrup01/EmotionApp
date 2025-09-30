@@ -92,7 +92,7 @@ export default {
             // 4.提交用户信息
             // const res = await userLogin(this.account, this.password)
             // console.log(res)
-            // 5.存储 userInfo (token、id等信息)
+            // 5.存储 userInfo (token、信息)
             // this.$store.commit('user/setUserInfo', resizeBy.data)
             // 6.跳转页面
             // this.$router.push('/')

@@ -62,7 +62,7 @@ export default {
         ],
         lastOption: [],
         title: '选择心情',
-        toUrl: ''
+        toUrl: '',
       }
     },
     methods: {
