@@ -11,7 +11,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 日志文件输出的文件名,%i表示序号 -->
-            <fileNamePattern>D:/tlias-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <fileNamePattern>D:/emotion-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
             <!-- 单个日志文件的最大大小，超过会滚动到新的文件 -->
             <maxFileSize>10MB</maxFileSize>
             <!-- 最多保留的历史日志文件数量 -->
