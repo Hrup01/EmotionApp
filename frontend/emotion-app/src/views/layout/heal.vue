@@ -1,13 +1,13 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div id="heal">
+   
   </div>
 </template>
 
 <script>
 
 export default {
-  
+    name: 'healSpace'
 }
 </script>
 

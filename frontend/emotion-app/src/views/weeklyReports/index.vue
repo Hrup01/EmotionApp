@@ -11,7 +11,7 @@
       </ul>
       <div class="statistics">
         <p>本周共记录情绪</p>
-        <div class="total">{{ total }}次</div>
+        <div class="total">{{ time }}次</div>
       </div>
     </div>
 
@@ -98,7 +98,7 @@ export default {
           { id: 9, url: require('@/assets/image/yellow.png'), text: '将愉悦感转化为探索新兴趣或技能的动力。成就感的获得能为您持续的幸福感提供新源泉。'},
         ],
         total: 7,
-        time: 0,
+        time: 6,
         moodText: '开心',
         emojiUrl: require('@/assets/image/icon_1.png'),
         title: '心情周报',

@@ -1,13 +1,13 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div id="attention">
+
   </div>
 </template>
 
 <script>
 
 export default {
-  
+  name: 'attentionPage'
 }
 </script>
 
