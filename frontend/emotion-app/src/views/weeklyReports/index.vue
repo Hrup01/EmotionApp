@@ -11,11 +11,13 @@
       </ul>
       <div class="statistics">
         <p>本周共记录情绪</p>
-        <div class="total">{{ total }}次</div>
+        <div class="total">{{ time }}次</div>
       </div>
     </div>
+
     <div class="middle wrapper">
-      <div class="proportion">
+      <!-- 左边部分 -->
+      <div class="proportion" v-if="time">
         <p>本周占比最大的情绪是</p>
         <h3>{{ moodText }}</h3>
         <div class="pic">
@@ -24,6 +26,17 @@
         </div>
         <p class="tip">保持好心情~</p>
       </div>
+      <!-- 0记录版本 -->
+       <div class="zeroRecording" v-else>
+        <p>本周还没记录心情哦</p>
+        <p>去记录心情吧！</p>
+        <div class="toMoodOption" @click="$router.push('/moodOption')">
+          <p>选择心情</p>
+          <img src="@/assets/image/jt_right.png" alt="">
+        </div>
+       </div>
+
+      <!-- 右边部分 -->
       <div class="time">
         <p>本周日记打卡次数</p>
         <!-- 打卡次数可视化 -->
@@ -32,18 +45,29 @@
         </div>
       </div>
     </div>
+
     <div class="bottom wrapper">
-      <h2>本周情绪建议</h2>
-      <div class="suggest">
-        <ul>
-          <li v-for="item in suggestList" :key="item.id">
-            <img :src="item.url" alt="">
-            <p>{{ item.text }}</p>
-          </li>
-        </ul>
-        <div class="toAI" @click="$router.push('/ai')">
-          <p>AI情绪教练</p>
-          <img src="@/assets/image/jt_right.png" alt="">
+      <div class="haveRecording" v-if="time">
+        <h2>本周情绪建议</h2>
+        <div class="suggest">
+          <ul>
+            <li v-for="item in suggestList" :key="item.id">
+              <img :src="item.url" alt="">
+              <p>{{ item.text }}</p>
+            </li>
+          </ul>
+          <div class="toAI" @click="$router.push('/ai')">
+            <p>AI情绪教练</p>
+            <img src="@/assets/image/jt_right.png" alt="">
+          </div>
+        </div>
+      </div>
+      <!--  0记录版本 -->
+      <div class="zeroRecording" v-else>
+        <div class="remind">
+          <img src="@/assets/image/空记录.png" alt="">
+          <p>本周还没记录心情，小栈无法给出建议哦</p>
+          <p>去记录心情吧！</p>
         </div>
       </div>
     </div>
@@ -74,7 +98,7 @@ export default {
           { id: 9, url: require('@/assets/image/yellow.png'), text: '将愉悦感转化为探索新兴趣或技能的动力。成就感的获得能为您持续的幸福感提供新源泉。'},
         ],
         total: 7,
-        time: 4,
+        time: 6,
         moodText: '开心',
         emojiUrl: require('@/assets/image/icon_1.png'),
         title: '心情周报',
@@ -148,7 +172,8 @@ export default {
   display: flex;
   justify-content: space-between;
   .proportion,
-  .time {
+  .time,
+  .zeroRecording {
     padding: 17px 21px;
     width: 173px;
     height: 185px;
@@ -218,20 +243,53 @@ export default {
       }
     }
   }
+  // 0记录样式
+  .zeroRecording {
+    padding: 55px 32px;
+    p {
+      text-align: center;
+    }
+    .toMoodOption {
+      margin-top: 8px;
+      padding: 0 16px;
+      display: flex;
+      width: 108px;
+      height: 36px;
+      border-radius: 10px;
+      background: #ffb870;
+      box-shadow: 0 2px 4px 0 #00000040;
+      p {
+        color: #ffffff;
+        font-weight: normal;
+        font-size: 12px;
+        line-height: 36px;
+      }
+      img {
+        margin-top: 8px;
+        margin-left: 8px;
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+      }
+    }
+  }
 }
 .bottom{
   margin-top: 16px;
-  h2 {
-     font-size: 18px;
-     font-weight: 600;
-  }
-  .suggest {
+  .suggest,
+  .remind {
     margin-top: 12px;
     padding-top: 7px;
     padding-right: 20px;
     height: 263px;
     border-radius: 20px;
     background: #ffffffe6;
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .suggest {
     li {
       margin-top: 28px;
       margin-left: 19px;
@@ -239,7 +297,7 @@ export default {
       img {
         margin-top: 4px;
         margin-right: 14px;
-        width: 24px;
+        width: 38px;
         height: 24px;
         
       }
@@ -274,6 +332,22 @@ export default {
         width: 20px;
         height: 20px;
       }
+    }
+  }
+  // 0记录样式
+  .remind {
+    padding-top: 36px;
+    img {
+      margin-left: 92px;
+      width: 171px;
+      height: 109px;
+    }
+     p {
+      margin-left: 20px;
+      text-align: center;
+      color: #0000004d;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
 }
