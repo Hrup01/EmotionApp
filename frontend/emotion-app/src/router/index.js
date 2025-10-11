@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// 二、三级路由
 import Layout from '@/views/layout'
 import Home from '@/views/layout/home.vue'
 import Heal from '@/views/layout/heal.vue'
@@ -9,11 +10,14 @@ import Recommend from '@/views/layout/community/recommend.vue'
 import Attention from '@/views/layout/community/attention.vue'
 import User from '@/views/layout/user.vue'
 
+// 一级路由
 import Login from '@/views/login'
 import WeeklyReports from '@/views/weeklyReports'
 import MoodOption from '@/views/moodOption'
 import Log from '@/views/log'
 import AI from '@/views/AI'
+import WhiteNoise from '@/views/whiteNoise'
+import OtherHomePage from '@/views/otherHomePage'
 
 
 Vue.use(VueRouter)
@@ -42,6 +46,8 @@ const router = new VueRouter({
     { path: '/moodOption', component: MoodOption },
     { path: '/log/:mood', component: Log },
     { path: '/ai', component: AI },
+    { path: '/whiteNoise', component: WhiteNoise },
+    { path: '/otherHomePage', component: OtherHomePage },
   ]
 })
 

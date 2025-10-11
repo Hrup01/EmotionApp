@@ -2,21 +2,21 @@
     <div class="contentItem">
       <div class="top">
         <div class="user">
-          <img src="@/assets/image/头像1.png" alt="">
-          <div class="username">{{ contentList[0].username }}</div>
+          <img :src="contentList[id].headPortraitUrl" alt="">
+          <div class="username">{{ contentList[id].username }}</div>
         </div>
         <div class="more"><img src="@/assets/image/更多1.png" alt=""></div>
       </div>
-      <div class="background"><img src="@/assets/image/背景1.png" alt=""></div>
-      <div class="title">{{ title }}</div>
+      <div class="background"><img :src="contentList[id].bgUrl" alt=""></div>
+      <div class="title">{{ contentList[id].title }}</div>
       <div class="respond">
         <div class="like">
           <img src="@/assets/image/喜欢.png" alt="">
-          <p>{{ likeCount }}</p>
+          <p>{{ contentList[id].likeCount }}</p>
         </div>
         <div class="comment">
           <img src="@/assets/image/评论.png" alt="">
-          <p>{{ commentCount }}</p>
+          <p>{{ contentList[id].commentCount }}</p>
         </div>
       </div>
     </div>
@@ -25,8 +25,7 @@
 <script>
 
 export default {
-  name: 'attentionPage',
-  props: ['contentList', 'likeCount', 'commentCount', 'title']
+    props: ['contentList', 'id']
 }
 </script>
 
@@ -43,12 +42,12 @@ export default {
         height: 46px;
         .user {
             display: flex;
+            align-items: center;
             img {
                 width: 32px;
-                // vertical-align: middle;
             }
             .username {
-                margin-top: 6px;
+
                 margin-left: 10px;
                 color: #575757;
                 font-size: 14px;
@@ -85,6 +84,7 @@ export default {
             padding: 6px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 69px;
             height: 32px;
             border-radius: 6px;

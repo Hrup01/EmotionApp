@@ -14,11 +14,23 @@
         <ul ref="dashed">
             <!-- js动态渲染 -->
         </ul>
-        <textarea name="log" id="" class="diary" v-model="currentCotent" @click="changeContent" ref="diary"></textarea>
-        <!-- 富文本编辑器 -->
-         <!-- <div>
-            <tinymceEditor ref="editor" v-model="value"></tinymceEditor>
-         </div> -->
+        <!-- 实际输入 -->
+        <textarea name="log" id="" class="diary" v-model="currentContent" @click="changeContent" ref="diary"></textarea>
+        <!-- 实际显示 -->
+        <div class="realShow" ref="realShow">{{ realShow }}</div>
+    </div>
+    <!-- 富文本编辑器 -->
+    <div class="richTextEditor">
+        <div class="color"><img src="@/assets/image/t.png" alt="" @click="changeColor"></div>
+        <div class="strong"><img src="@/assets/image/b.png" alt="" @click="toStrong"></div>
+        <div class="incline"><img src="@/assets/image/I.png" alt="" @click="toIncline"></div>
+        <div class="underline"><img src="@/assets/image/U.png" alt="" @click="addUnderline"></div>
+        <div class="numSort"><img src="@/assets/image/Num.png" alt="" @click="numSort"></div>
+        <div class="alphabetSort"><img src="@/assets/image/abc.png" alt="" @click="alphabetSort"></div>
+        <div class="pic">
+            <img src="@/assets/image/add_pic.png" alt="" @click="addPic">
+            <input type="file" class="upload" ref="upload">
+        </div>
     </div>
     <div class="chartLet">
         <img :src="item.url" alt="" :class="item.name" v-for="item in picList" :key="item.id">
@@ -28,6 +40,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+// import request from '@/utlis/request'
 // import tinymce from '@/components/tinymce.vue'
 // import tinymceEditor from '@/components/tinymceEditor.vue'
 export default {
@@ -39,7 +52,8 @@ export default {
     data () {
         return {
             currentTitle: '+ 添加标题',
-            currentCotent: '输入心得，记录你的情绪变化',
+            currentContent: '输入心得，记录你的情绪变化',
+            changeStyleContnet: '',
             exactDate: '',
             week: '',
             content: '',
@@ -54,6 +68,8 @@ export default {
                 { id: 4, url: require('@/assets/image/swim.png'), name: 'swim' },
                 { id: 5, url: require('@/assets/image/star.png'), name: 'star' }
             ],
+            realShow: '',
+            str: ''
         }
     },
     methods: {
@@ -79,16 +95,57 @@ export default {
             })
         },
         changeContent () {
-            if (this.currentCotent === '输入心得，记录你的情绪变化') this.currentCotent = ''
+            if (this.currentContent === '输入心得，记录你的情绪变化') this.currentContent = ''
             this.$refs.diary.addEventListener('blur', () => {
-                if (this.currentCotent === '') this.currentCotent = '输入心得，记录你的情绪变化'
+                if (this.currentContent === '') this.currentContent = '输入心得，记录你的情绪变化'
             })
+            // this.realShow = this.currentCotent
+            // const diary = this.$refs.diary
+            // diary.addEventListener('change', () => {
+            //     this.realShow = this.currentCotent
+            // })
         },
         postDiary () {
             // 1.清除标题和日记内容
             this.currentTitle = '+ 添加标题'
-            this.currentCotent = '输入心得，记录你的情绪变化'
+            this.currentContent = '输入心得，记录你的情绪变化'
             // 2.post
+        },
+        changeColor () {
+            // const realShow = this.$refs.realShow
+            // console.log(realShow) // <div data-v-b919abc6="" class="realShow"></div>
+
+        },
+        toStrong () {
+
+        },
+        toIncline () {
+
+        },
+        addUnderline () {
+
+        },
+        numSort () {
+
+        },
+        alphabetSort () {
+
+        },
+        addPic () {
+            const upload = this.$refs.upload 
+            upload.click()
+            // upload.addEventListener('change', (e) => {
+            //     const fd = new FormData()
+            //     fd.append('img', e.target.files[0])
+            //     // console.log(fd)
+            //     request({
+            //         url: '',
+            //         method: 'post',
+            //         data: fd
+            //     }).then(result => {
+            //         const imgUrl = result.data.data.url
+            //     })
+            // })
         }
     },
     created () {
@@ -110,9 +167,11 @@ export default {
         }
         this.$refs.dashed.innerHTML = str
         // console.log(this.$refs.dashed)
+
+        // this.realShow = this.currentContent
     },
     updated () {
-        
+        // this.realShow = this.currentContent
     }
 }
 </script>
@@ -169,7 +228,7 @@ export default {
         border: 2px solid #e4ceb0;
     }
     .bg {
-        width: 274px;
+        width: 276px;
         height: 46px;
         opacity: 1;
         border-bottom: 2px dashed #e3e3e3;
@@ -182,7 +241,7 @@ export default {
         top: 62px;
         left: 16;
         z-index: 1;
-        // background: transparent;
+        background: transparent;
         background: transparent url('@/assets/image/bj.png') no-repeat 0px 16px;
         background-size: 20px;
         width: 274px;
@@ -190,10 +249,27 @@ export default {
         resize: none;
         border: 0;
         color: #c0bdb7;
+        // color: transparent;
         text-indent: 2em;
         font-size: 12px;
-        width: 600;
+        font-weight: 600;
         line-height: 46px;
+        z-index: 2;
+    }
+    .realShow {
+        position: absolute;
+        top: 66px;
+        left: 16;
+        width: 274px;
+        height: 552px;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        color: #c0bdb7;
+        text-indent: 2em;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 46px;
+        z-index: 1;
     }
 }
 .chartLet {
@@ -235,6 +311,24 @@ export default {
         right: 18px;
         width: 75px;
         height: 69px;
+    }
+}
+// 富文本编辑器
+.richTextEditor {
+    padding-top: 18px; 
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 60px;
+    background-color: #FEF8EC;
+    img {
+        width: 24px;
+        height: 24px;
+    }
+    .upload {
+        display: none;
     }
 }
 </style>

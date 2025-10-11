@@ -12,16 +12,18 @@
       </div>
 
       <!-- 有对话时 -->
-      <div class="haveContent" ref="haveContent" v-else>
-        <!-- <div class="userSentence">
-            <div class="item">{{ userSentence }}</div>
-        </div>
-        <div class="answer">
-          <div class="item">
-            <img src="@/assets/image/头像.png" alt="">
-            <p>{{ answer }}</p>
+      <div class="box" v-else>
+        <div class="haveContent" ref="haveContent">
+          <!-- <div class="userSentence">
+              <div class="item">{{ userSentence }}</div>
           </div>
-        </div> -->
+          <div class="answer">
+            <div class="item">
+              <img src="@/assets/image/头像.png" alt="">
+              <p>{{ answer }}</p>
+            </div>
+          </div> -->
+        </div>
       </div>
 
       <!-- 发送消息 -->
@@ -58,7 +60,7 @@ export default {
         if (this.answer !== '') {
           this.str += ` <div data-v-3cd368c5 class="answer">
                           <div data-v-3cd368c5 class="item">
-                            <img data-v-3cd368c5 src="${require('@/assets/image/头像.png')}" alt="">
+                            <img data-v-3cd368c5 src="${require('@/assets/image/AI头像.png')}" alt="">
                             <p data-v-3cd368c5 >${this.answer}</p>
                           </div>
                         </div> `
@@ -128,7 +130,7 @@ export default {
   height: 619px;
   border-radius: 30px;
   background: #fff9ef;
-  overflow: auto;
+  
   .noContent {
     img {
       margin-top: 27px;
@@ -178,37 +180,47 @@ export default {
     }
   }
   // 有对话时
-  .haveContent {
-    display: flex;
-    flex-direction: column;
-    // flex-shrink: 0;
+  .box {
     height: 510px;  
-    font-size: 15px;
-    font-weight: 600;
-    .userSentence {
-      align-self: flex-end;
-      .item {
-        margin-bottom: 10px;
-        padding: 12px 17px;
-        border-radius: 26px;
-        background: #dff1f0;
+    overflow-y: auto;
+    .haveContent {
+      display: flex;
+      flex-direction: column;
+      // height: 510px;  
+      font-size: 15px;
+      font-weight: 600;
+      // overflow-y: auto;
+      .userSentence,
+      .answer {
+        width: fit-content;
+        max-width: 100%;
+        word-break: break-word;
       }
-    }
-    .answer {
-      align-self: flex-start;
-      .item {
-        display: flex;
-        margin-bottom: 10px;
-        img {
-          margin-right: 12px;
-          flex: none;
-          width: 46px;
-          height: 46px;
-        }
-        p {
+      .userSentence {
+        align-self: flex-end;
+        .item {
+          margin-bottom: 10px;
           padding: 12px 17px;
           border-radius: 26px;
-          background: #fbddd9;
+          background: #dff1f0;
+        }
+      }
+      .answer {
+        align-self: flex-start;
+        .item {
+          display: flex;
+          margin-bottom: 10px;
+          img {
+            margin-right: 12px;
+            flex: none;
+            width: 46px;
+            height: 46px;
+          }
+          p {
+            padding: 12px 17px;
+            border-radius: 26px;
+            background: #fbddd9;
+          }
         }
       }
     }

@@ -2,8 +2,8 @@ import axios from 'axios'
 import { Toast } from 'vant'
 
 const instance = axios.create({
-    baseURL: 'http://dev-cn.your-api-server.com',
-    // timeout: 5000
+    baseURL: ' http://localhost:8080',
+    timeout: 5000
 })
 // 添加请求拦截器
 instance.interceptors.request.use(function (config) {

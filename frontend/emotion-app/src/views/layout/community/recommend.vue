@@ -3,10 +3,9 @@
     <contentItem 
       v-for="item in contentList"
       :key="item.id"
+      :id="item.id"
       :contentList="contentList" 
-      :likeCount="likeCount"
-      :commentCount="commentCount"
-      :title="title">
+    >
     </contentItem>
   </div>
 </template>
@@ -21,16 +20,16 @@ export default {
   data () {
     return {
       contentList: [
-        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
-        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
-        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
-        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
-        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
-        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), username: '小小栈' },
+        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
       ],
-      likeCount: 123,
-      commentCount: 123,
-      title: '云朵是天空温柔的枕头'
+      
+      
+      
     }
   }
 }
