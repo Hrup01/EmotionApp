@@ -1,6 +1,6 @@
 <template>
   <div id="NaVBar">
-    <div class="left" @click="$router.push(`${toUrl}`)">
+    <div class="left" @click="$router.go(-1)">
       <img src="@/assets/image/jt_left.png" alt="">
       <h3>{{ title }}</h3>
     </div>
@@ -13,7 +13,7 @@
 <script>
 
 export default {
-  props: ['title', 'toUrl'],
+  props: ['title'],
   // data () {
   //   return {
   //     rightPic: '@/assets/image/更多1.png'

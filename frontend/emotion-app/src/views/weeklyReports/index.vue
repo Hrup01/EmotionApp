@@ -1,6 +1,6 @@
 <template>
   <div id="weeklyReports">
-    <NavBar :title="title" :toUrl="toUrl"></NavBar>
+    <NavBar :title="title"></NavBar>
     <div class="record wrapper">
       <h5>本周心情记录</h5>
       <ul>
@@ -102,7 +102,6 @@ export default {
         moodText: '开心',
         emojiUrl: require('@/assets/image/icon_1.png'),
         title: '心情周报',
-        toUrl: ''
       }
     },
     mounted () {

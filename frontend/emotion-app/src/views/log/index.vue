@@ -1,7 +1,7 @@
 <template>
   <div id="logPage">
     <div class="top">
-        <NavBar :title="title" :toUrl="toUrl"></NavBar>
+        <NavBar :title="title"></NavBar>
         <img src="@/assets/image/bc.png" alt="" @click="postDiary">
     </div>
     <div class="time wrapper">
@@ -58,7 +58,6 @@ export default {
             week: '',
             content: '',
             title: '日志打卡',
-            toUrl: '/moodOption',
             haveImg: false,
             picList: [
                 { id: 0, url: require('@/assets/image/pen.png'), name: 'pen' },

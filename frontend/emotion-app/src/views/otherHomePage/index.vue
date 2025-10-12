@@ -1,6 +1,6 @@
 <template>
   <div id="otherHomePage">
-    <NavBar :toUrl="toUrl"></NavBar>
+    <NavBar></NavBar>
     <div class="navbarRightPic">
         <img src="@/assets/image/更多1.png" alt="" class="more" @click="changeFlag">
         <div class="hiden" ref="hiden" v-show="flag">
@@ -52,7 +52,6 @@ export default {
             flag: false,
             blackList: false,
             report: false,
-            toUrl: '',
             attention: 123,
             fans: 123,
             noteList: [

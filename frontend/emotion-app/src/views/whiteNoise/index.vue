@@ -1,6 +1,6 @@
 <template>
   <div id="whiteNoise">
-    <NavBar :title="title" :toUrl="toUrl"></NavBar>
+    <NavBar :title="title"></NavBar>
   </div>
 </template>
 
@@ -14,7 +14,6 @@ export default {
     data () {
         return {
             title: '白噪音',
-            toUrl: '',
         }
     }
 }
