@@ -39,6 +39,7 @@ export default {
     width: 24px;
     }
     h3 {
+      margin-left: 14px;
       font-size: 18px;
     }
   }

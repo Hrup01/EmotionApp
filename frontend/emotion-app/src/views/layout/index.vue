@@ -53,10 +53,11 @@ export default {
       const as = document.querySelectorAll('#layout .tabbar div')
       const shades = document.querySelectorAll('#layout .tabbar .shade')
 
-            // 一开始就先激活
+      // 一开始就先激活
       as.forEach((item, index) => {
-        // console.log(item)
-        if (item.classList.contains('active')) {
+        // console.log(item.childNodes[0])
+        if (item.childNodes[0].classList.contains('router-link-active')) {
+          console.log(11)
           item.style.marginTop = '5px'
           shades[index].style.display = 'block'
           // item.classList.remove('active')

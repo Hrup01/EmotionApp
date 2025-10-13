@@ -18,6 +18,11 @@ import Log from '@/views/log'
 import AI from '@/views/AI'
 import WhiteNoise from '@/views/whiteNoise'
 import OtherHomePage from '@/views/otherHomePage'
+import MessageCenter from '@/views/messageCenter'
+import NewFollow from '@/views/newFollow'
+import Comment from '@/views/comment'
+import LikeReceived from '@/views/likeReceived'
+import MyAttention from '@/views/myAttention'
 
 
 Vue.use(VueRouter)
@@ -48,6 +53,11 @@ const router = new VueRouter({
     { path: '/ai', component: AI },
     { path: '/whiteNoise', component: WhiteNoise },
     { path: '/otherHomePage', component: OtherHomePage },
+    { path: '/messageCenter', component: MessageCenter },
+    { path: '/newFollow', component: NewFollow },
+    { path: '/comment', component: Comment },
+    { path: '/likeReceived', component: LikeReceived },
+    { path: '/myAttention', component: MyAttention },
   ]
 })
 
