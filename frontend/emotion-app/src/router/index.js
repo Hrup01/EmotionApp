@@ -5,10 +5,14 @@ import VueRouter from 'vue-router'
 import Layout from '@/views/layout'
 import Home from '@/views/layout/home.vue'
 import Heal from '@/views/layout/heal.vue'
+
 import Community from '@/views/layout/community'
 import Recommend from '@/views/layout/community/recommend.vue'
 import Attention from '@/views/layout/community/attention.vue'
-import User from '@/views/layout/user.vue'
+
+import User from '@/views/layout/user/index.vue'
+import Note from '@/views/layout/user/note.vue'
+import Collect from '@/views/layout/user/collect.vue'
 
 // 一级路由
 import Login from '@/views/login'
@@ -23,6 +27,9 @@ import NewFollow from '@/views/newFollow'
 import Comment from '@/views/comment'
 import LikeReceived from '@/views/likeReceived'
 import MyAttention from '@/views/myAttention'
+import PostNotes from '@/views/postNotes'
+import MyState from '@/views/myState'
+import Meditation from '@/views/meditation'
 
 
 Vue.use(VueRouter)
@@ -42,7 +49,14 @@ const router = new VueRouter({
           ],
           redirect: '/community/recommend'
         },
-        { path: '/user', component: User }
+        { path: '/user', 
+          component: User,
+          children: [
+            { path: '/user/note', component: Note },
+            { path: '/user/collect', component: Collect }
+          ],
+          redirect: '/user/collect'
+        }
       ],
       redirect: '/home'
     },
@@ -52,12 +66,15 @@ const router = new VueRouter({
     { path: '/log/:mood', component: Log },
     { path: '/ai', component: AI },
     { path: '/whiteNoise', component: WhiteNoise },
-    { path: '/otherHomePage', component: OtherHomePage },
+    { path: '/otherHomePage/:id', component: OtherHomePage },
     { path: '/messageCenter', component: MessageCenter },
     { path: '/newFollow', component: NewFollow },
     { path: '/comment', component: Comment },
     { path: '/likeReceived', component: LikeReceived },
     { path: '/myAttention', component: MyAttention },
+    { path: '/postNotes', component: PostNotes },
+    { path: '/myState', component: MyState },
+    { path: '/meditation', component: Meditation },
   ]
 })
 

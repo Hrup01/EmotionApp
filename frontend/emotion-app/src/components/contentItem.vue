@@ -2,7 +2,7 @@
     <div class="contentItem">
       <div class="top">
         <div class="user">
-          <img :src="contentList[id].headPortraitUrl" alt="">
+          <img :src="contentList[id].headPortraitUrl" alt="" @click="$router.push(`/otherHomePage/${id}`)">
           <div class="username">{{ contentList[id].username }}</div>
         </div>
         <div class="more"><img src="@/assets/image/更多1.png" alt=""></div>
@@ -36,9 +36,10 @@ export default {
     background-color: #fff;
     border-radius: 10px;
     .top {
-        padding: 8px;
+        padding: 6px 8px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         height: 46px;
         .user {
             display: flex;

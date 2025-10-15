@@ -4,8 +4,8 @@
       <img src="@/assets/image/jt_left.png" alt="">
       <h3>{{ title }}</h3>
     </div>
-    <!-- <div class="right">
-      <img src="@/assets/image/更多1.png" alt="">
+    <!-- <div class="right" v-show="haveRight">
+      <img :src="rightPic" alt="">
     </div> -->
   </div>
 </template>
@@ -13,7 +13,7 @@
 <script>
 
 export default {
-  props: ['title'],
+  props: ['title', 'haveRight', 'rightPic'],
   // data () {
   //   return {
   //     rightPic: '@/assets/image/更多1.png'

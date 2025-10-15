@@ -57,7 +57,7 @@ export default {
       as.forEach((item, index) => {
         // console.log(item.childNodes[0])
         if (item.childNodes[0].classList.contains('router-link-active')) {
-          console.log(11)
+          // console.log(11)
           item.style.marginTop = '5px'
           shades[index].style.display = 'block'
           // item.classList.remove('active')

@@ -27,9 +27,6 @@ export default {
         { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
         { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
       ],
-      
-      
-      
     }
   }
 }
@@ -48,6 +45,6 @@ export default {
 .bottom {
   width: 100%;
   height: 94px;
-  background-color: pink;
+  // background-color: pink;
 }
 </style>

@@ -40,7 +40,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
-import noteItem from '@/components/noteItem.vue';
+import noteItem from '@/components/noteItem.vue'
 export default {
     name: 'otherHomePage',
     components: {

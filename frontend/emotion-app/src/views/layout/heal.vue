@@ -29,7 +29,7 @@ export default {
       return {
         healList: [
           { id: 0, bgUrl: require('@/assets/image/疗愈空间/白噪音背景.png'), url: require('@/assets/image/疗愈空间/白噪音.png'), title: '白噪音', introduce: '聆听大自然的声音', toUrl: '/whiteNoise' },
-          { id: 1, bgUrl: require('@/assets/image/疗愈空间/冥想背景.png'), url: require('@/assets/image/疗愈空间/冥想.png'), title: '冥想', introduce: '是时候给身心放一次假了', toUrl: '/whiteNoise' },
+          { id: 1, bgUrl: require('@/assets/image/疗愈空间/冥想背景.png'), url: require('@/assets/image/疗愈空间/冥想.png'), title: '冥想', introduce: '是时候给身心放一次假了', toUrl: '/meditation' },
           { id: 2, bgUrl: require('@/assets/image/疗愈空间/情绪拼图背景.png'), url: require('@/assets/image/疗愈空间/情绪拼图.png'), title: '情绪拼图', introduce: '把杂乱的情绪慢慢变完整', toUrl: '/whiteNoise' },
           { id: 3, bgUrl: require('@/assets/image/疗愈空间/敲木鱼背景.png'), url: require('@/assets/image/疗愈空间/敲木鱼.png'), title: '敲木鱼', introduce: '木鱼敲击，烦恼-1', toUrl: '/whiteNoise' },
         ]

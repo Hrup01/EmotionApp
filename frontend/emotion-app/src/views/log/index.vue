@@ -1,7 +1,7 @@
 <template>
   <div id="logPage">
     <div class="top">
-        <NavBar :title="title"></NavBar>
+        <NavBar :title="nabbarTitle"></NavBar>
         <img src="@/assets/image/bc.png" alt="" @click="postDiary">
     </div>
     <div class="time wrapper">
@@ -9,13 +9,13 @@
         <div class="week">{{ week }}</div>
     </div>
     <div class="content wrapper">
-        <input type="text" name="title" class="title" v-model="currentTitle" @click="changeTitle" ref="title">
+        <input type="text" name="title" class="title" v-model="title" @click="changeTitle" ref="title">
         <div class="border"></div>
         <ul ref="dashed">
             <!-- js动态渲染 -->
         </ul>
         <!-- 实际输入 -->
-        <textarea name="log" id="" class="diary" v-model="currentContent" @click="changeContent" ref="diary"></textarea>
+        <textarea name="log" id="" class="diary" v-model="content" @click="changeContent" ref="diary"></textarea>
         <!-- 实际显示 -->
         <div class="realShow" ref="realShow">{{ realShow }}</div>
     </div>
@@ -51,13 +51,12 @@ export default {
     },
     data () {
         return {
-            currentTitle: '+ 添加标题',
-            currentContent: '输入心得，记录你的情绪变化',
+            nabbarTitle: '日志打卡',
+            title: '+ 添加标题',
+            content: '输入心得，记录你的情绪变化',
             changeStyleContnet: '',
             exactDate: '',
             week: '',
-            content: '',
-            title: '日志打卡',
             haveImg: false,
             picList: [
                 { id: 0, url: require('@/assets/image/pen.png'), name: 'pen' },
@@ -73,30 +72,30 @@ export default {
     },
     methods: {
         changeTitle () {
-            this.currentTitle = ''
+            this.title = ''
             this.$refs.title.addEventListener('blur', () => {
-                if (this.currentTitle === '') {
-                    this.currentTitle = '+ 添加标题'
+                if (this.title === '') {
+                    this.title = '+ 添加标题'
                 }
             })
             this.$refs.title.addEventListener('keyup', (e) => {
                 // console.log(e)
                 if (e.key === 'Enter') {
                     // console.log(11)
-                    if (this.currentTitle !== '') {
-                        this.currentTitle = this.currentTitle.trim()
+                    if (this.title !== '') {
+                        this.title = this.title.trim()
                     }
                     else {
-                        this.currentTitle = '+ 添加标题'
+                        this.title = '+ 添加标题'
                     }
                     this.$refs.title.blur()
                 }
             })
         },
         changeContent () {
-            if (this.currentContent === '输入心得，记录你的情绪变化') this.currentContent = ''
+            if (this.content === '输入心得，记录你的情绪变化') this.content = ''
             this.$refs.diary.addEventListener('blur', () => {
-                if (this.currentContent === '') this.currentContent = '输入心得，记录你的情绪变化'
+                if (this.content === '') this.content = '输入心得，记录你的情绪变化'
             })
             // this.realShow = this.currentCotent
             // const diary = this.$refs.diary
