@@ -44,6 +44,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 允许所有OPTIONS请求
 				.requestMatchers("/api/auth/**").permitAll()   // 允许认证相关接口无需认证
+								.requestMatchers("/ai/**").permitAll()
 				.requestMatchers("/api/emotion/types").permitAll() // 允许获取情绪类型无需认证
 				.requestMatchers("/api/emotion/recent").permitAll() // 允许获取最近情绪无需认证（开发阶段）
 				.requestMatchers("/api/test/**").permitAll()   // 允许测试接口无需认证
