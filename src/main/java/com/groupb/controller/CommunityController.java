@@ -38,8 +38,10 @@ public class CommunityController {
         try {
             // 从SecurityContext中获取认证信息
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            log.debug("SecurityContext认证信息: {}", auth);
+            
             if (auth == null || auth.getPrincipal() == null) {
-                log.warn("无法获取当前用户认证信息");
+                log.warn("无法获取当前用户认证信息 - auth: {}, principal: {}", auth, auth != null ? auth.getPrincipal() : null);
                 return null;
             }
             
@@ -50,6 +52,7 @@ public class CommunityController {
             // 通过用户名查询用户ID
             User user = userService.findByUsername(username);
             if (user != null) {
+                log.debug("找到用户: {} (ID: {})", username, user.getId());
                 return user.getId();
             }
             
@@ -97,8 +100,8 @@ public class CommunityController {
             //3. 处理图片文件
             List<String> imageUrls = null;
             if (images != null && images.length > 0) {
-                // 这里可以调用FileUploadController的逻辑，或者直接处理
-                // 为了简化，这里先返回错误，建议前端先上传图片再创建帖子
+                // 这里可以调用FileUploadController的逻辑
+                // 这里先返回错误，建议前端先上传图片再创建帖子
                 return Result.error("请先上传图片，然后使用图片URL创建帖子");
             }
             
@@ -268,12 +271,24 @@ public class CommunityController {
      */
     @DeleteMapping("/posts/{postId}/like")
     public Result<Void> unlike(@PathVariable Long postId) {
+        log.info("收到取消点赞请求 - postId: {}", postId);
+        
         Long userId = getCurrentUserId();
+        log.info("获取到用户ID: {}", userId);
+        
         if (userId == null) {
+            log.warn("取消点赞失败 - 用户未登录");
             return Result.error("用户未登录");
         }
-        communityService.unlikePost(userId, postId);
-        return Result.success(null, "已取消点赞");
+        
+        try {
+            communityService.unlikePost(userId, postId);
+            log.info("取消点赞成功 - userId: {}, postId: {}", userId, postId);
+            return Result.success(null, "已取消点赞");
+        } catch (Exception e) {
+            log.error("取消点赞失败 - userId: {}, postId: {}", userId, postId, e);
+            return Result.error("取消点赞失败: " + e.getMessage());
+        }
     }
 
     /**
@@ -366,6 +381,36 @@ public class CommunityController {
         }
         communityService.unfollow(userId, targetUserId);
         return Result.success(null, "已取消关注");
+    }
+
+    /**
+     * 检查用户是否已关注目标用户
+     * API接口：GET /api/community/follow-status/{targetUserId}
+     * 
+     * 实现步骤：
+     * 1. 获取当前用户ID
+     * 2. 调用服务层检查关注状态
+     * 3. 返回关注状态结果
+     * 
+     * @param targetUserId 目标用户ID
+     * @return 关注状态结果
+     */
+    @GetMapping("/follow-status/{targetUserId}")
+    public Result<Map<String, Object>> getFollowStatus(@PathVariable Long targetUserId) {
+        try {
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            
+            boolean isFollowing = communityService.isFollowing(userId, targetUserId);
+            Map<String, Object> result = Map.of("isFollowing", isFollowing);
+            
+            return Result.success(result, "获取关注状态成功");
+        } catch (Exception e) {
+            log.error("获取关注状态失败", e);
+            return Result.error("获取关注状态失败：" + e.getMessage());
+        }
     }
 
     /**
