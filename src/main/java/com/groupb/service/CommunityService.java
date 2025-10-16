@@ -31,6 +31,14 @@ public interface CommunityService {
      * @return 帖子DTO列表
      */
     List<PostDTO> getFeed(Long userId, String type, int page, int size);
+    
+    /**
+     * 获取单个帖子详情
+     * @param postId 帖子ID
+     * @param userId 当前用户ID（用于判断是否已点赞等）
+     * @return 帖子DTO
+     */
+    PostDTO getPostById(Long postId, Long userId);
     /**
      * 点赞帖子
      * @param userId 用户id
@@ -102,6 +110,30 @@ public interface CommunityService {
      * @return 黑名单id列表
      */
     boolean isBannedFromCommunity(Long userId);
+    
+    /**
+     * 收藏帖子
+     * @param userId 用户id
+     * @param postId 帖子id
+     * @return 是否成功
+     */
+    boolean favoritePost(Long userId, Long postId);
+    
+    /**
+     * 取消收藏帖子
+     * @param userId 用户id
+     * @param postId 帖子id
+     * @return 是否成功
+     */
+    boolean unfavoritePost(Long userId, Long postId);
+    
+    /**
+     * 检查用户是否已收藏帖子
+     * @param userId 用户id
+     * @param postId 帖子id
+     * @return 是否已收藏
+     */
+    boolean isPostFavorited(Long userId, Long postId);
 }
 
 
