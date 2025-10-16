@@ -5,9 +5,13 @@ import com.groupb.pojo.dto.CommentDTO;
 import com.groupb.pojo.dto.MessageDTO;
 import com.groupb.pojo.dto.PostDTO;
 import com.groupb.pojo.dto.Result;
+import com.groupb.pojo.User;
 import com.groupb.service.CommunityService;
+import com.groupb.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +30,35 @@ public class CommunityController {
 
     @Autowired
     private CommunityService communityService;
+    
+    @Autowired
+    private UserService userService;
 
     private Long getCurrentUserId() {
-        // TODO: 结合JWT获取真实用户，这里先返回1用于联调
-        return 1L;
+        try {
+            // 从SecurityContext中获取认证信息
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || auth.getPrincipal() == null) {
+                log.warn("无法获取当前用户认证信息");
+                return null;
+            }
+            
+            // 从认证信息中获取用户名
+            String username = auth.getPrincipal().toString();
+            log.debug("当前用户: {}", username);
+            
+            // 通过用户名查询用户ID
+            User user = userService.findByUsername(username);
+            if (user != null) {
+                return user.getId();
+            }
+            
+            log.warn("未找到用户: {}", username);
+            return null;
+        } catch (Exception e) {
+            log.error("获取当前用户ID失败", e);
+            return null;
+        }
     }
 
     /**
@@ -56,6 +85,9 @@ public class CommunityController {
         try {
             //1. 获取当前用户ID
             Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
             
             //2. 验证内容
             if (content == null || content.trim().isEmpty()) {
@@ -103,6 +135,9 @@ public class CommunityController {
         try {
             //1. 获取当前用户ID
             Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
             //2.基于id创建帖子
             String content = (String) body.getOrDefault("content", "");
             @SuppressWarnings("unchecked")
@@ -132,6 +167,9 @@ public class CommunityController {
     @DeleteMapping("/posts/{postId}")
     public Result<Void> deletePost(@PathVariable Long postId) {
         Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
         boolean ok = communityService.deletePost(userId, postId);
         return ok ? Result.success(null, "删除成功") : Result.error("无权删除或帖子不存在");
     }
@@ -159,6 +197,9 @@ public class CommunityController {
                                       @RequestParam(defaultValue = "0") Integer page,
                                       @RequestParam(defaultValue = "10") Integer size) {
         Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
         List<PostDTO> list = communityService.getFeed(userId, type, page, size);
         return Result.success(list, "获取动态成功");
     }
@@ -179,6 +220,9 @@ public class CommunityController {
     public Result<PostDTO> getPostDetail(@PathVariable Long postId) {
         try {
             Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
             PostDTO post = communityService.getPostById(postId, userId);
             return Result.success(post, "获取帖子详情成功");
         } catch (IllegalArgumentException e) {
@@ -204,7 +248,11 @@ public class CommunityController {
     @PostMapping("/posts/{postId}/like")
     public Result<Void> like(@PathVariable Long postId) {
         try {
-            communityService.likePost(getCurrentUserId(), postId);
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            communityService.likePost(userId, postId);
             return Result.success(null, "已点赞");
         } catch (Exception e) {
             return Result.error("点赞失败: " + e.getMessage());
@@ -220,7 +268,11 @@ public class CommunityController {
      */
     @DeleteMapping("/posts/{postId}/like")
     public Result<Void> unlike(@PathVariable Long postId) {
-        communityService.unlikePost(getCurrentUserId(), postId);
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        communityService.unlikePost(userId, postId);
         return Result.success(null, "已取消点赞");
     }
 
@@ -245,9 +297,13 @@ public class CommunityController {
     @PostMapping("/posts/{postId}/comments")
     public Result<CommentDTO> comment(@PathVariable Long postId, @RequestBody Map<String, Object> body) {
         try {
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
             String content = (String) body.getOrDefault("content", "");
             Long replyTo = body.get("replyToCommentId") == null ? null : Long.valueOf(body.get("replyToCommentId").toString());
-            CommentDTO c = communityService.addComment(getCurrentUserId(), postId, content, replyTo);
+            CommentDTO c = communityService.addComment(userId, postId, content, replyTo);
             return Result.success(c, "评论成功");
         } catch (Exception e) {
             return Result.error("评论失败: " + e.getMessage());
@@ -287,7 +343,11 @@ public class CommunityController {
      */
     @PostMapping("/follow/{targetUserId}")
     public Result<Void> follow(@PathVariable Long targetUserId) {
-        communityService.follow(getCurrentUserId(), targetUserId);
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        communityService.follow(userId, targetUserId);
         return Result.success(null, "已关注");
     }
 
@@ -300,7 +360,11 @@ public class CommunityController {
      */
     @DeleteMapping("/follow/{targetUserId}")
     public Result<Void> unfollow(@PathVariable Long targetUserId) {
-        communityService.unfollow(getCurrentUserId(), targetUserId);
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        communityService.unfollow(userId, targetUserId);
         return Result.success(null, "已取消关注");
     }
 
@@ -312,7 +376,11 @@ public class CommunityController {
      */
     @GetMapping("/ban-status")
     public Result<Map<String, Object>> banStatus() {
-        boolean banned = communityService.isBannedFromCommunity(getCurrentUserId());
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        boolean banned = communityService.isBannedFromCommunity(userId);
         return Result.success(Map.of("banned", banned), "查询成功");
     }
 
@@ -336,8 +404,12 @@ public class CommunityController {
     @PostMapping("/dm/{toUserId}")
     public Result<Void> sendDm(@PathVariable Long toUserId, @RequestBody Map<String, Object> body) {
         try {
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
             String content = (String) body.getOrDefault("content", "");
-            communityService.sendMessage(getCurrentUserId(), toUserId, content);
+            communityService.sendMessage(userId, toUserId, content);
             return Result.success(null, "发送成功");
         } catch (Exception e) {
             return Result.error("发送失败: " + e.getMessage());
@@ -361,7 +433,11 @@ public class CommunityController {
     public Result<List<MessageDTO>> listDm(@PathVariable Long peerUserId,
                                           @RequestParam(defaultValue = "0") Integer page,
                                           @RequestParam(defaultValue = "20") Integer size) {
-        List<MessageDTO> list = communityService.getConversation(getCurrentUserId(), peerUserId, page, size);
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        List<MessageDTO> list = communityService.getConversation(userId, peerUserId, page, size);
         return Result.success(list, "获取会话成功");
     }
 
@@ -373,7 +449,11 @@ public class CommunityController {
      */
     @GetMapping("/dm/recent-contacts")
     public Result<List<Long>> recentContacts() {
-        return Result.success(communityService.getRecentContacts(getCurrentUserId()), "获取联系人成功");
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        return Result.success(communityService.getRecentContacts(userId), "获取联系人成功");
     }
 
     /**
@@ -386,7 +466,11 @@ public class CommunityController {
     @PostMapping("/posts/{postId}/favorite")
     public Result<Void> favoritePost(@PathVariable Long postId) {
         try {
-            boolean success = communityService.favoritePost(getCurrentUserId(), postId);
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            boolean success = communityService.favoritePost(userId, postId);
             return success ? Result.success(null, "收藏成功") : Result.error("收藏失败");
         } catch (Exception e) {
             log.error("收藏帖子失败", e);
@@ -404,7 +488,11 @@ public class CommunityController {
     @DeleteMapping("/posts/{postId}/favorite")
     public Result<Void> unfavoritePost(@PathVariable Long postId) {
         try {
-            boolean success = communityService.unfavoritePost(getCurrentUserId(), postId);
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            boolean success = communityService.unfavoritePost(userId, postId);
             return success ? Result.success(null, "取消收藏成功") : Result.error("取消收藏失败");
         } catch (Exception e) {
             log.error("取消收藏帖子失败", e);
@@ -422,7 +510,11 @@ public class CommunityController {
     @GetMapping("/posts/{postId}/favorite-status")
     public Result<Map<String, Object>> getFavoriteStatus(@PathVariable Long postId) {
         try {
-            boolean isFavorited = communityService.isPostFavorited(getCurrentUserId(), postId);
+            Long userId = getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            boolean isFavorited = communityService.isPostFavorited(userId, postId);
             Map<String, Object> result = Map.of("isFavorited", isFavorited);
             return Result.success(result, "获取收藏状态成功");
         } catch (Exception e) {
