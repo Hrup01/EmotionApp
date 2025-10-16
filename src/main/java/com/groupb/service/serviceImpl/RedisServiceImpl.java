@@ -3,6 +3,7 @@ package com.groupb.service.serviceImpl;
 import com.groupb.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,12 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis服务实现类
+ * Redis服务实现类 - 仅在RedisTemplate可用时启用
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnBean(RedisTemplate.class)
 public class RedisServiceImpl implements RedisService {
     
     private final RedisTemplate<String, Object> redisTemplate;
