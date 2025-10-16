@@ -25,6 +25,7 @@ public class CommunityServiceImpl implements CommunityService {
     private final CommunityPostMapper postMapper;
     private final CommunityCommentMapper commentMapper;
     private final CommunityLikeMapper likeMapper;
+    private final CommunityFavoriteMapper favoriteMapper;
     private final UserFollowMapper followMapper;
     private final PrivateMessageMapper privateMessageMapper;
     private final RedisService redisService;
@@ -41,6 +42,7 @@ public class CommunityServiceImpl implements CommunityService {
     private static final String POST_FEED_CACHE_PREFIX = "community:feed:";
     private static final String POST_LIKES_CACHE_PREFIX = "community:likes:";
     private static final String POST_COMMENTS_CACHE_PREFIX = "community:comments:";
+    private static final String POST_FAVORITES_CACHE_PREFIX = "community:favorites:";
     private static final String USER_FOLLOWS_CACHE_PREFIX = "community:follows:";
     private static final String USER_MESSAGES_CACHE_PREFIX = "community:messages:";
     private static final String BANNED_USERS_CACHE_KEY = "community:banned_users";
@@ -572,9 +574,38 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public boolean favoritePost(Long userId, Long postId) {
         enforceBan(userId);
-        // TODO: 实现收藏功能，需要添加收藏表和相关Mapper
-        log.info("用户 {} 收藏了帖子 {}", userId, postId);
-        return true;
+        
+        try {
+            // 1. 检查帖子是否存在
+            CommunityPost post = postMapper.findById(postId);
+            if (post == null) {
+                log.warn("用户 {} 尝试收藏不存在的帖子 {}", userId, postId);
+                return false;
+            }
+            
+            // 2. 检查是否已经收藏
+            if (isPostFavorited(userId, postId)) {
+                log.warn("用户 {} 已经收藏过帖子 {}", userId, postId);
+                return false;
+            }
+            
+            // 3. 添加到数据库
+            int result = favoriteMapper.insert(userId, postId, LocalDateTime.now());
+            if (result > 0) {
+                // 4. 更新Redis缓存
+                String cacheKey = POST_FAVORITES_CACHE_PREFIX + postId;
+                redisService.addToSet(cacheKey, userId);
+                redisService.expire(cacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+                
+                log.info("用户 {} 收藏了帖子 {}", userId, postId);
+                return true;
+            }
+            
+            return false;
+        } catch (Exception e) {
+            log.error("用户 {} 收藏帖子 {} 失败", userId, postId, e);
+            return false;
+        }
     }
 
     /**
@@ -590,9 +621,29 @@ public class CommunityServiceImpl implements CommunityService {
      */
     @Override
     public boolean unfavoritePost(Long userId, Long postId) {
-        // TODO: 实现取消收藏功能，需要添加收藏表和相关Mapper
-        log.info("用户 {} 取消收藏了帖子 {}", userId, postId);
-        return true;
+        try {
+            // 1. 检查是否已经收藏
+            if (!isPostFavorited(userId, postId)) {
+                log.warn("用户 {} 尝试取消收藏未收藏的帖子 {}", userId, postId);
+                return false;
+            }
+            
+            // 2. 从数据库中删除
+            int result = favoriteMapper.delete(userId, postId);
+            if (result > 0) {
+                // 3. 更新Redis缓存
+                String cacheKey = POST_FAVORITES_CACHE_PREFIX + postId;
+                redisService.removeFromSet(cacheKey, userId);
+                
+                log.info("用户 {} 取消收藏了帖子 {}", userId, postId);
+                return true;
+            }
+            
+            return false;
+        } catch (Exception e) {
+            log.error("用户 {} 取消收藏帖子 {} 失败", userId, postId, e);
+            return false;
+        }
     }
 
     /**
@@ -604,8 +655,35 @@ public class CommunityServiceImpl implements CommunityService {
      */
     @Override
     public boolean isPostFavorited(Long userId, Long postId) {
-        // TODO: 实现检查收藏状态功能，需要添加收藏表和相关Mapper
-        return false;
+        try {
+            // 1. 先检查Redis缓存
+            String cacheKey = POST_FAVORITES_CACHE_PREFIX + postId;
+            boolean cached = redisService.isSetMember(cacheKey, userId);
+            if (cached) {
+                return true;
+            }
+            
+            // 2. 如果缓存中没有，查询数据库
+            int count = favoriteMapper.countByUserAndPost(userId, postId);
+            boolean favorited = count > 0;
+            
+            // 3. 如果已收藏，更新缓存
+            if (favorited) {
+                redisService.addToSet(cacheKey, userId);
+                redisService.expire(cacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+            }
+            
+            return favorited;
+        } catch (Exception e) {
+            log.error("检查用户 {} 是否收藏帖子 {} 失败", userId, postId, e);
+            // 降级处理：直接查询数据库
+            try {
+                return favoriteMapper.countByUserAndPost(userId, postId) > 0;
+            } catch (Exception ex) {
+                log.error("降级查询也失败", ex);
+                return false;
+            }
+        }
     }
 
     /**
