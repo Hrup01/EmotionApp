@@ -20,9 +20,6 @@ public interface CommunityPostMapper {
     @Update("UPDATE community_post SET like_count = like_count + #{delta} WHERE id=#{postId}")
     int incrLikeCount(@Param("postId") Long postId, @Param("delta") int delta);
 
-    @Update("UPDATE community_post SET like_count = CASE WHEN like_count > 0 THEN like_count - 1 ELSE 0 END WHERE id=#{postId}")
-    int decrLikeCountSafe(@Param("postId") Long postId);
-
     @Update("UPDATE community_post SET comment_count = comment_count + #{delta} WHERE id=#{postId}")
     int incrCommentCount(@Param("postId") Long postId, @Param("delta") int delta);
 

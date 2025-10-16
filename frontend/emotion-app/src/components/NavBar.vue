@@ -2,7 +2,7 @@
   <div id="NaVBar">
     <div class="left" @click="$router.go(-1)">
       <img src="@/assets/image/jt_left.png" alt="">
-      <h3>{{ title }}</h3>
+      <h3 ref="title">{{ title }}</h3>
     </div>
     <!-- <div class="right" v-show="haveRight">
       <img :src="rightPic" alt="">
@@ -13,12 +13,16 @@
 <script>
 
 export default {
-  props: ['title', 'haveRight', 'rightPic'],
+  props: ['title', 'haveRight', 'rightPic', 'marginLeft'],
   // data () {
   //   return {
   //     rightPic: '@/assets/image/更多1.png'
   //   }
   // }
+  mounted () {
+    console.log(this.marginLeft)
+    this.$refs.title.style.marginLeft = this.marginLeft
+  }
 }
 </script>
 
@@ -28,6 +32,7 @@ export default {
   padding-left: 13px;
   display: flex;
   justify-content: space-between;
+  width: 340px;
   .left {
     margin-right: 14px;
     display: flex;

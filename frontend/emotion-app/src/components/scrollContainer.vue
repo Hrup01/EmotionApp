@@ -21,8 +21,8 @@ export default {
       // 初始化 better-scroll，设置 scrollX 为 true 开启横向滚动
       this.scroll = new BScroll(this.$refs.scrollWrapper, {
         scrollX: true,
-        click: true, // 允许点击事件
-        preventDefault: false, // 防止默认事件（根据需求调整）
+        click: false, // 允许点击事件
+        preventDefault: true, // 防止默认事件（根据需求调整）
       });
     },
   },
@@ -40,7 +40,7 @@ export default {
     width: 100%;
     overflow: hidden;
     /* 可根据需要设置高度 */
-    /* height: 100px;  */
+    height: 80px; 
 }
 
 .scroll-content {

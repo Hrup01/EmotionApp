@@ -30,6 +30,9 @@ import MyAttention from '@/views/myAttention'
 import PostNotes from '@/views/postNotes'
 import MyState from '@/views/myState'
 import Meditation from '@/views/meditation'
+import CountDown from '@/views/countDown'
+import NoteDetail from '@/views/noteDetail'
+import test from '@/views/test.vue'
 
 
 Vue.use(VueRouter)
@@ -75,6 +78,9 @@ const router = new VueRouter({
     { path: '/postNotes', component: PostNotes },
     { path: '/myState', component: MyState },
     { path: '/meditation', component: Meditation },
+    { path: '/countDown', component: CountDown },
+    { path: '/noteDetail/:id', component: NoteDetail },
+    { path: '/test', component: test },
   ]
 })
 

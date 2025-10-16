@@ -7,7 +7,7 @@
       <img src="@/assets/image/添加.png" alt="">
     </div>
     <!-- 二级导航出口 -->
-    <router-view></router-view>
+     <router-view></router-view>
   </div>
 </template>
 

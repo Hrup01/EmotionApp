@@ -7,7 +7,7 @@
         </div>
         <div class="more"><img src="@/assets/image/更多1.png" alt=""></div>
       </div>
-      <div class="background"><img :src="contentList[id].bgUrl" alt=""></div>
+      <div class="background"  @click="$router.push(`/noteDetail/${id}`)"><img :src="contentList[id].bgUrl" alt=""></div>
       <div class="title">{{ contentList[id].title }}</div>
       <div class="respond">
         <div class="like">
@@ -25,6 +25,7 @@
 <script>
 
 export default {
+    name: 'contentItem',
     props: ['contentList', 'id']
 }
 </script>

@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="function">
-        <!-- <ul ref="function">
+        <ul ref="function">
           <li class="item" v-for="item in functionList" :key="item.id" :ref="item.ref" @click="$router.push(item.toUrl)">
             <img :src="item.bgUrl" alt="" class="bg">
             <div class="content">
@@ -28,8 +28,8 @@
               <p>{{ item.name }}</p>
             </div>
           </li>
-        </ul> -->
-        <scrollContainer>
+        </ul>
+        <!-- <scrollContainer>
           <li class="item" v-for="item in functionList" :key="item.id" :ref="item.ref" @click="$router.push(item.toUrl)">
             <img :src="item.bgUrl" alt="" class="bg">
             <div class="content">
@@ -37,7 +37,7 @@
               <p>{{ item.name }}</p>
             </div>
           </li>
-        </scrollContainer>
+        </scrollContainer> -->
       </div>
     </div>
     <div class="footer">
@@ -50,12 +50,12 @@
 
 <script>
 import sencondNavBar from '@/components/sencondNavBar.vue'
-import scrollContainer from '@/components/scrollContainer.vue';
+// import scrollContainer from '@/components/scrollContainer.vue'
 export default {
     name: 'userPage',
     components: {
       sencondNavBar,
-      scrollContainer
+      // scrollContainer
     },
     data () {
       return {
@@ -135,10 +135,10 @@ export default {
   .function {
     margin-top: 20px;
     ul {
-      // margin-left: 12px;
-      // display: flex;
-      // // width: 378px;
-      // overflow: hidden;
+      margin-left: 12px;
+      display: flex;
+      // width: 378px;
+      overflow-x: auto;
       .item {
         position: relative;
         margin-right: 8px;
