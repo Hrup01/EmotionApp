@@ -4,6 +4,7 @@ import com.groupb.mapper.EmotionDiaryMapper;
 import com.groupb.pojo.EmotionDiary;
 import com.groupb.pojo.dto.*;
 import com.groupb.service.EmotionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class EmotionServiceImpl implements EmotionService {
 
@@ -86,11 +88,16 @@ public class EmotionServiceImpl implements EmotionService {
     
     @Override
     public boolean deleteDiaryByDate(Long userId, LocalDate date) {
+        log.info("尝试删除用户 {} 在日期 {} 的日记", userId, date);
+        
         // 先检查该日期是否有日记
         EmotionDiary diary = emotionDiaryMapper.findByUserAndDate(userId, date);
         if (diary == null) {
+            log.warn("用户 {} 在日期 {} 没有找到日记", userId, date);
             return false;
         }
+        
+        log.info("找到日记 ID: {}, 用户ID: {}, 日期: {}", diary.getId(), diary.getUserId(), diary.getDiaryDate());
         
         emotionDiaryMapper.deleteById(diary.getId(), userId);
         return true;

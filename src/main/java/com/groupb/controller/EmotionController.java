@@ -3,7 +3,9 @@ package com.groupb.controller;
 import com.groupb.pojo.dto.EmotionDTO;
 import com.groupb.pojo.dto.Result;
 // import com.groupb.pojo.dto.WeeklyReportDTO; // 周报功能暂时注释
+import com.groupb.pojo.User;
 import com.groupb.service.EmotionService;
+import com.groupb.service.UserService;
 import com.groupb.util.EmotionColorUtil;
 import com.groupb.util.jwt.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,9 @@ public class EmotionController {
 
     @Autowired
     private EmotionService emotionService;
+    
+    @Autowired
+    private UserService userService;
 
     /**
      * 从SecurityContext获取当前用户ID
@@ -42,10 +47,18 @@ public class EmotionController {
             // 从SecurityContext中获取用户名
             String username = auth.getPrincipal().toString();
             
-            // 这里简化处理，实际应该从请求头中获取token并解析用户ID
-            // 暂时返回固定值用于测试，实际项目中应该从JWT token中解析
+            // 从JWT token中解析用户ID
+            // 这里需要从请求头中获取token并解析用户ID
+            // 暂时通过用户名查询用户ID，实际项目中应该从JWT token中解析
             log.debug("当前用户: {}", username);
-            return 1L;
+            
+            // 通过用户名查询用户ID
+            User user = userService.findByUsername(username);
+            if (user != null) {
+                return user.getId();
+            }
+            
+            return null;
         } catch (Exception e) {
             log.error("解析用户ID失败", e);
             return null;

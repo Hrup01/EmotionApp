@@ -24,17 +24,17 @@ public interface EmotionDiaryMapper {
     int deleteById(Long id, Long userId);
 
     @Select("SELECT id, user_id as userId, diary_date as diaryDate, emotion_type as emotionType, " +
-            "content, background_music as backgroundMusic, tags, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
+            "content, background_music as backgroundMusic, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
             "FROM emotion_diaries WHERE user_id=#{userId} AND diary_date=#{date}")
     EmotionDiary findByUserAndDate(Long userId, LocalDate date);
 
     @Select("SELECT id, user_id as userId, diary_date as diaryDate, emotion_type as emotionType, " +
-            "content, background_music as backgroundMusic, tags, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
+            "content, background_music as backgroundMusic, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
             "FROM emotion_diaries WHERE user_id=#{userId} AND diary_date BETWEEN #{start} AND #{end} ORDER BY diary_date DESC")
     List<EmotionDiary> findByUserBetween(Long userId, LocalDate start, LocalDate end);
 
     @Select("SELECT id, user_id as userId, diary_date as diaryDate, emotion_type as emotionType, " +
-            "content, background_music as backgroundMusic, tags, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
+            "content, background_music as backgroundMusic, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
             "FROM emotion_diaries WHERE user_id=#{userId} ORDER BY diary_date DESC LIMIT #{limit}")
     List<EmotionDiary> findRecentByUser(Long userId, Integer limit);
 
@@ -42,7 +42,7 @@ public interface EmotionDiaryMapper {
     long countByUserBetween(Long userId, LocalDate start, LocalDate end);
 
     @Select("SELECT id, user_id as userId, diary_date as diaryDate, emotion_type as emotionType, " +
-            "content, background_music as backgroundMusic, tags, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
+            "content, background_music as backgroundMusic, mood_color as moodColor, location, check_in_count as checkInCount, created_at as createdAt, updated_at as updatedAt " +
             "FROM emotion_diaries WHERE id=#{id}")
     EmotionDiary findById(Long id);
 

@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.groupb.util.jwt.JwtAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.http.HttpMethod;
 
 /**
  *
@@ -23,6 +25,9 @@ import com.groupb.util.jwt.JwtAuthenticationFilter;
 public class SecurityConfig {
 	@Autowired(required = false)
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired
+	private CorsConfigurationSource corsConfigurationSource;
 	//配置密码编码器
 	@Bean
 	public PasswordEncoder passwordEncoder(){
@@ -35,7 +40,9 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(csrf -> csrf.disable())
+				.cors(cors -> cors.configurationSource(corsConfigurationSource)) // 添加CORS配置
 				.authorizeHttpRequests(auth -> auth
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 允许所有OPTIONS请求
 				.requestMatchers("/api/auth/**").permitAll()   // 允许认证相关接口无需认证
 				.requestMatchers("/api/emotion/types").permitAll() // 允许获取情绪类型无需认证
 				.requestMatchers("/api/emotion/recent").permitAll() // 允许获取最近情绪无需认证（开发阶段）
