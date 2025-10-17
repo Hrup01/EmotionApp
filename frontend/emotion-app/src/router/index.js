@@ -33,6 +33,7 @@ import Meditation from '@/views/meditation'
 import CountDown from '@/views/countDown'
 import NoteDetail from '@/views/noteDetail'
 import PrivateLetter from '@/views/privateLetter'
+import WoodFish from '@/views/woodFish'
 
 import test from '@/views/test.vue'
 
@@ -83,6 +84,7 @@ const router = new VueRouter({
     { path: '/countDown', component: CountDown },
     { path: '/noteDetail/:id', component: NoteDetail },
     { path: '/privateLetter/:id', component: PrivateLetter },
+    { path: '/woodFish', component: WoodFish },
     { path: '/test', component: test },
   ]
 })

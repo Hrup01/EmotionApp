@@ -38,11 +38,13 @@
 </template>
 
 <script>
+import axios from 'axios'
 // import request from '@/utlis/request'
 export default {
     name: 'AIPage',
     data () {
       return {
+        token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
         message: '向小栈发送信息',
         answer: '',
         userSentence: '',
@@ -71,11 +73,42 @@ export default {
           this.$refs.haveContent.innerHTML = this.str
         })
       },
-      // async getAIAnswer () {
-      //   const res = await request.get('')
-      //   this.str = res.data
-      //   this.render()
-      // },
+      async getAIAnswer () {
+        const res = await axios.get('http://localhost:8080/ai/chat', {
+          params: {
+            prompt: '你好',
+              hatId: 1
+          },
+          responseType: 'stream',
+          headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        const reader = res.data.data.getReader()
+        let buffer = ''
+        //eslint-disable-next-line no-constant-condition
+        while(true) { 
+          const { value, done } = await reader.read()
+          if (done) {
+            break
+          }
+          buffer += new TextDecoder('utf-8').decode(value)
+
+          const lines = buffer.split('\n').filter(line => line.trim() != '')
+          buffer = ''
+
+          for (const line of lines) {
+            try {
+              const dataItem = JSON.parse(line)
+              this.answer += dataItem.data
+            } catch (err) {
+              buffer = line
+            }
+          }
+        }
+        // this.str = res.data
+        this.render()
+      },
 
       sendMessage () {
         // 发送消息
@@ -88,7 +121,7 @@ export default {
         this.$refs.textarea.blur()
         // this.$refs.message.style.bottom = '31px'
         // 获得后端传回的ai回答
-        // getAIAnswer()
+        this.getAIAnswer()
       },
 
       changeMessage () {
