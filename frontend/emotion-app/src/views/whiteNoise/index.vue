@@ -25,12 +25,12 @@
         <!-- <stateItem :list="whiteNoiseList" :is-white-noise="isWhiteNoise"></stateItem> -->
     </div>
     <div class="footer wrapper">
-        <div class="prev"><img src="@/assets/image/白噪音/切换-左.png" alt=""></div>
+        <div class="prev" @click="prevAudio"><img src="@/assets/image/白噪音/切换-左.png" alt=""></div>
         <div class="control">
             <div class="play" v-if="isPlay" @click="pauseAudio"><img src="@/assets/image/白噪音/开始.png" alt=""></div>
             <div class="pause" v-else @click="ctrlPlayAudio"><img src="@/assets/image/白噪音/暂停.png" alt=""></div>
         </div>
-        <div class="next"><img src="@/assets/image/白噪音/切换-右.png" alt=""></div>
+        <div class="next" @click="nextAudio"><img src="@/assets/image/白噪音/切换-右.png" alt=""></div>
     </div>
   </div>
 </template>
@@ -48,7 +48,9 @@ export default {
         return {
             title: '白噪音',
             isWhiteNoise: true,
+            // prevOptionAudio: '',
             currentOptionAudio: '',
+            // nextOptionAudio: '',
             isPlay: false,
             whiteNoiseList: [
                 { id: 0, audioUrl: require('@/assets/audio/白噪音/海洋.mp3'), picUrl: require('@/assets/image/白噪音/海洋.png'), text: '海洋', ref: 'sea' },
@@ -92,18 +94,32 @@ export default {
             // 改变控件图片
             this.isPlay = true
         },
-        ctrlPlayAudio () {
-            this.isPlay = true
-            // 获取选择白噪音的索引值
-            const id = this.currentOptionAudio
-            this.playAudio(id)
-        },
         pauseAudio () {
             this.isPlay = false
             const id = this.currentOptionAudio
             // 获取要暂停的元素
             const name = this.whiteNoiseList[id].ref
             this.$refs[name][0].pause()
+        },
+        // 下面控件的操作
+        ctrlPlayAudio () {
+            this.isPlay = true
+            // 获取选择白噪音的索引值
+            const id = this.currentOptionAudio
+            this.playAudio(id)
+        },
+        // 切换上一首
+        prevAudio () {
+            const id = this.currentOptionAudio - 1
+            if (id < 0) return
+            // console.log(this.whiteNoiseList[id].ref)
+            this.playAudio(id)
+        },
+        nextAudio () {
+            const id = this.currentOptionAudio + 1
+            if (id > 15) return
+            console.log(this.whiteNoiseList[id].ref)
+            this.playAudio(id)
         }
     }
 }

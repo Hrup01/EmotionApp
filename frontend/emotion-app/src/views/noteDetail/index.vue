@@ -119,7 +119,7 @@ export default {
         },
         // 取消关注
         async deleteFollowed () {
-            const res = await axios.delete(`http://localhost:8080/api/community/follow/${this.postId}`, {}, {
+            const res = await axios.delete(`http://localhost:8080/api/community/follow/${this.postId}`, {
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
@@ -142,7 +142,7 @@ export default {
         },
         // 取消收藏
         async deleteCollect () {
-            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/favorit`, {}, {
+            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/favorit`, {
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
@@ -161,14 +161,15 @@ export default {
         },
         // 取消点赞帖子
         async deletetLikePost () {
-            // console.log(postId)
-            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/like`, {}, {
+            console.log('取消点赞帖子请求 token:', this.token)
+            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/like`, {
                 headers: {
-                    Authorization: 'Bearer ' + this.token
+                    Authorization: 'Bearer ' + this.token,
+                    // 'Content-Type': 'application/json'
                 }
             })
             console.log(res)
-        }, //401?
+        },
         // 点赞评论
         async postLikeComment () {
             // console.log(postId)
@@ -185,8 +186,8 @@ export default {
         },
         changeCollect () {
             this.isCollect = this.isCollect ? false : true
-            // if (this.isCollect) this.collect()
-            // else this.deleteCollect()
+            if (this.isCollect) this.collect()
+            else this.deleteCollect()
         },
         changeLike () {
             this.isLike = this.isLike ? false : true
@@ -230,26 +231,28 @@ export default {
     },
     async mounted () {
         // 获取帖子详情
-        // const res = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}`, {}, {
-        //     headers: {
-        //         Authorization: 'Bearer ' + this.token
-        //     }
-        // })
-        // console.log(res)
-        // 获取帖子评论列表http://dev-cn.your-api-server.com/
-        // const res = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/comments`, {}, {
-        //     headers: {
-        //         Authorization: 'Bearer ' + this.token
-        //     }
-        // })
-        // console.log(res)
+        const postDetailRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}`, {
+            headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        console.log('获取帖子详情',postDetailRes)
+        // 获取帖子评论列表
+        const postCommentRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/comments`, {
+            headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        console.log('获取帖子评论列表',postCommentRes)
+        // this.commentList = postCommentRes.data.data
+        // console.log(this.commentList)
         // 查看帖子是否收藏
-        // const res = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/favorite-status`, {}, {
-        //     headers: {
-        //         Authorization: 'Bearer ' + this.token
-        //     }
-        // })
-        // console.log(res)
+        const collectRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/favorite-status`, {
+            headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        console.log('查看帖子是否收藏',collectRes)
     }
 }
 </script>

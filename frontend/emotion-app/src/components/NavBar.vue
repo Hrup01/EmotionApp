@@ -2,6 +2,7 @@
   <div id="NaVBar">
     <div class="left" @click="$router.go(-1)">
       <img src="@/assets/image/jt_left.png" alt="">
+      <!-- <img src="@/assets/image/私信/头像.png" alt="" class="headPic"> -->
       <h3 ref="title">{{ title }}</h3>
     </div>
     <!-- <div class="right" v-show="haveRight">

@@ -15,8 +15,12 @@ export default {
   methods: {
     async fn1 () {
         const token = JSON.parse(localStorage.getItem('emotion_app_info')).token
-        console.log(token)
-        const res = await axios.get('http://localhost:8080/api/emotion/emotion-types', {}, {
+        // console.log(token)
+        const res = await axios.get('http://localhost:8080/ai/chat', {
+            params: {
+              prompt: '你好',
+              chatId: 12345
+            },
             headers: {
                 Authorization: 'Bearer ' + token
             }

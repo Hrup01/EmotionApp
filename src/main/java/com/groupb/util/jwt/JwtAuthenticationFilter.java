@@ -31,15 +31,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
+        log.debug("处理请求: {} {}", request.getMethod(), request.getRequestURI());
+        log.debug("Authorization头: {}", authHeader);
+
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtTokenProvider.getUsernameFromToken(token);
+            log.debug("从token中提取用户名: {}", username);
+        } else {
+            log.warn("请求缺少有效的Authorization头: {}", authHeader);
         }
 
         if (StringUtils.hasText(username) && jwtTokenProvider.validateToken(token, username) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("用户认证成功: {}", username);
+        } else {
+            log.warn("用户认证失败 - 用户名: {}, token有效: {}", username, jwtTokenProvider.validateToken(token, username));
         }
 
         filterChain.doFilter(request, response);

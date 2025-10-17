@@ -1,7 +1,7 @@
 <template>
   <div id="postNotes">
     <nav-bar :title="navbartitle"></nav-bar>
-    <div class="navbarRightPic">
+    <div class="navbarRightPic" @click="createPost">
         <img src="@/assets/image/笔记页面/路径 1.png" alt="">
     </div>
     <div class="body wrapper">
@@ -15,10 +15,20 @@
             <textarea name="content" id="" ref="note" v-model="content" @click="changeContent"></textarea>
         </div>
     </div>
+    <div class="add wrapper">
+        <ul>
+            <li v-for="item in addList" :key="item.id" :ref="item.ref">
+                <input type="file" ref="upload" v-show="0">
+                <img :src="item.url" alt="">
+                <p>{{ item.text }}</p>
+            </li>
+        </ul>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import NavBar from '../../components/NavBar.vue'
 
 export default {
@@ -28,11 +38,19 @@ export default {
     },
     data () {
         return {
+            token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             navbartitle: '发布笔记',
             // haveRight: true,
             // rightPic: require('@/assets/image/更多1.png')
             title: '+ 添加标题',
-            content: '分享此刻的喜怒哀乐...'
+            content: '分享此刻的喜怒哀乐...',
+            images: '',
+            addList: [
+                { id: 0, url: require('@/assets/image/笔记页面/话题.png'), text: '添加话题', ref: 'addtopic' },
+                { id: 1, url: require('@/assets/image/笔记页面/图片添加.png'), text: '添加图片', ref: 'addpic' },
+                { id: 2, url: require('@/assets/image/笔记页面/本地.png'), text: '添加地点', ref: 'addplace' },
+                { id: 3, url: require('@/assets/image/笔记页面/艾特.png'), text: '添加话题', ref: 'at' },
+            ]
         }
     },
     methods: {
@@ -62,7 +80,33 @@ export default {
             this.$refs.note.addEventListener('blur', () => {
                 if (this.content === '') this.content = '分享此刻的喜怒哀乐...'
             })
+        },
+        // 创建帖子
+        async createPost () {
+            const res = await axios.post('http://localhost:8080/api/community/posts', {}, {
+                params: {
+                    content: this.content,
+                    images: this.images
+                },
+                headers: {
+                    Authorization: 'Bearer ' + this.token
+                }
+            })
+            console.log(res)
         }
+    },
+    mounted () {
+        const addpic = this.$refs.addpic
+        // console.log(addpic[0])
+        addpic[0].addEventListener('click',() => {
+            // console.log(this.$refs.upload[0])
+            this.$refs.upload[0].click()
+            this.$refs.upload[0].addEventListener('change', e => {
+                 const fd = new FormData()
+                 fd.append('img',e.target.files[0])
+                this.images = fd
+            })
+        })
     }
 }
 </script>
@@ -89,7 +133,7 @@ export default {
 .body {
     margin-top: 12px;
     width: 365px;
-    height: 634px;
+    height: 654px;
     border-radius: 30px;
     background: #fff3db;
     .top {
@@ -131,6 +175,35 @@ export default {
             background-color: #FFF3DB;
             color: #c0bdb7;
             font-size: 12px;
+        }
+    }
+}
+.add {
+    ul {
+        margin-top: 11px;
+        display: flex;
+        height: 50px;
+        overflow-x: auto;
+        li {
+            margin-right: 28px;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            width: 98px;
+            height: 34px;
+            border-radius: 20px;
+            background: #ffefcf;
+            box-shadow: 2px 2px 5px 0 #cc680440;
+            img {
+                margin-left: 10px;
+                margin-right: 8px;
+                width: 20px;
+                height: 20px;
+            }
+            p {
+                color: #5c5c5c;
+                font-size: 12px;
+            }
         }
     }
 }

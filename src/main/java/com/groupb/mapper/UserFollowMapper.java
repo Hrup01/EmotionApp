@@ -15,6 +15,9 @@ public interface UserFollowMapper {
 
     @Select("SELECT target_user_id FROM user_follow WHERE user_id=#{userId}")
     List<Long> listFollowings(Long userId);
+
+    @Select("SELECT COUNT(*) FROM user_follow WHERE user_id=#{userId} AND target_user_id=#{targetUserId}")
+    int isFollowing(@Param("userId") Long userId, @Param("targetUserId") Long targetUserId);
 }
 
 

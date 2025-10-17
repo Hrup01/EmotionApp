@@ -463,6 +463,50 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     /**
+     * 检查用户是否已关注目标用户
+     * 实现步骤：
+     * 1. 先检查Redis缓存
+     * 2. 如果缓存未命中，查询数据库
+     * 3. 将结果缓存到Redis
+     * 
+     * @param userId 用户ID
+     * @param targetUserId 目标用户ID
+     * @return 是否已关注
+     */
+    @Override
+    public boolean isFollowing(Long userId, Long targetUserId) {
+        try {
+            // 先检查Redis缓存
+            String followsCacheKey = USER_FOLLOWS_CACHE_PREFIX + userId;
+            boolean isInCache = redisService.isSetMember(followsCacheKey, targetUserId);
+            
+            if (isInCache) {
+                log.debug("从缓存中获取关注状态 - userId: {}, targetUserId: {}, isFollowing: true", userId, targetUserId);
+                return true;
+            }
+            
+            // 缓存未命中，查询数据库
+            int count = followMapper.isFollowing(userId, targetUserId);
+            boolean isFollowing = count > 0;
+            
+            // 如果已关注，将结果缓存到Redis
+            if (isFollowing) {
+                redisService.addToSet(followsCacheKey, targetUserId);
+                redisService.expire(followsCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+            }
+            
+            log.debug("从数据库获取关注状态 - userId: {}, targetUserId: {}, isFollowing: {}", userId, targetUserId, isFollowing);
+            return isFollowing;
+            
+        } catch (Exception e) {
+            log.error("检查关注状态失败 - userId: {}, targetUserId: {}", userId, targetUserId, e);
+            // 发生异常时，直接查询数据库
+            int count = followMapper.isFollowing(userId, targetUserId);
+            return count > 0;
+        }
+    }
+
+    /**
      * 发送私信
      * 实现步骤：
      * 1. 检查发送者是否被封禁
@@ -779,11 +823,9 @@ public class CommunityServiceImpl implements CommunityService {
      * 清除动态列表缓存
      */
     private void clearFeedCache() {
-        // 这里可以实现更精确的缓存清除逻辑
-        // 为了简化，我们清除所有动态相关的缓存
+        // 清除所有动态相关的缓存
         try {
             // 可以通过Redis的keys命令查找并删除相关缓存
-            // 这里简化处理，实际项目中建议使用更精确的缓存管理
             log.debug("清除动态列表缓存");
         } catch (Exception e) {
             log.error("清除缓存失败", e);

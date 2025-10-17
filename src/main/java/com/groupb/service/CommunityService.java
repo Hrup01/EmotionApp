@@ -82,6 +82,14 @@ public interface CommunityService {
      * @param targetUserId 目标用户id
      */
     void unfollow(Long userId, Long targetUserId);
+    
+    /**
+     * 检查用户是否已关注目标用户
+     * @param userId 用户id
+     * @param targetUserId 目标用户id
+     * @return 是否已关注
+     */
+    boolean isFollowing(Long userId, Long targetUserId);
     /**
      * 发送私信
      * @param fromUserId 发送者id

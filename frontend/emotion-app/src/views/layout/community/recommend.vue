@@ -44,7 +44,7 @@ export default {
           Authorization: 'Bearer ' + token
       }
     })
-    console.log(res)
+    console.log('获取推荐列表',res)
     // this.contentList = res.data.data
   }
 }
