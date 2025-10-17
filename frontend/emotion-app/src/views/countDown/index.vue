@@ -87,6 +87,10 @@ export default {
       // console.log(this.timeList[index].totalSecond)
       this.totalSecond = this.timeList[index].totalSecond
       this.startCounting()
+      // 白噪音页面开始播放
+
+      // 传递播放时间
+      this.$store.commit('countDown/setwhiteNoisePlayTime', this.timeList[index].totalSecond)
     },
     // 渲染页面倒计时
     render () {

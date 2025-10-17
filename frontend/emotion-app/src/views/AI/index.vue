@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 // import request from '@/utlis/request'
 export default {
     name: 'AIPage',
@@ -74,16 +74,32 @@ export default {
         })
       },
       async getAIAnswer () {
-        const res = await axios.get('http://localhost:8080/ai/chat', {
-          params: {
-            prompt: '你好',
-              hatId: 1
-          },
-          responseType: 'stream',
+        // const res = await axios.get('http://localhost:8080/ai/chat', {
+        //   params: {
+        //     prompt: this.userSentence,
+        //     chatId: 1
+        //   },
+        //   responseType: 'stream',
+        //   headers: {
+        //         Authorization: 'Bearer ' + this.token
+        //     }
+        // })
+        const prompt = this.userSentence
+        const chatId = 1
+        const url = new URL('http://localhost:8080/ai/chat')
+        url.searchParams.append('prompt',prompt)
+        url.searchParams.append('chatId',chatId)
+        const res = await fetch(url.toString(), {
+          method: 'GET',
+          // params: {
+          //   prompt: this.userSentence,
+          //   chatId: 1
+          // },
           headers: {
-                Authorization: 'Bearer ' + this.token
-            }
+              Authorization: 'Bearer ' + this.token
+          }
         })
+        console.log(res.data.data)
         const reader = res.data.data.getReader()
         let buffer = ''
         //eslint-disable-next-line no-constant-condition
