@@ -1,5 +1,6 @@
 <template>
   <div id="AI">
+    <nav-bar></nav-bar>
     <div class="title wrapper">AI情绪教练</div>
     <div class="dialog wrapper">
       <!-- 无对话时 -->
@@ -40,8 +41,12 @@
 <script>
 // import axios from 'axios'
 // import request from '@/utlis/request'
+import NavBar from '@/components/NavBar.vue'
 export default {
     name: 'AIPage',
+    components: {
+      NavBar
+    },
     data () {
       return {
         token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
