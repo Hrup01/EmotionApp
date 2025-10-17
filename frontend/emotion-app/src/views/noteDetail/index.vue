@@ -253,6 +253,14 @@ export default {
             }
         })
         console.log('查看帖子是否收藏',collectRes)
+        // 查看用户是否关注
+        const userFollowedtRes = await axios.get(`http://localhost:8080/api/community/posts//followed-status/${this.postId}`, {
+            headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        console.log('查看用户是否关注',userFollowedtRes)
+        // this.followed = userFollowedtRes.data.data
     }
 }
 </script>

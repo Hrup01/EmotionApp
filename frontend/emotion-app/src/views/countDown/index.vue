@@ -10,7 +10,7 @@
         <div class="maohao time">:</div>
         <div class="second time">{{ second }}</div>
         <p v-if="hour === '00' && minute === '00' && second === '00'">暂未开启</p>
-        <p v-else @click="startCounting">开始</p>
+        <!-- <p v-else @click="startCounting">开始</p> -->
       </div>
     </div>
     <div class="optionTiming wrapper">
@@ -68,8 +68,8 @@ export default {
         { id: 2, text: '20分钟', isCheck: false, totalSecond: '1200' },
         { id: 3, text: '30分钟', isCheck: false, totalSecond: '1800' },
         { id: 4, text: '40分钟', isCheck: false, totalSecond: '2400' },
-        { id: 5, text: '50分钟', isCheck: false, totalSecond: '3000' },
-        { id: 6, text: '60分钟', isCheck: false, totalSecond: '3600' },
+        { id: 5, text: '60分钟', isCheck: false, totalSecond: '3600' },
+        { id: 6, text: '自定义', isCheck: false, totalSecond: '' },
       ],
       timer: null
     }
@@ -86,7 +86,7 @@ export default {
       // 上方倒计时也随之改变
       // console.log(this.timeList[index].totalSecond)
       this.totalSecond = this.timeList[index].totalSecond
-      this.render()
+      this.startCounting()
     },
     // 渲染页面倒计时
     render () {
