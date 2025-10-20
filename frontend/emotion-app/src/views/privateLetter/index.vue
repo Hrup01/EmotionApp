@@ -20,20 +20,31 @@
             </div>
         </div>
     </div>
-    <div class="body">
-
+    <div class="body" ref="body">
+        <!-- <div class="myContent">
+            <div class="item">{{ content }}</div>
+        </div>
+        <div class="answer">
+          <div class="item">{{ answer }}</div>
+        </div> -->
     </div>
-    <div class="footer">
+    <div class="footer" ref="footer">
         <div class="sendMessage">
-            <textarea name="" id="" v-model="content" @focus="changeCotent" ref="textarea"></textarea>
-            <div class="add"><img src="@/assets/image/私信/添加.png" alt=""></div>
+            <textarea name="" id="" v-model="content" @focus="changeContent" ref="textarea"></textarea>
+            <div class="send" @click="sendMessage">发送</div>
+            <div class="add"><img src="@/assets/image/私信/添加.png" alt="" @click="addFunction"></div>
+        </div>
+        <div class="moreFunction" v-show="isAddFunction">
+            <input type="file" ref="upload">
+            <img src="@/assets/image/私信/照片.png" alt="" class="addPic" @click="addPic">
         </div>
     </div>
   </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue';
+import NavBar from '@/components/NavBar.vue'
+import axios from 'axios'
 export default {
     name: 'privateLetter',
     components: {
@@ -42,13 +53,97 @@ export default {
     data () {
         return {
             flag: false,
-            content: '发送消息...'
+            isAddFunction: false,
+            toUserId: this.$route.params.id,
+            token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
+            content: '发送消息...',
+            answer: '',
+            str: ''
         }
     },
     methods: {
+        // 举报、拉黑组件出现
         changeFlag () {
             this.flag = this.flag ? false : true
         },
+        // 改变文本域内容
+        changeContent () {
+            if (this.content === '发送消息...') this.content = ''
+            this.$refs.textarea.addEventListener('blur', () => {
+                if (this.content === '') this.content = '发送消息...'
+            })
+        },
+        // 添加功能（图片）
+        addFunction () {
+            // 1.改变样式
+            this.isAddFunction = true
+            const footer = this.$refs.footer
+            if (this.isAddFunction) {
+                footer.style.height = '300px'
+                footer.style.borderRadius = '30px 30px 0 0'
+                footer.style.background = '#ffffff'
+            }
+        },
+        // 发送图片
+        addPic () {
+            this.$refs.upload.click()
+        },
+        // 发送消息
+        async sendMessage () {
+            if (this.content === '发送消息...') return
+            // console.log(11)
+            if (this.content != '') {
+                // 异步任务 --> 微任务
+                const res = await axios.post(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
+                    // 去除前后空格
+                    content: this.content.trim()
+                }, {
+                    headers: {
+                        Authorization: 'Bearer ' + this.token
+                    }
+                })
+                console.log('我发送的信息',res)
+                // 渲染页面
+                this.getUserMessage()
+            }
+            // 异步任务 --> 宏任务
+            setTimeout(( () => this.content = '发送消息...'),100)
+        },
+        // 获取与指定用户的私信对话
+        async getUserMessage () {
+            const res = await axios.get(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
+                params: {
+                    page: 0,
+                    size: 20
+                },
+                headers: {
+                    Authorization: 'Bearer ' + this.token
+                }
+            })
+            console.log('对方发送的信息',res)
+            this.answer = res.data.data[0].content
+            this.render()
+        },
+        // 渲染页面函数
+        render () {
+        if (this.myContent !== '') {
+          this.str += ` <div data-v-160026a2 class="myContent">
+                          <div data-v-160026a2 class="item">${this.content}</div>
+                        </div>  `
+        }
+        if (this.answer !== '') {
+          this.str += ` <div data-v-160026a2 class="answer">
+                          <div data-v-160026a2 class="item">${this.answer}</div>
+                        </div> `
+        }
+        // 等dom元素挂载后再渲染
+        this.$nextTick(() => {
+          this.$refs.body.innerHTML = this.str
+        })
+      },
+    },
+    mounted () {
+        // this.getUserMessage()
     }
 }
 </script>
@@ -116,16 +211,60 @@ export default {
     }
 }
 .body {
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column; 
     width: 390px;
     height: 740px;
     background: #fcfaf5;
+    font-size: 15px;
+    font-weight: 600;
+    overflow-y: auto;
+    .myContent,
+    .answer {
+        width: fit-content;
+        max-width: 100%;
+        word-break: break-word;
+        .item {
+            margin-bottom: 6px;
+            padding: 12px 17px;
+        }
+    }
+    .myContent {
+        align-self: flex-end;
+        .item {
+            margin-right: 12px;
+            border-radius: 26px 0 26px 26px;
+            background: #aff0ef;
+        }
+    }
+    .answer {
+        align-self: flex-start;
+        .item {
+            margin-left: 12px;
+            display: flex;
+            border-radius: 0 26px 26px 26px;
+            background: #FFE5B8;
+            img {
+                margin-right: 12px;
+                flex: none;
+                width: 46px;
+                height: 46px;
+            }
+            p {
+                padding: 12px 17px;
+                border-radius: 26px;
+                background: #fbddd9;
+            }
+        }
+    }
 }
 .footer {
     position: fixed;
     bottom: 0;
     width: 390px;
     height: 100px;
-    background-color: #fff;
+    // background-color: #fff;
     .sendMessage {
         padding-top: 24px;
         display: flex;
@@ -142,9 +281,32 @@ export default {
             color: #543a0d33;
             font-size: 14px;
         }
+        .send {
+            position: absolute;
+            right: 65px;
+            width: 48px;
+            height: 30px;
+            border-radius: 30px;
+            background: #fefbf6;
+            color: #0000004d;
+            font-size: 14px;
+            line-height: 30px;
+            text-align: center;
+        }
         img {
             width: 32px;
             height: 32px;
+        }
+    }
+    .moreFunction {
+        margin-top: 23px;
+        margin-left: 40px;
+        img {
+            width: 56px;
+            height: 56px;
+        }
+        input {
+            display: none;
         }
     }
 }

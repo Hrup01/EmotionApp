@@ -20,7 +20,7 @@
         <div class="realShow" ref="realShow">{{ realShow }}</div>
     </div>
     <!-- 富文本编辑器 -->
-    <div class="richTextEditor">
+    <div class="richTextEditor" style="display: none;">
         <div class="color"><img src="@/assets/image/t.png" alt="" @click="changeColor"></div>
         <div class="strong"><img src="@/assets/image/b.png" alt="" @click="toStrong"></div>
         <div class="incline"><img src="@/assets/image/I.png" alt="" @click="toIncline"></div>
@@ -40,6 +40,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import axios from 'axios'
 // import request from '@/utlis/request'
 // import tinymce from '@/components/tinymce.vue'
 // import tinymceEditor from '@/components/tinymceEditor.vue'
@@ -51,12 +52,17 @@ export default {
     },
     data () {
         return {
+            token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             nabbarTitle: '日志打卡',
             title: '+ 添加标题',
             content: '输入心得，记录你的情绪变化',
             changeStyleContnet: '',
+            // 具体日期
             exactDate: '',
+            // 星期几
             week: '',
+            // 情绪类型
+            emotionType: this.$route.params.mood,
             haveImg: false,
             picList: [
                 { id: 0, url: require('@/assets/image/pen.png'), name: 'pen' },
@@ -71,6 +77,7 @@ export default {
         }
     },
     methods: {
+        // 改变标题
         changeTitle () {
             this.title = ''
             this.$refs.title.addEventListener('blur', () => {
@@ -92,6 +99,7 @@ export default {
                 }
             })
         },
+        // 改变内容
         changeContent () {
             if (this.content === '输入心得，记录你的情绪变化') this.content = ''
             this.$refs.diary.addEventListener('blur', () => {
@@ -103,11 +111,24 @@ export default {
             //     this.realShow = this.currentCotent
             // })
         },
-        postDiary () {
+        // 发布日志
+        async postDiary () {
             // 1.清除标题和日记内容
             this.currentTitle = '+ 添加标题'
             this.currentContent = '输入心得，记录你的情绪变化'
             // 2.post
+            console.log(this.emotionType)
+            const res = await axios.post('http://localhost:8080/api/emotion/diary', {}, {
+                params: {
+                    diaryDate: this.exactDate,
+                    emotionType: this.emotionType,
+                    content: this.content
+                },
+                headers: {
+                    Authorization: 'Bearer ' + this.token
+                }
+            })
+            console.log('发布日志结果',res)
         },
         changeColor () {
             // const realShow = this.$refs.realShow
@@ -150,6 +171,7 @@ export default {
         
     },
     mounted () {
+        // 获取具体日期和星期几
         const date = new Date()
         const year =  date.getFullYear()
         const month = date.getMonth()
@@ -188,7 +210,6 @@ export default {
     img {
         position: relative;
         top: 50px;
-        left: 225px;
         width: 24px;
         height: 24px;
     }

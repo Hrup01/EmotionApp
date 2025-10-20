@@ -32,19 +32,19 @@
     </div>
     <div class="component wrapper">
       <router-link to="/moodOption">
-        <img src="@/assets/image/首页/日记.png" alt="">
+        <img src="@/assets/image/首页/日记.png" alt="" class="dairy">
         <p>日记</p>
       </router-link>
       <router-link to="">
-        <img src="@/assets/image/首页/涂鸦.png" alt="">
+        <img src="@/assets/image/首页/涂鸦.png" alt="" class="graffiti">
         <p>涂鸦</p>
       </router-link>
       <router-link to="/weeklyReports">
-        <img src="@/assets/image/首页/周报.png" alt="">
+        <img src="@/assets/image/首页/周报.png" alt="" class="weeklyReport">
         <p>周报</p>
       </router-link>
       <router-link to="">
-        <img src="@/assets/image/首页/心理测评.png" alt="">
+        <img src="@/assets/image/首页/心理测评.png" alt="" class="psychological">
         <p>心理测评</p>
       </router-link>
     </div>
@@ -103,7 +103,7 @@ export default {
       ],
       componentList: [
         { id: 0, url: require('@/assets/image/侧边栏/日记本.png'), name: '日记本', toUrl: '/moodOption' },
-        { id: 1, url: require('@/assets/image/侧边栏/消息中心.png'), name: '消息中心', toUrl: '/moodOption' },
+        { id: 1, url: require('@/assets/image/侧边栏/消息中心.png'), name: '消息中心', toUrl: '/messageCenter' },
         { id: 2, url: require('@/assets/image/侧边栏/草稿.png'), name: '我的草稿', toUrl: '/moodOption' },
         { id: 3, url: require('@/assets/image/侧边栏/我的收藏.png'), name: '我的收藏', toUrl: '/moodOption' },
         { id: 4, url: require('@/assets/image/侧边栏/我的关注.png'), name: '我的关注', toUrl: '/moodOption' },
@@ -297,11 +297,24 @@ export default {
 }
 .component {
   margin-top: 12px;
+  padding: 0 10px;
   display: flex;
   justify-content: space-between;
   text-align: center;
-  img {
+  .dairy {
     width: 48px;
+    height: 52px;
+  }
+  .graffiti {
+    width: 50px;
+    height: 47px;
+  }
+  .weeklyReport {
+    width: 52px;
+    height: 52px;
+  }
+  .psychological {
+    width: 52px;
     height: 52px;
   }
   p {

@@ -14,6 +14,21 @@
             <input type="text" class="title" ref="title" v-model="title" @click="changeTitle">
             <textarea name="content" id="" ref="note" v-model="content" @click="changeContent"></textarea>
         </div>
+        <!-- <ul class="pic">
+            <li>
+                <img src="@/assets/image/笔记页面/示例图片1.png" alt="" class="subject">
+                <img src="@/assets/image/笔记页面/关闭.png" alt="" class="delete">
+            </li>
+            <li>
+                <img src="" alt="" class="subject">
+                <img src="@/assets/image/笔记页面/关闭.png" alt="" class="delete">
+            </li>
+        </ul> -->
+        <!-- <div class="pic">
+            <img src="@/assets/image/笔记页面/示例图片1.png" alt="">
+            <img src="@/assets/image/笔记页面/示例图片1.png" alt="">
+            <img src="@/assets/image/笔记页面/示例图片1.png" alt="">
+        </div> -->
     </div>
     <div class="add wrapper">
         <ul>
@@ -93,18 +108,22 @@ export default {
                 }
             })
             console.log(res)
+            this.$router.push('/community/recommend')
         }
     },
     mounted () {
+        // 上传图片
         const addpic = this.$refs.addpic
         // console.log(addpic[0])
         addpic[0].addEventListener('click',() => {
             // console.log(this.$refs.upload[0])
             this.$refs.upload[0].click()
             this.$refs.upload[0].addEventListener('change', e => {
-                 const fd = new FormData()
-                 fd.append('img',e.target.files[0])
+                const fd = new FormData()
+                fd.append('img',e.target.files[0])
                 this.images = fd
+                // console.log(fd)
+                // console.log(this.images)
             })
         })
     }
@@ -133,7 +152,7 @@ export default {
 .body {
     margin-top: 12px;
     width: 365px;
-    height: 654px;
+    height: 674px;
     border-radius: 30px;
     background: #fff3db;
     .top {
@@ -170,11 +189,33 @@ export default {
         textarea {
             margin-top: 22px;
             width: 100%;
-            height: 300px;
+            height: 320px;
             border: 0;
             background-color: #FFF3DB;
             color: #c0bdb7;
             font-size: 12px;
+        }
+    }
+    .pic {
+        display: flex;
+        overflow-y: auto;
+        li {
+            position: relative;
+            .subject {
+                margin-right: 8px;
+                flex-shrink: 0;
+                width: 152px;
+                height: 191px;
+                border-radius: 10px;
+                background: #cccccc;
+            }
+            .delete {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                width: 20px;
+                height: 20px;
+            }
         }
     }
 }

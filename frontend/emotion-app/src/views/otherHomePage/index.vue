@@ -22,7 +22,19 @@
             <div class="attention"><p>关注</p>{{ attention }}</div>
             <div class="fans"><p>粉丝</p>{{ fans }}</div>
         </div>
-        <div class="toAttention">关注</div>
+        <div class="followedState" @click="changeFollowedState">
+            <div class="toAttention" v-if="!isfollowed">关注</div>
+            <div class="followed" v-else>
+                <div class="following">
+                    <p>正在关注</p>
+                    <img src="@/assets/image/已关注.png" alt="">
+                </div>
+                <div class="privateLetter" @click="$router.push(`/privateLetter/${userId}`)">
+                    <p>私信</p>
+                    <img src="@/assets/image/私信.png" alt="">
+                </div>
+            </div>
+        </div>
         <div class="note">
             <h6>笔记</h6>
             <ul>
@@ -52,6 +64,8 @@ export default {
             flag: false,
             blackList: false,
             report: false,
+            isfollowed: false,
+            userId: this.$route.params.id,
             attention: 123,
             fans: 123,
             noteList: [
@@ -65,6 +79,9 @@ export default {
     methods: {
         changeFlag () {
             this.flag = this.flag ? false : true
+        },
+        changeFollowedState () {
+            this.isfollowed = this.isfollowed ? false : true
         }
     }
 }
@@ -146,14 +163,46 @@ export default {
             }
         }
     }
-    .toAttention {
-        margin: 16px auto;
-        width: 104px;
-        height: 40px;
-        border-radius: 30px;
-        background: #ffda8f;
-        text-align: center;
-        line-height: 40px;
+    .followedState {
+        .toAttention {
+            margin: 16px auto;
+            width: 104px;
+            height: 40px;
+            border-radius: 30px;
+            background: #ffda8f;
+            text-align: center;
+            line-height: 40px;
+        }
+        .followed {
+            margin: 16px 0;
+            display: flex;
+            img {
+                width: 20px;
+                height: 20px;
+            }
+            p {
+                margin-left: 17px;
+                margin-right: 4px;
+            }
+            .following,
+            .privateLetter {
+                display: flex;
+                align-items: center;
+                height: 40px;
+                border-radius: 30px;
+            }
+            .following {
+                margin-left: 66px;
+                margin-right: 10px;
+                width: 122px;
+                background: #ffe7b8;
+                color: #91723499;
+            }
+            .privateLetter {
+                width: 88px;
+                background: #ffda8f;
+            }
+        }
     }
     .note {
         color: #404040cc;

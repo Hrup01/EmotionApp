@@ -65,8 +65,8 @@
                 </div>
                 <div class="like"  @click="changeCommentLike(index)">
                     <img src="@/assets/image/笔记详情/评论区喜欢-未激活态.png" alt="" v-if="!item.isCommentLike">
-                    <img src="@/assets/image/笔记详情/评论区喜欢-激活态.png" alt="" v-else>
-                    <p>123</p>
+                    <img src="@/assets/image/笔记详情/喜欢-激活态.png" alt="" v-else>
+                    <p>{{ item.likeCount }}</p>
                 </div>
             </li>
         </ul>
@@ -74,7 +74,7 @@
     <div class="sendComment wrapper">
         <textarea name="" id="" v-model="myComment" @focus="changeCotent" ref="textarea"></textarea>
         <div class="send" @click="sendComment" ref="send">发送</div>
-        <!-- <div class="add"><img src="@/assets/image/笔记详情/添加.png" alt=""></div> -->
+        <div class="add"><img src="@/assets/image/笔记详情/添加.png" alt=""></div>
     </div>
   </div>
 </template>
@@ -93,7 +93,7 @@ export default {
             marginLeft: '130px',
             flag: false,
             likeCount: 123,
-            commentCount: 123,
+            commentCount: '',
             followed: false,
             isLike: false,
             isCollect: false,
@@ -115,7 +115,7 @@ export default {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('关注',res)
         },
         // 取消关注
         async deleteFollowed () {
@@ -124,7 +124,7 @@ export default {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('取消关注',res)
         },
         changeFollowed () {
             this.followed = this.followed ? false : true
@@ -133,21 +133,21 @@ export default {
         },
         // 收藏
         async collect () {
-            const res = await axios.post(`http://localhost:8080/api/community/posts/${this.postId}/favorit`, {}, {
+            const res = await axios.post(`http://localhost:8080/api/community/posts/${this.postId}/favorite`, {}, {
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('收藏',res)
         },
         // 取消收藏
         async deleteCollect () {
-            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/favorit`, {
+            const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/favorite`, {
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('取消收藏',res)
         },
         // 点赞帖子
         async postLikePost () {
@@ -157,18 +157,22 @@ export default {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('点赞帖子',res)
+            // 帖子点赞数加1
+            this.likeCount += 1
         },
         // 取消点赞帖子
         async deletetLikePost () {
-            console.log('取消点赞帖子请求 token:', this.token)
+            // console.log('取消点赞帖子请求 token:', this.token)
             const res = await axios.delete(`http://localhost:8080/api/community/posts/${this.postId}/like`, {
                 headers: {
                     Authorization: 'Bearer ' + this.token,
                     // 'Content-Type': 'application/json'
                 }
             })
-            console.log(res)
+            console.log('取消点赞帖子',res)
+            // 帖子点赞数减1
+            this.likeCount -= 1
         },
         // 点赞评论
         async postLikeComment () {
@@ -178,7 +182,7 @@ export default {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('点赞评论',res)
         },
         // 点赞收藏相关
         changeFlag () {
@@ -196,6 +200,12 @@ export default {
         },
         changeCommentLike (index) {
             this.commentList[index].isCommentLike = this.commentList[index].isCommentLike ? false : true
+            // 评论点赞数变化
+            if (this.commentList[index].isCommentLike) {
+                this.commentList[index].likeCount += 1
+            } else {
+                this.commentList[index].likeCount -= 1
+            }
         },
         // 改变文本域内容
         changeCotent () {
@@ -215,6 +225,12 @@ export default {
         // 发送评论
         async sendComment () {
             if (this.myComment === '点我发评论') return
+            // 获得发送评论的时间
+            const date = new Date()
+            const year = date.getFullYear()
+            const month = date.getMonth() + 1
+            const day = date.getDate()
+            const time = year + '-' + month + '-' + day
             // 1.直接给帖子评论
             const res = await axios.post(`http://localhost:8080/api/community/posts/${this.postId}/comments`, {
                 contain: this.myComment
@@ -223,7 +239,19 @@ export default {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log(res)
+            console.log('发送评论',res)
+            // 将内容推送到评论列表
+            this.commentList.unshift({ id: this.commentList.length,
+                headPic: require('@/assets/image/笔记详情/头像2.png'),
+                name: 'NaNa',
+                contant: this.myComment,
+                time,
+                isCommentLike: false,
+                likeCount: 0
+            })
+            console.log('评论列表',this.commentList)
+            // 改变评论数
+            this.commentCount += 1
             // 文本域恢复默认状态
             this.myComment = '点我发评论'
             // 2.回复他人的评论
@@ -244,6 +272,8 @@ export default {
             }
         })
         console.log('获取帖子评论列表',postCommentRes)
+        // 评论数
+        this.commentCount = this.commentList.length
         // this.commentList = postCommentRes.data.data
         // console.log(this.commentList)
         // 查看帖子是否收藏
@@ -253,14 +283,15 @@ export default {
             }
         })
         console.log('查看帖子是否收藏',collectRes)
+        this.isCollect = collectRes.data.data.isFavorited
         // 查看用户是否关注
-        const userFollowedtRes = await axios.get(`http://localhost:8080/api/community/posts//followed-status/${this.postId}`, {
+        const userFollowedtRes = await axios.get(`http://localhost:8080/api/community/follow-status/${this.postId}`, {
             headers: {
                 Authorization: 'Bearer ' + this.token
             }
         })
         console.log('查看用户是否关注',userFollowedtRes)
-        // this.followed = userFollowedtRes.data.data
+        this.followed = userFollowedtRes.data.data.isFollowing
     }
 }
 </script>
@@ -446,6 +477,7 @@ export default {
                 }
                 p {
                     margin-left: 6px;
+                    width: 28px;
                     color: #5c5c5c;
                     font-size: 14px;
                 }
@@ -461,6 +493,7 @@ export default {
     background-color: #fff;
     textarea {
         margin-left: 22px;
+        margin-right: 14px;
         padding: 10px 60px 10px 19px;
         width: 314px;
         height: 40px;
@@ -472,9 +505,9 @@ export default {
         font-weight: 400;
     }
     .send {
-        position: relative;
-        top: 5px;
-        right: 55px;
+        position: absolute;
+        bottom: 28px;
+        right: 62px;
         width: 48px;
         height: 30px;
         border-radius: 30px;

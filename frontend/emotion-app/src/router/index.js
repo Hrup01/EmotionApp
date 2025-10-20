@@ -15,28 +15,43 @@ import Note from '@/views/layout/user/note.vue'
 import Collect from '@/views/layout/user/collect.vue'
 
 // 一级路由
-import Login from '@/views/login'
-import WeeklyReports from '@/views/weeklyReports'
-import MoodOption from '@/views/moodOption'
-import Log from '@/views/log'
-import AI from '@/views/AI'
-import WhiteNoise from '@/views/whiteNoise'
-import OtherHomePage from '@/views/otherHomePage'
-import MessageCenter from '@/views/messageCenter'
-import NewFollow from '@/views/newFollow'
-import Comment from '@/views/comment'
-import LikeReceived from '@/views/likeReceived'
-import MyAttention from '@/views/myAttention'
-import PostNotes from '@/views/postNotes'
-import MyState from '@/views/myState'
-import Meditation from '@/views/meditation'
-import CountDown from '@/views/countDown'
-import NoteDetail from '@/views/noteDetail'
-import PrivateLetter from '@/views/privateLetter'
-import WoodFish from '@/views/woodFish'
-
-import test from '@/views/test.vue'
-
+const Login = () => import ('@/views/login')
+const WeeklyReports = () => import ('@/views/weeklyReports')
+const MoodOption = () => import ('@/views/moodOption')
+const Log = () => import ('@/views/log')
+const AI = () => import ('@/views/AI')
+const WhiteNoise = () => import ('@/views/whiteNoise')
+const OtherHomePage = () => import ('@/views/otherHomePage')
+const MessageCenter = () => import ('@/views/messageCenter')
+const NewFollow = () => import ('@/views/newFollow')
+const Comment = () => import ('@/views/comment')
+const LikeReceived = () => import ('@/views/likeReceived')
+const MyAttention = () => import ('@/views/myAttention')
+const PostNotes = () => import ('@/views/postNotes')
+const State = () => import ('@/views/state')
+const Meditation = () => import ('@/views/meditation')
+const CountDown = () => import ('@/views/countDown')
+const NoteDetail = () => import ('@/views/noteDetail')
+const PrivateLetter = () => import ('@/views/privateLetter')
+const WoodFish = () => import ('@/views/woodFish')
+// import Login from '@/views/login'
+// import MoodOption from '@/views/moodOption'
+// import Log from '@/views/log'
+// import AI from '@/views/AI'
+// import WhiteNoise from '@/views/whiteNoise'
+// import OtherHomePage from '@/views/otherHomePage'
+// import MessageCenter from '@/views/messageCenter'
+// import NewFollow from '@/views/newFollow'
+// import Comment from '@/views/comment'
+// import LikeReceived from '@/views/likeReceived'
+// import MyAttention from '@/views/myAttention'
+// import PostNotes from '@/views/postNotes'
+// import State from '@/views/state'
+// import Meditation from '@/views/meditation'
+// import CountDown from '@/views/countDown'
+// import NoteDetail from '@/views/noteDetail'
+// import PrivateLetter from '@/views/privateLetter'
+// import WoodFish from '@/views/woodFish'
 
 Vue.use(VueRouter)
 
@@ -79,13 +94,12 @@ const router = new VueRouter({
     { path: '/likeReceived', component: LikeReceived },
     { path: '/myAttention', component: MyAttention },
     { path: '/postNotes', component: PostNotes },
-    { path: '/myState', component: MyState },
+    { path: '/state', component: State },
     { path: '/meditation', component: Meditation },
     { path: '/countDown', component: CountDown },
     { path: '/noteDetail/:id', component: NoteDetail },
     { path: '/privateLetter/:id', component: PrivateLetter },
     { path: '/woodFish', component: WoodFish },
-    { path: '/test', component: test },
   ]
 })
 
