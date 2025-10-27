@@ -8,6 +8,7 @@ import com.groupb.pojo.dto.Result;
 import com.groupb.pojo.User;
 import com.groupb.service.CommunityService;
 import com.groupb.service.UserService;
+import com.groupb.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,8 +16,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 社区模块控制器
@@ -35,8 +45,16 @@ public class CommunityController {
     private UserService userService;
 
     private Long getCurrentUserId() {
+        // 优先从JWT token中获取用户ID
+        Long userId = SecurityContextUtil.getCurrentUserId();
+        if (userId != null) {
+            log.debug("从JWT token中获取到用户ID: {}", userId);
+            return userId;
+        }
+
+        // 如果JWT token解析失败，降级到通过用户名查询（向后兼容）
+        log.warn("JWT token解析失败，降级到用户名查询方式");
         try {
-            // 从SecurityContext中获取认证信息
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             log.debug("SecurityContext认证信息: {}", auth);
             
@@ -45,14 +63,12 @@ public class CommunityController {
                 return null;
             }
             
-            // 从认证信息中获取用户名
             String username = auth.getPrincipal().toString();
-            log.debug("当前用户: {}", username);
+            log.debug("通过用户名查询用户ID: {}", username);
             
-            // 通过用户名查询用户ID
             User user = userService.findByUsername(username);
             if (user != null) {
-                log.debug("找到用户: {} (ID: {})", username, user.getId());
+                log.debug("通过用户名找到用户: {} (ID: {})", username, user.getId());
                 return user.getId();
             }
             
@@ -69,21 +85,24 @@ public class CommunityController {
      * API接口：POST /api/community/posts
      * 
      * 请求参数：
-     * - content: 帖子内容（必填）
+     * - content: 帖子内容（可选，支持纯图片帖子）
      * - images: 图片文件（可选，支持多文件上传）
+     * 
+     * 注意：content和images至少需要一项，支持纯图片帖子（无文字内容）
      * 
      * 实现步骤：
      * 1. 获取当前用户ID
-     * 2. 处理上传的图片文件
-     * 3. 调用服务层创建帖子
-     * 4. 处理异常情况
+     * 2. 验证内容或图片至少需要一项
+     * 3. 处理上传的图片文件
+     * 4. 调用服务层创建帖子
+     * 5. 处理异常情况
      * 
-     * @param content 帖子内容
-     * @param images 图片文件数组
+     * @param content 帖子内容（可为空）
+     * @param images 图片文件数组（可为空）
      * @return 创建结果，包含帖子数据或错误信息
      */
     @PostMapping("/posts")
-    public Result<PostDTO> createPost(@RequestParam("content") String content,
+    public Result<PostDTO> createPost(@RequestParam(value = "content", required = false) String content,
                                       @RequestParam(value = "images", required = false) MultipartFile[] images) {
         try {
             //1. 获取当前用户ID
@@ -92,17 +111,69 @@ public class CommunityController {
                 return Result.error("用户未登录");
             }
             
-            //2. 验证内容
-            if (content == null || content.trim().isEmpty()) {
-                return Result.error("帖子内容不能为空");
+            //2. 验证内容 - 允许纯图片帖子（无文字内容）
+            if ((content == null || content.trim().isEmpty()) && (images == null || images.length == 0)) {
+                return Result.error("帖子内容或图片至少需要一项");
             }
             
             //3. 处理图片文件
             List<String> imageUrls = null;
             if (images != null && images.length > 0) {
-                // 这里可以调用FileUploadController的逻辑
-                // 这里先返回错误，建议前端先上传图片再创建帖子
-                return Result.error("请先上传图片，然后使用图片URL创建帖子");
+                imageUrls = new ArrayList<>();
+                for (MultipartFile image : images) {
+                    try {
+                        // 验证文件
+                        if (image.isEmpty()) {
+                            continue;
+                        }
+                        
+                        // 验证文件大小
+                        if (image.getSize() > 10 * 1024 * 1024) { // 10MB
+                            log.warn("文件大小超过限制: {}", image.getOriginalFilename());
+                            continue;
+                        }
+                        
+                        // 验证文件类型
+                        String contentType = image.getContentType();
+                        if (contentType == null || !contentType.startsWith("image/")) {
+                            log.warn("文件类型不支持: {}", image.getOriginalFilename());
+                            continue;
+                        }
+                        
+                        // 生成文件名和路径
+                        String originalFilename = image.getOriginalFilename();
+                        String extension = originalFilename != null && originalFilename.contains(".") 
+                            ? originalFilename.substring(originalFilename.lastIndexOf(".")) 
+                            : ".jpg";
+                        String fileName = System.currentTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "") + extension;
+                        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                        String relativePath = datePath + "/" + fileName;
+                        String fullPath = "F:/image/" + relativePath;
+                        
+                        // 创建目录
+                        File directory = new File(fullPath).getParentFile();
+                        if (!directory.exists()) {
+                            directory.mkdirs();
+                        }
+                        
+                        // 保存文件
+                        Path path = Paths.get(fullPath);
+                        Files.copy(image.getInputStream(), path);
+                        
+                        // 生成访问URL
+                        String fileUrl = "/uploads/" + relativePath;
+                        imageUrls.add(fileUrl);
+                        
+                        log.info("图片上传成功: fileName={}, size={}, url={}", fileName, image.getSize(), fileUrl);
+                        
+                    } catch (IOException e) {
+                        log.error("图片上传失败: {}", image.getOriginalFilename(), e);
+                    }
+                }
+                
+                if (imageUrls.isEmpty()) {
+                    return Result.error("图片上传失败，请检查文件格式和大小");
+                }
             }
             
             //4. 创建帖子
@@ -121,12 +192,14 @@ public class CommunityController {
      * API接口：POST /api/community/posts/with-urls
      * 
      * 请求参数：
-     * - content: 帖子内容（必填）
+     * - content: 帖子内容（可选，支持纯图片帖子）
      * - imageUrls: 图片URL列表（可选）
+     * 
+     * 注意：content和imageUrls至少需要一项，支持纯图片帖子（无文字内容）
      * 
      * 实现步骤：
      * 1. 获取当前用户ID
-     * 2. 提取请求参数
+     * 2. 提取请求参数并验证
      * 3. 调用服务层创建帖子
      * 4. 处理异常情况
      * 
@@ -141,10 +214,17 @@ public class CommunityController {
             if (userId == null) {
                 return Result.error("用户未登录");
             }
-            //2.基于id创建帖子
+            //2. 提取参数并验证
             String content = (String) body.getOrDefault("content", "");
             @SuppressWarnings("unchecked")
             List<String> images = (List<String>) body.get("imageUrls");
+            
+            // 验证：内容或图片至少需要一项
+            if ((content == null || content.trim().isEmpty()) && (images == null || images.isEmpty())) {
+                return Result.error("帖子内容或图片至少需要一项");
+            }
+            
+            //3. 创建帖子
             PostDTO post = communityService.createPost(userId, content, images);
             return Result.success(post, "发布成功");
         } catch (IllegalArgumentException ex) {
@@ -500,6 +580,7 @@ public class CommunityController {
         }
         return Result.success(communityService.getRecentContacts(userId), "获取联系人成功");
     }
+
 
     /**
      * 收藏帖子
