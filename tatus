@@ -1,0 +1,10 @@
+[33m9a1dc70[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m 添加拼图游戏功能和相关资源文件
+[33m08f39cb[m 新增了静态资源访问路径确保图片能够正常上传到服务器端指定文件目录下 修改了上传帖子的默认逻辑为可以单独上传图片或图片和文案一起上传 修改图片上传形式为上传文件
+[33m5d2db62[m 实现了带Redis缓存的关注状态检查逻辑： 优先从Redis缓存中获取关注状态 缓存未命中时查询数据库 将查询结果缓存到Redis以提高性能 包含异常处理和日志记录
+[33m4a17a9c[m 在所有调用getCurrentUserId()的地方添加了空值检查 ✅ 当用户未登录时返回"用户未登录"错误信息 ✅ 总共更新了18个方法
+[33mec1e594[m 无Redis时正常启动 - 应用可以在没有Redis的情况下正常启动 ✅ 功能降级处理 - 所有Redis操作都有降级处理，不会影响核心功能 ✅ 条件化配置 - 当Redis可用时自动启用，不可用时自动降级 ✅ 完整日志记录 - 所有降级操作都有日志记录
+[33m72400de[m CommunityFavoriteMapper.java - 数据库操作层 ✅ insert() - 添加收藏记录 ✅ delete() - 删除收藏记录 ✅ countByUserAndPost() - 检查是否已收藏 ✅ findPostIdsByUser() - 获取用户收藏列表 ✅ countByPost() - 获取帖子收藏数 ✅ countByUser() - 获取用户收藏总数 2️⃣ CommunityServiceImpl.java - 业务逻辑层 ✅ favoritePost() - 收藏帖子功能 检查帖子是否存在 防止重复收藏 更新数据库和Redis缓存 ✅ unfavoritePost() - 取消收藏功能 检查收藏状态 删除数据库记录 更新Redis缓存 ✅ isPostFavorited() - 检查收藏状态 优先从Redis缓存读取 缓存未命中时查询数据库 自动更新缓存 3️⃣ 测试结果 ✅ POST /api/community/posts/2/favorite - 收藏成功 (200 OK) ✅ 数据库表结构正确，由用户提供 ✅ Redis缓存集成完成
+[33m2cb711f[m 更新SecurityConfig放行了社区模块相关接口
+[33m7c4d7e0[m 修正了cros全局配置确保所有请求能够正常发送
+[33m1dbd574[m 添加了redis缓存功能
+[33md46959f[m 更正了redis的配置确保redis能够正确连接

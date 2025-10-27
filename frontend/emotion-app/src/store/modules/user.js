@@ -1,14 +1,14 @@
 import { getInfo, setInfo } from '@/utlis/storage'
 
 export default {
-    namespace: true,
+    namespaced: true,
     state () {
         return {
             // 个人权证相关
             userInfo: getInfo()
         }
     },
-    mutation: {
+    mutations: {
         setUserInfo (state,obj) {
             state.userInfo = obj
             setInfo(obj)

@@ -41,6 +41,7 @@ public class SecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.cors(cors -> cors.configurationSource(corsConfigurationSource)) // 添加CORS配置
+
 				.authorizeHttpRequests(auth -> auth
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 允许所有OPTIONS请求
 				.requestMatchers("/api/auth/**").permitAll()   // 允许认证相关接口无需认证

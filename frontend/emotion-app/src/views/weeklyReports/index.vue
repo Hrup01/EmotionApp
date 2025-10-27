@@ -1,6 +1,6 @@
 <template>
   <div id="weeklyReports">
-    <NavBar :title="title" :toUrl="toUrl"></NavBar>
+    <NavBar :title="title"></NavBar>
     <div class="record wrapper">
       <h5>本周心情记录</h5>
       <ul>
@@ -76,6 +76,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import axios from 'axios';
 export default {
     name: 'weeklyReports',
     components: {
@@ -83,14 +84,15 @@ export default {
     },
     data () {
       return {
+        token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
         moodList: [
-          { id: 0, url: require('@/assets/image/icon_1.png'), day: '一'},
-          { id: 1, url: require('@/assets/image/icon_2.png'), day: '二'},
-          { id: 2, url: require('@/assets/image/icon_1.png'), day: '三'},
-          { id: 3, url: require('@/assets/image/icon_1.png'), day: '四'},
-          { id: 4, url: require('@/assets/image/icon_3.png'), day: '五'},
-          { id: 5, url: require('@/assets/image/icon_1.png'), day: '六'},
-          { id: 6, url: require('@/assets/image/icon_4.png'), day: '日'}
+          { id: 0, url: require('@/assets/image/空缺心情_笑.png'), day: '一'},
+          { id: 1, url: require('@/assets/image/空缺心情_笑.png'), day: '二'},
+          { id: 2, url: require('@/assets/image/空缺心情_笑.png'), day: '三'},
+          { id: 3, url: require('@/assets/image/空缺心情_笑.png'), day: '四'},
+          { id: 4, url: require('@/assets/image/空缺心情_笑.png'), day: '五'},
+          { id: 5, url: require('@/assets/image/空缺心情_笑.png'), day: '六'},
+          { id: 6, url: require('@/assets/image/空缺心情_笑.png'), day: '日'}
         ],
         suggestList: [
           { id: 7, url: require('@/assets/image/green.png'), text: '有意识地将注意力停留在积极时刻上，延长和深化愉悦感，促进积极情绪的内化。'},
@@ -102,14 +104,65 @@ export default {
         moodText: '开心',
         emojiUrl: require('@/assets/image/icon_1.png'),
         title: '心情周报',
-        toUrl: ''
       }
     },
-    mounted () {
+    async mounted () {
+      // 获取用户当前连续打卡天数
+      const checkInDays = await axios.get('http://localhost:8080/api/emotion/check-in-count',{
+        headers: {
+          Authorization: 'Bearer ' + this.token
+        }
+      })
+      console.log('获取用户当前连续打卡天数',checkInDays)
+      // console.log('连续打卡天数',checkInDays.data.data.checkInCount)
+      this.time = checkInDays.data.data.checkInCount
+      // 渲染打卡次数可视化
       const progress = this.time / (this.total * 3.5)
       const endDeg = progress * 360
       // console.log(endDeg)
       this.$refs.outer.style.background = `conic-gradient(#A3EBAF 0% ,#BEF3A5 ${endDeg}%, #F0FAF2 ${endDeg}% 360%)`
+      // 获取用户最近使用的情绪
+      const recentMood = await axios.get('http://localhost:8080/api/emotion/recent',{
+        params: {
+          limit: 4,
+          userId: 1
+        },
+        headers: {
+          Authorization: 'Bearer ' + this.token
+        }
+      })
+      console.log('获取用户最近使用的情绪',recentMood)
+      // this.moodList = recentMood.data
+      // if (recentMood.data.data.length === 0) {
+      //   this.moodList = this.moodList.map((item) => {
+      //     // item.url = require('@/assets/image/空缺心情_笑.png')
+      //     // console.log(item)
+      //   })
+      //   console.log(this.moodList)
+      //   // 计算本周占比最大的情绪
+      //   // const moodCount = {}
+      //   // recentMood.data.data.forEach(item => {
+      //   //   if (moodCount[item.emotionId]) {
+      //   //     moodCount[item.emotionId]++
+      //   //   } else {
+      //   //     moodCount[item.emotionId] = 1
+      //   //   }
+      //   // })
+      //   // const sortedMoods = Object.entries(moodCount).sort((a,b) => b[1] - a[1])
+      //   // const topMoodId = sortedMoods[0][0]
+      //   // const moodTextMap = {
+      //   //   1: '开心',
+      //   //   2: '难过',
+      //   //   3: '生气',
+      //   //   4: '惊讶',
+      //   //   5: '害怕',
+      //   //   6: '厌恶'
+      //   // }
+      //   // this.moodText = moodTextMap[topMoodId]
+      //   // this.emojiUrl = require(`@/assets/image/icon_${topMoodId}.png`)
+      // }
+      // console.log(recentMood.data.data.length)
+      // console.log(this.moodList)
     }
 }
 </script>

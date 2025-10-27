@@ -1,20 +1,57 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+// 二、三级路由
 import Layout from '@/views/layout'
 import Home from '@/views/layout/home.vue'
 import Heal from '@/views/layout/heal.vue'
+
 import Community from '@/views/layout/community'
 import Recommend from '@/views/layout/community/recommend.vue'
 import Attention from '@/views/layout/community/attention.vue'
-import User from '@/views/layout/user.vue'
 
-import Login from '@/views/login'
-import WeeklyReports from '@/views/weeklyReports'
-import MoodOption from '@/views/moodOption'
-import Log from '@/views/log'
-import AI from '@/views/AI'
+import User from '@/views/layout/user/index.vue'
+import Note from '@/views/layout/user/note.vue'
+import Collect from '@/views/layout/user/collect.vue'
 
+// 一级路由
+const Login = () => import ('@/views/login')
+const WeeklyReports = () => import ('@/views/weeklyReports')
+const MoodOption = () => import ('@/views/moodOption')
+const Log = () => import ('@/views/log')
+const AI = () => import ('@/views/AI')
+const WhiteNoise = () => import ('@/views/whiteNoise')
+const OtherHomePage = () => import ('@/views/otherHomePage')
+const MessageCenter = () => import ('@/views/messageCenter')
+const NewFollow = () => import ('@/views/newFollow')
+const Comment = () => import ('@/views/comment')
+const LikeReceived = () => import ('@/views/likeReceived')
+const MyAttention = () => import ('@/views/myAttention')
+const PostNotes = () => import ('@/views/postNotes')
+const State = () => import ('@/views/state')
+const Meditation = () => import ('@/views/meditation')
+const CountDown = () => import ('@/views/countDown')
+const NoteDetail = () => import ('@/views/noteDetail')
+const PrivateLetter = () => import ('@/views/privateLetter')
+const WoodFish = () => import ('@/views/woodFish')
+// import Login from '@/views/login'
+// import MoodOption from '@/views/moodOption'
+// import Log from '@/views/log'
+// import AI from '@/views/AI'
+// import WhiteNoise from '@/views/whiteNoise'
+// import OtherHomePage from '@/views/otherHomePage'
+// import MessageCenter from '@/views/messageCenter'
+// import NewFollow from '@/views/newFollow'
+// import Comment from '@/views/comment'
+// import LikeReceived from '@/views/likeReceived'
+// import MyAttention from '@/views/myAttention'
+// import PostNotes from '@/views/postNotes'
+// import State from '@/views/state'
+// import Meditation from '@/views/meditation'
+// import CountDown from '@/views/countDown'
+// import NoteDetail from '@/views/noteDetail'
+// import PrivateLetter from '@/views/privateLetter'
+// import WoodFish from '@/views/woodFish'
 
 Vue.use(VueRouter)
 
@@ -33,7 +70,14 @@ const router = new VueRouter({
           ],
           redirect: '/community/recommend'
         },
-        { path: '/user', component: User }
+        { path: '/user', 
+          component: User,
+          children: [
+            { path: '/user/note', component: Note },
+            { path: '/user/collect', component: Collect }
+          ],
+          redirect: '/user/collect'
+        }
       ],
       redirect: '/home'
     },
@@ -42,6 +86,20 @@ const router = new VueRouter({
     { path: '/moodOption', component: MoodOption },
     { path: '/log/:mood', component: Log },
     { path: '/ai', component: AI },
+    { path: '/whiteNoise', component: WhiteNoise },
+    { path: '/otherHomePage/:id', component: OtherHomePage },
+    { path: '/messageCenter', component: MessageCenter },
+    { path: '/newFollow', component: NewFollow },
+    { path: '/comment', component: Comment },
+    { path: '/likeReceived', component: LikeReceived },
+    { path: '/myAttention', component: MyAttention },
+    { path: '/postNotes', component: PostNotes },
+    { path: '/state', component: State },
+    { path: '/meditation', component: Meditation },
+    { path: '/countDown', component: CountDown },
+    { path: '/noteDetail/:id', component: NoteDetail },
+    { path: '/privateLetter/:id', component: PrivateLetter },
+    { path: '/woodFish', component: WoodFish },
   ]
 })
 

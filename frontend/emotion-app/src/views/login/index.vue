@@ -39,6 +39,7 @@
 
 <script>
 // import { userLogin } from '@/api/login'
+import axios from 'axios'
 export default {
     name: 'loginPage',
     data () {
@@ -90,12 +91,15 @@ export default {
             // 3.改变效果
             // this.$refs.login.classList.add('active')
             // 4.提交用户信息
-            // const res = await userLogin(this.account, this.password)
-            // console.log(res)
+            const res = await axios.post('http://localhost:8080/api/auth/login', { 
+                username: 'zs',
+                password: 123456
+            })
+            console.log(res)
             // 5.存储 userInfo (token、信息)
-            // this.$store.commit('user/setUserInfo', resizeBy.data)
+            this.$store.commit('user/setUserInfo', res.data.data)
             // 6.跳转页面
-            // this.$router.push('/')
+            this.$router.push('/')
         }
     },
 }

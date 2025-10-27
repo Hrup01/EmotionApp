@@ -1,12 +1,38 @@
 spring:
   application:
     name: EmotionApp
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: deepseek-r1:1.5b
   #数据库的连接信息
   datasource:
-    url: jdbc:mysql://localhost:3306/emotionApp
+    url: jdbc:mysql://localhost:3306/emotionApp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Hrup041001.
+    password: zy060320
+    druid:
+      # 初始化连接池大小
+      initial-size: 5
+      # 最大连接池数量
+      max-active: 20
+      # 最小空闲连接数
+      min-idle: 5
+      # 获取连接时的最大等待时间（毫秒），超时则抛异常
+      max-wait: 60000
+
+      # 每 60 秒检测一次空闲连接，关闭超过 300 秒未使用的连接
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      # 检测连接是否有效（MySQL 可用 "SELECT 1"）
+      validation-query: SELECT 1
+      # 申请连接时检测连接有效性（建议关闭，影响性能）
+      test-on-borrow: false
+      # 归还连接时检测连接有效性（建议关闭）
+      test-on-return: false
+      # 空闲时检测连接有效性（建议开启）
+      test-while-idle: true
   # Jackson配置
   jackson:
     date-format: yyyy-MM-dd
@@ -18,34 +44,6 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-      enabled: true
-      file-size-threshold: 2KB
-      location: ${java.io.tmpdir}
-  # Redis配置
-  data:
-    redis:
-      host: 192.168.80.130
-      port: 6379
-      password: 123321
-      database: 0
-      timeout: 2000ms
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-
-# 文件上传配置
-file:
-  upload:
-    path: F:/image  # 上传文件存储路径（F盘image文件夹）
-    max-size: 10485760        # 最大文件大小（10MB）
-    allowed-types:            # 允许的文件类型
-      - image/jpeg
-      - image/png
-      - image/gif
-      - image/webp
 
 #mybatis的相关配置
 mybatis:
@@ -68,6 +66,7 @@ logging:
   level:
     com.groupb: DEBUG
     org.springframework.web: DEBUG
+    org.springframework.ai.chat.client.advisor: debug
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
@@ -75,3 +74,16 @@ logging:
 jwt:
   secret: mySecretKey123456789012345678901234567890
   expiration: 86400000 # 24小时
+
+# MyBatis-Plus 核心配置
+mybatis-plus:
+  # 实体类包路径
+  type-aliases-package: com.groupb.pojo
+  # 全局配置（可选，统一设置主键生成策略、逻辑删除等）
+  global-config:
+    db-config:
+      # 逻辑删除配置（若使用逻辑删除，需在数据库添加 deleted 字段）
+      logic-delete-field: deleted  # 全局逻辑删除字段名
+      logic-delete-value: 1  # 逻辑删除值（表示已删除）
+      logic-not-delete-value: 0  # 未删除值
+

@@ -1,7 +1,7 @@
 <template>
   <div id="logPage">
     <div class="top">
-        <NavBar :title="title" :toUrl="toUrl"></NavBar>
+        <NavBar :title="nabbarTitle"></NavBar>
         <img src="@/assets/image/bc.png" alt="" @click="postDiary">
     </div>
     <div class="time wrapper">
@@ -9,16 +9,28 @@
         <div class="week">{{ week }}</div>
     </div>
     <div class="content wrapper">
-        <input type="text" name="title" class="title" v-model="currentTitle" @click="changeTitle" ref="title">
+        <input type="text" name="title" class="title" v-model="title" @click="changeTitle" ref="title">
         <div class="border"></div>
         <ul ref="dashed">
             <!-- js动态渲染 -->
         </ul>
-        <textarea name="log" id="" class="diary" v-model="currentCotent" @click="changeContent" ref="diary"></textarea>
-        <!-- 富文本编辑器 -->
-         <!-- <div>
-            <tinymceEditor ref="editor" v-model="value"></tinymceEditor>
-         </div> -->
+        <!-- 实际输入 -->
+        <textarea name="log" id="" class="diary" v-model="content" @click="changeContent" ref="diary"></textarea>
+        <!-- 实际显示 -->
+        <div class="realShow" ref="realShow">{{ realShow }}</div>
+    </div>
+    <!-- 富文本编辑器 -->
+    <div class="richTextEditor" style="display: none;">
+        <div class="color"><img src="@/assets/image/t.png" alt="" @click="changeColor"></div>
+        <div class="strong"><img src="@/assets/image/b.png" alt="" @click="toStrong"></div>
+        <div class="incline"><img src="@/assets/image/I.png" alt="" @click="toIncline"></div>
+        <div class="underline"><img src="@/assets/image/U.png" alt="" @click="addUnderline"></div>
+        <div class="numSort"><img src="@/assets/image/Num.png" alt="" @click="numSort"></div>
+        <div class="alphabetSort"><img src="@/assets/image/abc.png" alt="" @click="alphabetSort"></div>
+        <div class="pic">
+            <img src="@/assets/image/add_pic.png" alt="" @click="addPic">
+            <input type="file" class="upload" ref="upload">
+        </div>
     </div>
     <div class="chartLet">
         <img :src="item.url" alt="" :class="item.name" v-for="item in picList" :key="item.id">
@@ -28,6 +40,8 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import axios from 'axios'
+// import request from '@/utlis/request'
 // import tinymce from '@/components/tinymce.vue'
 // import tinymceEditor from '@/components/tinymceEditor.vue'
 export default {
@@ -38,13 +52,17 @@ export default {
     },
     data () {
         return {
-            currentTitle: '+ 添加标题',
-            currentCotent: '输入心得，记录你的情绪变化',
+            token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
+            nabbarTitle: '日志打卡',
+            title: '+ 添加标题',
+            content: '输入心得，记录你的情绪变化',
+            changeStyleContnet: '',
+            // 具体日期
             exactDate: '',
+            // 星期几
             week: '',
-            content: '',
-            title: '日志打卡',
-            toUrl: '/moodOption',
+            // 情绪类型
+            emotionType: this.$route.params.mood,
             haveImg: false,
             picList: [
                 { id: 0, url: require('@/assets/image/pen.png'), name: 'pen' },
@@ -54,47 +72,106 @@ export default {
                 { id: 4, url: require('@/assets/image/swim.png'), name: 'swim' },
                 { id: 5, url: require('@/assets/image/star.png'), name: 'star' }
             ],
+            realShow: '',
+            str: ''
         }
     },
     methods: {
+        // 改变标题
         changeTitle () {
-            this.currentTitle = ''
+            this.title = ''
             this.$refs.title.addEventListener('blur', () => {
-                if (this.currentTitle === '') {
-                    this.currentTitle = '+ 添加标题'
+                if (this.title === '') {
+                    this.title = '+ 添加标题'
                 }
             })
             this.$refs.title.addEventListener('keyup', (e) => {
                 // console.log(e)
                 if (e.key === 'Enter') {
                     // console.log(11)
-                    if (this.currentTitle !== '') {
-                        this.currentTitle = this.currentTitle.trim()
+                    if (this.title !== '') {
+                        this.title = this.title.trim()
                     }
                     else {
-                        this.currentTitle = '+ 添加标题'
+                        this.title = '+ 添加标题'
                     }
                     this.$refs.title.blur()
                 }
             })
         },
+        // 改变内容
         changeContent () {
-            if (this.currentCotent === '输入心得，记录你的情绪变化') this.currentCotent = ''
+            if (this.content === '输入心得，记录你的情绪变化') this.content = ''
             this.$refs.diary.addEventListener('blur', () => {
-                if (this.currentCotent === '') this.currentCotent = '输入心得，记录你的情绪变化'
+                if (this.content === '') this.content = '输入心得，记录你的情绪变化'
             })
+            // this.realShow = this.currentCotent
+            // const diary = this.$refs.diary
+            // diary.addEventListener('change', () => {
+            //     this.realShow = this.currentCotent
+            // })
         },
-        postDiary () {
+        // 发布日志
+        async postDiary () {
             // 1.清除标题和日记内容
             this.currentTitle = '+ 添加标题'
-            this.currentCotent = '输入心得，记录你的情绪变化'
+            this.currentContent = '输入心得，记录你的情绪变化'
             // 2.post
+            console.log(this.emotionType)
+            const res = await axios.post('http://localhost:8080/api/emotion/diary', {}, {
+                params: {
+                    diaryDate: this.exactDate,
+                    emotionType: this.emotionType,
+                    content: this.content
+                },
+                headers: {
+                    Authorization: 'Bearer ' + this.token
+                }
+            })
+            console.log('发布日志结果',res)
+        },
+        changeColor () {
+            // const realShow = this.$refs.realShow
+            // console.log(realShow) // <div data-v-b919abc6="" class="realShow"></div>
+
+        },
+        toStrong () {
+
+        },
+        toIncline () {
+
+        },
+        addUnderline () {
+
+        },
+        numSort () {
+
+        },
+        alphabetSort () {
+
+        },
+        addPic () {
+            const upload = this.$refs.upload 
+            upload.click()
+            // upload.addEventListener('change', (e) => {
+            //     const fd = new FormData()
+            //     fd.append('img', e.target.files[0])
+            //     // console.log(fd)
+            //     request({
+            //         url: '',
+            //         method: 'post',
+            //         data: fd
+            //     }).then(result => {
+            //         const imgUrl = result.data.data.url
+            //     })
+            // })
         }
     },
     created () {
         
     },
     mounted () {
+        // 获取具体日期和星期几
         const date = new Date()
         const year =  date.getFullYear()
         const month = date.getMonth()
@@ -110,9 +187,11 @@ export default {
         }
         this.$refs.dashed.innerHTML = str
         // console.log(this.$refs.dashed)
+
+        // this.realShow = this.currentContent
     },
     updated () {
-        
+        // this.realShow = this.currentContent
     }
 }
 </script>
@@ -131,7 +210,6 @@ export default {
     img {
         position: relative;
         top: 50px;
-        left: 225px;
         width: 24px;
         height: 24px;
     }
@@ -169,7 +247,7 @@ export default {
         border: 2px solid #e4ceb0;
     }
     .bg {
-        width: 274px;
+        width: 276px;
         height: 46px;
         opacity: 1;
         border-bottom: 2px dashed #e3e3e3;
@@ -182,7 +260,7 @@ export default {
         top: 62px;
         left: 16;
         z-index: 1;
-        // background: transparent;
+        background: transparent;
         background: transparent url('@/assets/image/bj.png') no-repeat 0px 16px;
         background-size: 20px;
         width: 274px;
@@ -190,10 +268,27 @@ export default {
         resize: none;
         border: 0;
         color: #c0bdb7;
+        // color: transparent;
         text-indent: 2em;
         font-size: 12px;
-        width: 600;
+        font-weight: 600;
         line-height: 46px;
+        z-index: 2;
+    }
+    .realShow {
+        position: absolute;
+        top: 66px;
+        left: 16;
+        width: 274px;
+        height: 552px;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        color: #c0bdb7;
+        text-indent: 2em;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 46px;
+        z-index: 1;
     }
 }
 .chartLet {
@@ -235,6 +330,24 @@ export default {
         right: 18px;
         width: 75px;
         height: 69px;
+    }
+}
+// 富文本编辑器
+.richTextEditor {
+    padding-top: 18px; 
+    position: fixed;
+    bottom: 0;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    height: 60px;
+    background-color: #FEF8EC;
+    img {
+        width: 24px;
+        height: 24px;
+    }
+    .upload {
+        display: none;
     }
 }
 </style>

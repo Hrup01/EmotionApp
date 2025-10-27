@@ -1,6 +1,6 @@
 <template>
   <div id="moodOption">
-    <NavBar :title="title" :toUrl="toUrl"></NavBar>
+    <NavBar :title="title"></NavBar>
     <div class="top wrapper">
       <!-- 上方的表情 -->
       <div class="pic"><img :src="currentEmojiUrl" alt="" class="optionMood"></div>
@@ -62,7 +62,6 @@ export default {
         ],
         lastOption: [],
         title: '选择心情',
-        toUrl: '',
       }
     },
     methods: {

@@ -17,3 +17,13 @@ export const setInfo = (obj) => {
 export const removeInfo = () => {
     localStorage.removeItem(INFO_KEY)
 }
+
+// // 获取播放时间
+// export const getPlayTime = () => {
+    
+// }
+
+// // 设置播放时间
+// export const setPlayTime = (time) => {
+
+// }
