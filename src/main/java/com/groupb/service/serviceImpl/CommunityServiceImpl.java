@@ -1,5 +1,6 @@
 package com.groupb.service.serviceImpl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupb.mapper.*;
 import com.groupb.pojo.CommunityComment;
 import com.groupb.pojo.CommunityPost;
@@ -56,15 +57,17 @@ public class CommunityServiceImpl implements CommunityService {
      * 创建帖子
      * 步骤：
      * 1. 检查用户是否被封禁
-     * 2. 进行敏感词检测，如果包含敏感词则记录违规并阻止发布
+     * 2. 进行敏感词检测，如果包含敏感词则记录违规并阻止发布（仅当有文字内容时检测）
      * 3. 创建帖子实体并保存到数据库
      * 4. 将帖子数据缓存到Redis
      * 5. 清除相关缓存以确保数据一致性
      * 6. 记录操作日志
      * 
+     * 支持纯图片帖子（无文字内容）和纯文字帖子（无图片）
+     * 
      * @param userId 用户ID
-     * @param content 帖子内容
-     * @param imageUrls 图片URL列表
+     * @param content 帖子内容（可为空，支持纯图片帖子）
+     * @param imageUrls 图片URL列表（可为空，支持纯文字帖子）
      * @return 帖子DTO对象
      * @throws IllegalArgumentException 当内容包含敏感词时抛出
      */
@@ -72,8 +75,8 @@ public class CommunityServiceImpl implements CommunityService {
     public PostDTO createPost(Long userId, String content, List<String> imageUrls) {
         //1. 检查用户是否被封禁
         enforceBan(userId);
-        //2. 发布前敏感词检测：命中则记录一次触发并阻止发布
-        if (containsSensitive(content)) {
+        //2. 发布前敏感词检测：命中则记录一次触发并阻止发布（仅当有内容时检测）
+        if (content != null && !content.trim().isEmpty() && containsSensitive(content)) {
             checkAndStrike(userId, content);
             throw new IllegalArgumentException("帖子包含敏感词，发布失败");
         }
@@ -82,7 +85,18 @@ public class CommunityServiceImpl implements CommunityService {
         //初始化帖子数据
         entity.setAuthorId(userId);
         entity.setContent(content == null ? "" : content);
-        entity.setImagesJson(imageUrls == null || imageUrls.isEmpty() ? null : String.join(",", imageUrls));
+        // 将图片URL列表转换为JSON格式
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                entity.setImagesJson(objectMapper.writeValueAsString(imageUrls));
+            } catch (Exception e) {
+                log.error("转换图片URL为JSON失败", e);
+                entity.setImagesJson("[]"); // 如果转换失败，设置为空数组
+            }
+        } else {
+            entity.setImagesJson("[]"); // 没有图片时设置为空数组
+        }
         entity.setLikeCount(0);//初始化点赞数
         entity.setCommentCount(0);//初始化评论数
         entity.setStatus(1);//默认正常
@@ -520,30 +534,42 @@ public class CommunityServiceImpl implements CommunityService {
      */
     @Override
     public void sendMessage(Long fromUserId, Long toUserId, String content) {
+        // 1. 检查用户是否被封禁
         enforceBan(fromUserId);
+        
+        // 2. 基本内容验证
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("私信内容不能为空");
+        }
+        
+        if (content.length() > 1000) {
+            throw new IllegalArgumentException("私信内容不能超过1000字符");
+        }
+        
+        // 3. 创建私信记录
         PrivateMessage pm = new PrivateMessage();
         pm.setFromUserId(fromUserId);
         pm.setToUserId(toUserId);
-        pm.setContent(content);
+        pm.setContent(content.trim());
         pm.setStatus(1);
         privateMessageMapper.insert(pm);
         
-        // 兼容旧DTO返回链路（如需）
+        // 4. 兼容旧DTO返回链路（如需）
         MessageDTO m = new MessageDTO();
         m.setId(pm.getId());
         m.setFromUserId(fromUserId);
         m.setToUserId(toUserId);
-        m.setContent(content);
+        m.setContent(content.trim());
         m.setCreatedAt(LocalDateTime.now());
         messages.add(m);
         
-        // 缓存私信
+        // 5. 缓存私信
         String messageCacheKey = USER_MESSAGES_CACHE_PREFIX + fromUserId + ":" + toUserId;
         redisService.rightPush(messageCacheKey, m);
         redisService.expire(messageCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
         
-        // 私信发送成功，记录日志
-        log.info("用户 {} 向用户 {} 发送了私信", fromUserId, toUserId);
+        // 6. 私信发送成功，记录日志
+        log.info("用户 {} 向用户 {} 发送了私信，内容长度: {}", fromUserId, toUserId, content.trim().length());
     }
 
     /**
@@ -807,8 +833,16 @@ public class CommunityServiceImpl implements CommunityService {
         dto.setAuthorName("user-" + p.getAuthorId());
         dto.setAuthorAvatar("");
         dto.setContent(p.getContent());
+        // 解析图片JSON
         if (p.getImagesJson() != null && !p.getImagesJson().isEmpty()) {
-            dto.setImageUrls(Arrays.asList(p.getImagesJson().split(",")));
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                List<String> imageUrls = objectMapper.readValue(p.getImagesJson(), List.class);
+                dto.setImageUrls(imageUrls);
+            } catch (Exception e) {
+                log.error("解析图片JSON失败: {}", p.getImagesJson(), e);
+                dto.setImageUrls(List.of());
+            }
         } else {
             dto.setImageUrls(List.of());
         }

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪App后端技术说明文档</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+        }
+        h4 {
+            color: #95a5a6;
+            margin-top: 20px;
+        }
+        code {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-family: "Consolas", "Monaco", monospace;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: "Consolas", "Monaco", monospace;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .doc-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>情绪App后端技术说明文档</h1>
+    
+    <div class="doc-info">
+        <p><strong>文档版本:</strong> v2.0</p>
+        <p><strong>最后更新:</strong> 2025年10月</p>
+        <p><strong>维护人员:</strong> 我觉得不对开发团队</p>
+    </div>
+
+    <h2>1. 项目概述</h2>
+    
+    <h3>1.1 项目简介</h3>
+    <p>情绪App是一个基于Spring Boot的情绪日记管理应用，旨在帮助用户记录和管理日常情绪状态，提供情绪分析和社区交流功能。</p>
+    
+    <h3>1.2 技术栈</h3>
+    <ul>
+        <li><strong>Spring Boot 3.5.5</strong>: 后端框架，提供快速开发和自动配置</li>
+        <li><strong>MyBatis 3.0.5</strong>: 持久层框架，简化数据库操作和SQL映射</li>
+        <li><strong>MySQL 8.0</strong>: 关系型数据库，存储核心业务数据</li>
+        <li><strong>Redis</strong>: 内存数据库，用于缓存和会话管理</li>
+        <li><strong>Spring Security</strong>: 安全框架，提供认证和授权</li>
+        <li><strong>JWT (JSON Web Token)</strong>: 无状态认证机制</li>
+        <li><strong>Maven</strong>: 项目构建和依赖管理工具</li>
+        <li><strong>Logback</strong>: 日志框架，提供灵活的日志配置</li>
+        <li><strong>Lombok</strong>: 代码生成工具，减少样板代码</li>
+        <li><strong>BCrypt</strong>: 密码加密算法</li>
+        <li><strong>Jackson</strong>: JSON序列化和反序列化</li>
+        <li><strong>Hibernate Validator</strong>: 数据验证框架</li>
+    </ul>
+
+    <h2>2. 项目架构</h2>
+    
+    <h3>2.1 整体架构</h3>
+    <pre><code>src/main/java/com/groupb/
+├── EmotionAppApplication.java     # 启动类
+├── config/                        # 配置类
+│   ├── RedisConfig.java
+│   └── StaticResourceConfig.java
+├── controller/                     # 控制器层
+│   ├── CommunityController.java
+│   ├── EmotionController.java
+│   ├── LoginController.java
+│   ├── FileUploadController.java
+│   └── EmotionApiController.java
+├── service/                        # 服务层
+│   ├── CommunityService.java
+│   ├── EmotionService.java
+│   ├── UserService.java
+│   ├── RedisService.java
+│   └── serviceImpl/
+├── mapper/                         # 数据访问层
+├── pojo/                          # 实体类
+│   ├── User.java
+│   ├── EmotionDiary.java
+│   ├── CommunityPost.java
+│   └── dto/                       # 数据传输对象
+├── util/                          # 工具类
+│   ├── jwt/                       # JWT工具
+│   ├── security/                  # 安全工具
+│   └── EmotionColorUtil.java
+└── websocket/                     # WebSocket支持</code></pre>
+
+    <h3>2.2 分层架构</h3>
+    <ul>
+        <li><strong>Controller层</strong>: 处理HTTP请求，参数验证，调用Service层</li>
+        <li><strong>Service层</strong>: 业务逻辑处理，事务管理</li>
+        <li><strong>Mapper层</strong>: 数据访问，SQL映射</li>
+        <li><strong>POJO层</strong>: 实体类和DTO定义</li>
+    </ul>
+
+    <h2>3. 核心模块详解</h2>
+    
+    <h3>3.1 用户认证模块</h3>
+    
+    <h4>3.1.1 功能特性</h4>
+    <ul>
+        <li>用户注册/登录</li>
+        <li>JWT Token认证</li>
+        <li>密码BCrypt加密</li>
+        <li>用户状态管理</li>
+    </ul>
+    
+    <h4>3.1.2 核心类</h4>
+    <ul>
+        <li><code>LoginController</code>: 处理登录/注册请求</li>
+        <li><code>UserService</code>: 用户业务逻辑</li>
+        <li><code>JwtTokenProvider</code>: JWT Token生成和验证</li>
+    </ul>
+    
+    <h4>3.1.3 API接口</h4>
+    <pre><code>POST /api/auth/login      # 用户登录
+POST /api/auth/register   # 用户注册
+GET  /api/auth/health     # 健康检查</code></pre>
+
+    <h3>3.2 情绪日记模块</h3>
+    
+    <h4>3.2.1 功能特性</h4>
+    <ul>
+        <li>情绪日记CRUD操作</li>
+        <li>12种情绪类型支持</li>
+        <li>连续打卡统计</li>
+        <li>日历视图展示</li>
+        <li>背景音乐支持</li>
+    </ul>
+    
+    <h4>3.2.2 支持的情绪类型</h4>
+    <pre><code>开心, 伤心, 自责, 晕, 邪恶, 生气, 困, 期待, 无奈, 疑问, 满足, 叹气</code></pre>
+    
+    <h4>3.2.3 核心类</h4>
+    <ul>
+        <li><code>EmotionController</code>: 情绪日记API控制器</li>
+        <li><code>EmotionService</code>: 情绪日记业务逻辑</li>
+        <li><code>EmotionDiary</code>: 情绪日记实体类</li>
+        <li><code>EmotionDTO</code>: 情绪日记数据传输对象</li>
+    </ul>
+    
+    <h4>3.2.4 API接口</h4>
+    <pre><code>POST   /api/emotion/diary                    # 保存情绪日记
+GET    /api/emotion/diary?date=2024-01-01    # 获取指定日期日记
+GET    /api/emotion/diaries/recent           # 获取最近日记
+GET    /api/emotion/diaries/range             # 获取时间范围内日记
+DELETE /api/emotion/diary/{id}                # 删除日记
+GET    /api/emotion/check-in-count            # 获取连续打卡天数
+GET    /api/emotion/calendar                  # 获取日历数据
+POST   /api/emotion/quick-diary               # 快速记录情绪</code></pre>
+
+    <h3>3.3 社区模块</h3>
+    
+    <h4>3.3.1 功能特性</h4>
+    <ul>
+        <li>帖子发布和管理</li>
+        <li>点赞/取消点赞</li>
+        <li>评论系统</li>
+        <li>用户关注/取消关注</li>
+        <li>私信功能</li>
+        <li>收藏功能</li>
+        <li>社区封禁管理</li>
+    </ul>
+    
+    <h4>3.3.2 核心类</h4>
+    <ul>
+        <li><code>CommunityController</code>: 社区功能API控制器</li>
+        <li><code>CommunityService</code>: 社区业务逻辑</li>
+        <li><code>CommunityPost</code>: 帖子实体类</li>
+        <li><code>CommunityComment</code>: 评论实体类</li>
+        <li><code>PrivateMessage</code>: 私信实体类</li>
+    </ul>
+    
+    <h4>3.3.3 API接口</h4>
+    <pre><code>POST   /api/community/posts                    # 发布帖子
+GET    /api/community/feed                    # 获取动态流
+GET    /api/community/posts/{id}              # 获取帖子详情
+POST   /api/community/posts/{id}/like         # 点赞帖子
+DELETE /api/community/posts/{id}/like         # 取消点赞
+POST   /api/community/posts/{id}/comments     # 添加评论
+GET    /api/community/posts/{id}/comments     # 获取评论列表
+POST   /api/community/follow/{userId}         # 关注用户
+DELETE /api/community/follow/{userId}         # 取消关注
+POST   /api/community/dm/{userId}             # 发送私信
+GET    /api/community/dm/{userId}             # 获取私信对话</code></pre>
+
+    <h3>3.4 文件上传模块</h3>
+    
+    <h4>3.4.1 功能特性</h4>
+    <ul>
+        <li>图片文件上传</li>
+        <li>文件类型验证</li>
+        <li>文件大小限制</li>
+        <li>静态资源访问</li>
+    </ul>
+    
+    <h4>3.4.2 配置参数</h4>
+    <pre><code>file:
+  upload:
+    path: F:/image                    # 上传路径
+    max-size: 10485760                # 最大文件大小(10MB)
+    allowed-types:                    # 允许的文件类型
+      - image/jpeg
+      - image/png
+      - image/gif
+      - image/webp</code></pre>
+
+    <h2>4. 数据库设计</h2>
+    
+    <h3>4.1 核心表结构</h3>
+    
+    <h4>4.1.1 用户表 (users)</h4>
+    <pre><code>CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    avatar_url VARCHAR(255),
+    status ENUM('ONLINE', 'OFFLINE', 'DISABLED', 'DELETED'),
+    last_login_time TIMESTAMP NULL,
+    create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);</code></pre>
+    
+    <h4>4.1.2 情绪日记表 (emotion_diaries)</h4>
+    <pre><code>CREATE TABLE emotion_diaries (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    diary_date DATE NOT NULL,
+    emotion_type VARCHAR(20) NOT NULL,
+    content TEXT,
+    background_music VARCHAR(50),
+    mood_color VARCHAR(10),
+    location VARCHAR(100),
+    check_in_count INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);</code></pre>
+    
+    <h4>4.1.3 社区帖子表 (community_post)</h4>
+    <pre><code>CREATE TABLE community_post (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    author_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+    images_json JSON NULL,
+    like_count INT NOT NULL DEFAULT 0,
+    comment_count INT NOT NULL DEFAULT 0,
+    status TINYINT NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);</code></pre>
+
+    <h3>4.2 索引设计</h3>
+    <ul>
+        <li>用户表: <code>idx_username</code>, <code>idx_status</code></li>
+        <li>情绪日记表: <code>idx_user_date</code>, <code>idx_user_emotion</code>, <code>idx_diary_date</code></li>
+        <li>社区帖子表: <code>idx_author_created</code>, <code>idx_created</code></li>
+    </ul>
+
+    <h2>5. 配置说明</h2>
+    
+    <h3>5.1 应用配置 (application.yml)</h3>
+    <pre><code>spring:
+  application:
+    name: EmotionApp
+  datasource:
+    url: jdbc:mysql://localhost:3306/emotionApp
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Hrup041001.
+  data:
+    redis:
+      host: 192.168.80.130
+      port: 6379
+      password: 123321
+      database: 0
+
+server:
+  port: 8080
+
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400000  # 24小时</code></pre>
+
+    <h3>5.2 Maven依赖</h3>
+    <pre><code>&lt;dependencies&gt;
+    &lt;!-- Spring Boot Web --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- MyBatis --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mybatis.spring.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;mybatis-spring-boot-starter&lt;/artifactId&gt;
+        &lt;version&gt;3.0.5&lt;/version&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- MySQL --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- Spring Security --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- JWT --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+        &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+        &lt;version&gt;0.11.5&lt;/version&gt;
+    &lt;/dependency&gt;
+    
+    &lt;!-- Redis --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+
+    <h2>6. 安全机制</h2>
+    
+    <h3>6.1 JWT认证流程</h3>
+    <ol>
+        <li>用户登录成功后生成JWT Token</li>
+        <li>Token包含用户信息，有效期24小时</li>
+        <li>后续请求在Header中携带Token</li>
+        <li>服务端验证Token有效性</li>
+    </ol>
+    
+    <h3>6.2 密码安全</h3>
+    <ul>
+        <li>使用BCrypt算法加密存储密码</li>
+        <li>密码长度最少6位</li>
+        <li>支持密码重置功能</li>
+    </ul>
+    
+    <h3>6.3 跨域配置</h3>
+    <pre><code>@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8080"}, maxAge = 3600)</code></pre>
+
+    <h2>7. 缓存策略</h2>
+    
+    <h3>7.1 Redis配置</h3>
+    <ul>
+        <li>主机: 192.168.80.130</li>
+        <li>端口: 6379</li>
+        <li>数据库: 0</li>
+        <li>连接池: 最大8个连接</li>
+    </ul>
+    
+    <h3>7.2 缓存应用</h3>
+    <ul>
+        <li>用户会话信息</li>
+        <li>热点数据缓存</li>
+        <li>临时数据存储</li>
+    </ul>
+
+    <h2>8. 日志管理</h2>
+    
+    <h3>8.1 日志配置</h3>
+    <pre><code>logging:
+  level:
+    com.groupb: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"</code></pre>
+    
+    <h3>8.2 日志文件</h3>
+    <ul>
+        <li>日志文件位置: <code>logs/emotion-app-{date}-{index}.log</code></li>
+        <li>支持按日期滚动</li>
+        <li>包含详细的操作记录</li>
+    </ul>
+
+    <h2>9. 部署说明</h2>
+    
+    <h3>9.1 环境要求</h3>
+    <ul>
+        <li>JDK 17+</li>
+        <li>MySQL 8.0+</li>
+        <li>Redis 6.0+</li>
+        <li>Maven 3.6+</li>
+    </ul>
+    
+    <h3>9.2 部署步骤</h3>
+    <ol>
+        <li>克隆项目代码</li>
+        <li>配置数据库连接信息</li>
+        <li>执行SQL初始化脚本</li>
+        <li>配置Redis连接</li>
+        <li>编译打包: <code>mvn clean package</code></li>
+        <li>运行应用: <code>java -jar target/EmotionApp-0.0.1-SNAPSHOT.jar</code></li>
+    </ol>
+    
+    <h3>9.3 端口配置</h3>
+    <ul>
+        <li>应用端口: 8080</li>
+        <li>数据库端口: 3306</li>
+        <li>Redis端口: 6379</li>
+    </ul>
+
+    <h2>10. API响应格式</h2>
+    
+    <h3>10.1 统一响应结构</h3>
+    <pre><code>{
+    "code": 200,
+    "message": "操作成功",
+    "data": {
+        // 具体数据
+    },
+    "timestamp": "2024-01-01T12:00:00"
+}</code></pre>
+    
+    <h3>10.2 错误码说明</h3>
+    <ul>
+        <li>200: 成功</li>
+        <li>400: 请求参数错误</li>
+        <li>401: 未授权</li>
+        <li>403: 禁止访问</li>
+        <li>404: 资源不存在</li>
+        <li>500: 服务器内部错误</li>
+    </ul>
+
+    <h2>11. 性能优化</h2>
+    
+    <h3>11.1 数据库优化</h3>
+    <ul>
+        <li>合理设计索引</li>
+        <li>使用连接池</li>
+        <li>分页查询优化</li>
+    </ul>
+    
+    <h3>11.2 缓存优化</h3>
+    <ul>
+        <li>Redis缓存热点数据</li>
+        <li>合理设置缓存过期时间</li>
+        <li>避免缓存穿透</li>
+    </ul>
+    
+    <h3>11.3 代码优化</h3>
+    <ul>
+        <li>使用Lombok减少样板代码</li>
+        <li>合理使用事务</li>
+        <li>异常处理优化</li>
+    </ul>
+
+    <h2>12. 扩展功能</h2>
+    
+    <h3>12.1 已实现功能</h3>
+    <ul>
+        <li>情绪日记管理</li>
+        <li>社区交流</li>
+        <li>用户认证</li>
+        <li>文件上传</li>
+        <li>私信功能</li>
+    </ul>
+    
+    <h3>12.2 可扩展功能</h3>
+    <ul>
+        <li>AI情绪分析</li>
+        <li>周报统计</li>
+        <li>情绪趋势分析</li>
+        <li>社交推荐算法</li>
+        <li>消息推送</li>
+    </ul>
+
+    <hr>
+    <div class="doc-info">
+        <p><strong>文档版本:</strong> v2.0</p>
+        <p><strong>最后更新:</strong> 2025年10月</p>
+        <p><strong>维护人员:</strong> 我觉得不对开发团队</p>
+    </div>
+</body>
+</html>
+

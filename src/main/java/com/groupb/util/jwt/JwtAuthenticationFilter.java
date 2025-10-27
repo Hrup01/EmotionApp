@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.lang.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -26,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String token = null;
         String username = null;
@@ -43,10 +46,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (StringUtils.hasText(username) && jwtTokenProvider.validateToken(token, username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            // 从token中获取用户ID
+            Long userId = jwtTokenProvider.getUserIdFromToken(token);
+            log.debug("从token中提取用户ID: {}", userId);
+            
+            // 创建包含用户ID和用户名的认证对象
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            
+            // 将用户ID存储到认证对象的details中，方便后续获取
+            Map<String, Object> userDetails = new HashMap<>();
+            userDetails.put("userId", userId);
+            userDetails.put("username", username);
+            authentication.setDetails(userDetails);
+            
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.debug("用户认证成功: {}", username);
+            log.debug("用户认证成功: {} (ID: {})", username, userId);
         } else {
             log.warn("用户认证失败 - 用户名: {}, token有效: {}", username, jwtTokenProvider.validateToken(token, username));
         }

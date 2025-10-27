@@ -7,7 +7,7 @@ import com.groupb.pojo.User;
 import com.groupb.service.EmotionService;
 import com.groupb.service.UserService;
 import com.groupb.util.EmotionColorUtil;
-import com.groupb.util.jwt.JwtTokenProvider;
+import com.groupb.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -36,31 +36,36 @@ public class EmotionController {
 
     /**
      * 从SecurityContext获取当前用户ID
-     * 从JWT token中解析用户信息
+     * 优先从JWT token中解析，如果失败则通过用户名查询数据库
      */
     private Long getCurrentUserId(Authentication auth) {
+        // 优先从JWT token中获取用户ID
+        Long userId = SecurityContextUtil.getCurrentUserId();
+        if (userId != null) {
+            log.debug("从JWT token中获取到用户ID: {}", userId);
+            return userId;
+        }
+
+        // 如果JWT token解析失败，降级到通过用户名查询（向后兼容）
+        log.warn("JWT token解析失败，降级到用户名查询方式");
         if (auth == null || auth.getPrincipal() == null) {
             return null;
         }
         
         try {
-            // 从SecurityContext中获取用户名
             String username = auth.getPrincipal().toString();
+            log.debug("通过用户名查询用户ID: {}", username);
             
-            // 从JWT token中解析用户ID
-            // 这里需要从请求头中获取token并解析用户ID
-            // 暂时通过用户名查询用户ID，实际项目中应该从JWT token中解析
-            log.debug("当前用户: {}", username);
-            
-            // 通过用户名查询用户ID
             User user = userService.findByUsername(username);
             if (user != null) {
+                log.debug("通过用户名找到用户: {} (ID: {})", username, user.getId());
                 return user.getId();
             }
             
+            log.warn("未找到用户: {}", username);
             return null;
         } catch (Exception e) {
-            log.error("解析用户ID失败", e);
+            log.error("通过用户名查询用户ID失败", e);
             return null;
         }
     }
