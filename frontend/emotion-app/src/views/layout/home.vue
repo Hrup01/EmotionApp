@@ -211,7 +211,7 @@ export default {
   width: 353px;
 }
 .sidebarPic {
-  margin-top: 50px;
+  margin-top: 20px;
   margin-left: 12px;
   img {
     width: 30px;

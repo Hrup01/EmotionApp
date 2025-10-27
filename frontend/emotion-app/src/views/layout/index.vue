@@ -41,20 +41,12 @@
 </template>
 
 <script>
+
 export default {
     name: 'layoutPage',
     data () {
       return {
 
-      }
-    },
-    watched: {
-      $route: {
-        handler (to, from) {
-          console.log(to, from)
-          this.setActiveTab()
-        },
-        immediate: true
       }
     },
     methods: {

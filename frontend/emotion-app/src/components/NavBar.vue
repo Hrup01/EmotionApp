@@ -1,7 +1,8 @@
 <template>
   <div id="NaVBar">
     <div class="left" @click="$router.go(-1)">
-      <img src="@/assets/image/jt_left.png" alt="">
+      <img src="@/assets/image/jt_left.png" alt="" v-if="!leftPic">
+      <img :src="leftPic" alt="" class="otherPic" v-else>
       <!-- <img src="@/assets/image/私信/头像.png" alt="" class="headPic"> -->
       <h3 ref="title">{{ title }}</h3>
     </div>
@@ -14,14 +15,14 @@
 <script>
 
 export default {
-  props: ['title', 'haveRight', 'rightPic', 'marginLeft'],
+  props: ['title', 'haveRight', 'leftPic', 'rightPic', 'marginLeft'],
   // data () {
   //   return {
   //     rightPic: '@/assets/image/更多1.png'
   //   }
   // }
   mounted () {
-    console.log(this.marginLeft)
+    // console.log(this.marginLeft)
     this.$refs.title.style.marginLeft = this.marginLeft
   }
 }
@@ -29,7 +30,7 @@ export default {
 
 <style lang="less" scoped>
 #NaVBar {
-  padding-top: 50px;
+  padding-top: 20px;
   padding-left: 13px;
   display: flex;
   justify-content: space-between;
@@ -43,6 +44,10 @@ export default {
     margin-left: 9px;
     margin-top: 3px;
     width: 24px;
+    }
+    .otherPic {
+      width: 24px;
+      height: 24px;
     }
     h3 {
       margin-left: 14px;

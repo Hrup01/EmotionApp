@@ -98,17 +98,17 @@ export default {
         },
         // 创建帖子
         async createPost () {
-            const res = await axios.post('http://localhost:8080/api/community/posts', {}, {
+            console.log(this.images)
+            const res = await axios.post('http://localhost:8080/api/community/posts', this.images, {
                 params: {
                     content: this.content,
-                    images: this.images
                 },
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
             })
             console.log(res)
-            this.$router.push('/community/recommend')
+            // this.$router.go(-1)
         }
     },
     mounted () {
@@ -120,9 +120,10 @@ export default {
             this.$refs.upload[0].click()
             this.$refs.upload[0].addEventListener('change', e => {
                 const fd = new FormData()
-                fd.append('img',e.target.files[0])
+                console.log(e.target.files[0])
+                fd.append('images',e.target.files[0])
                 this.images = fd
-                // console.log(fd)
+                console.log(fd)
                 // console.log(this.images)
             })
         })

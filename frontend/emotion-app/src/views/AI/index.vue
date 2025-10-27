@@ -5,7 +5,7 @@
     <div class="dialog wrapper">
       <!-- 无对话时 -->
       <div class="noContent" v-if="!haveContent">
-        <img src="@/assets/image/首页头像.png" alt="">
+        <img src="@/assets/image/AI/首页头像.png" alt="">
         <div class="hint">
           <p>你好呀~我是你的情绪教练小栈~</p>
           <p>跟我讲讲你现在感觉怎么样吧~</p>
@@ -29,7 +29,7 @@
           </div>
           <div class="answer" v-else-if="item.role === 'ai'">
             <div class="item">
-              <img src="@/assets/image/AI头像.png" alt="">
+              <img src="@/assets/image/AI/AI头像.png" alt="">
               <p>{{ item.content }}</p>
             </div>
           </div>
@@ -40,7 +40,7 @@
       <div class="message" ref="message">
         <textarea name="message" v-model="message" @focus="changeMessage" ref="textarea"></textarea>
         <div class="send">
-          <img src="@/assets/image/发送.png" alt="" @click="sendMessage">
+          <img src="@/assets/image/AI/发送.png" alt="" @click="sendMessage">
         </div>
       </div>
     </div>
@@ -153,7 +153,7 @@ export default {
 <style lang="less" scoped>
 #AI {
   height: 852px;
-  background: url('@/assets/image/图案组合.png') no-repeat #ffefcf;
+  background: url('@/assets/image/AI/图案组合.png') no-repeat #ffefcf;
   background-size: 390px;
 }
 .wrapper {

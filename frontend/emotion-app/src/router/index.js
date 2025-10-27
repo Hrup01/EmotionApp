@@ -34,6 +34,8 @@ const CountDown = () => import ('@/views/countDown')
 const NoteDetail = () => import ('@/views/noteDetail')
 const PrivateLetter = () => import ('@/views/privateLetter')
 const WoodFish = () => import ('@/views/woodFish')
+const MoreSet = () => import ('@/views/woodFish/moreSet')
+const ClockIn = () => import ('@/views/clockIn')
 // import Login from '@/views/login'
 // import MoodOption from '@/views/moodOption'
 // import Log from '@/views/log'
@@ -52,6 +54,7 @@ const WoodFish = () => import ('@/views/woodFish')
 // import NoteDetail from '@/views/noteDetail'
 // import PrivateLetter from '@/views/privateLetter'
 // import WoodFish from '@/views/woodFish'
+import test from '@/views/test.vue'
 
 Vue.use(VueRouter)
 
@@ -81,6 +84,7 @@ const router = new VueRouter({
       ],
       redirect: '/home'
     },
+    {  path: '/test', component: test },
     { path: '/login', component: Login },
     { path: '/weeklyReports', component: WeeklyReports },
     { path: '/moodOption', component: MoodOption },
@@ -100,6 +104,8 @@ const router = new VueRouter({
     { path: '/noteDetail/:id', component: NoteDetail },
     { path: '/privateLetter/:id', component: PrivateLetter },
     { path: '/woodFish', component: WoodFish },
+    { path: '/woodFish/moreSet', component: MoreSet },
+    { path: '/clockIn', component: ClockIn },
   ]
 })
 
