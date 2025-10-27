@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: EmotionApp
+  #数据库的连接信息
+  datasource:
+    url: jdbc:mysql://localhost:3306/emotionApp
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: Hrup041001.
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      file-size-threshold: 2KB
+      location: ${java.io.tmpdir}
+  # Redis配置
+  data:
+    redis:
+      host: 192.168.80.130
+      port: 6379
+      password: 123321
+      database: 0
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+# 文件上传配置
+file:
+  upload:
+    path: F:/image  # 上传文件存储路径（F盘image文件夹）
+    max-size: 10485760        # 最大文件大小（10MB）
+    allowed-types:            # 允许的文件类型
+      - image/jpeg
+      - image/png
+      - image/gif
+      - image/webp
+
+#mybatis的相关配置
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰命名映射的开关：可以将表中的下划线映射为驼峰命名
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.groupb.pojo
+
+# 服务器配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+
+# 日志配置
+logging:
+  level:
+    com.groupb: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# JWT配置
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400000 # 24小时
