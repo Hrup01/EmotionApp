@@ -1,13 +1,14 @@
 <template>
+    <!-- 社区页面组件 -->
     <div class="contentItem">
       <div class="top">
         <div class="user">
           <img :src="contentList[id].headPortraitUrl" alt="" @click="$router.push(`/otherHomePage/${id}`)">
-          <div class="username">{{ contentList[id].username }}</div>
+          <div class="username">{{ contentList[id].authorName }}</div>
         </div>
         <div class="more"><img src="@/assets/image/更多1.png" alt=""></div>
       </div>
-      <div class="background"  @click="$router.push(`/noteDetail/${id}`)"><img :src="contentList[id].bgUrl" alt=""></div>
+      <div class="background"  @click="$router.push(`/noteDetail/${id}`)"><img :src="this.contentList[id].bgUrl" alt=""></div>
       <div class="title">{{ contentList[id].title }}</div>
       <div class="respond">
         <div class="like">

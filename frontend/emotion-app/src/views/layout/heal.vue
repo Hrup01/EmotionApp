@@ -1,5 +1,6 @@
 <template>
   <div id="heal">
+    <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
     <div class="bg">
       <div class="components wrapper">
         <ul>
@@ -58,8 +59,12 @@ export default {
   margin: 0 auto;
   width: 330px;
 }
+.top-time {
+  width: 390px;
+  background-color: #ffefcf;
+}
 .bg {
-  margin-top: 64px;
+  margin-top: 20px;
   margin-left: 12px;
   width: 367px;
   height: 645px;

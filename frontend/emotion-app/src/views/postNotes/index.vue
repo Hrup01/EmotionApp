@@ -1,6 +1,6 @@
 <template>
   <div id="postNotes">
-    <nav-bar :title="navbartitle"></nav-bar>
+    <nav-bar :title="navbartitle" :is-post-notes="isPostNotes"></nav-bar>
     <div class="navbarRightPic" @click="createPost">
         <img src="@/assets/image/笔记页面/路径 1.png" alt="">
     </div>
@@ -53,6 +53,7 @@ export default {
     },
     data () {
         return {
+            isPostNotes: true,
             token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             navbartitle: '发布笔记',
             // haveRight: true,

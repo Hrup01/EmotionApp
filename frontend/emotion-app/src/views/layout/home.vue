@@ -1,5 +1,6 @@
 <template>
   <div id="home">
+    <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
     <!-- 侧边栏按键 -->
     <div class="sidebarPic" v-show="!showSidebar" @click="showSidebar = true"><img src="@/assets/image/首页/汉堡图标.png" alt=""></div>
     <div class="occupied" v-show="showSidebar"></div>
@@ -37,7 +38,7 @@
       </router-link>
       <router-link to="">
         <img src="@/assets/image/首页/涂鸦.png" alt="" class="graffiti">
-        <p>涂鸦</p>
+        <p>手账</p>
       </router-link>
       <router-link to="/weeklyReports">
         <img src="@/assets/image/首页/周报.png" alt="" class="weeklyReport">
@@ -102,7 +103,7 @@ export default {
         { id: 8, url: require('@/assets/image/首页/9.png') },
       ],
       componentList: [
-        { id: 0, url: require('@/assets/image/侧边栏/日记本.png'), name: '日记本', toUrl: '/moodOption' },
+        { id: 0, url: require('@/assets/image/侧边栏/日记本.png'), name: '日记本', toUrl: '/diaryNoteBook' },
         { id: 1, url: require('@/assets/image/侧边栏/消息中心.png'), name: '消息中心', toUrl: '/messageCenter' },
         { id: 2, url: require('@/assets/image/侧边栏/草稿.png'), name: '我的草稿', toUrl: '/moodOption' },
         { id: 3, url: require('@/assets/image/侧边栏/我的收藏.png'), name: '我的收藏', toUrl: '/moodOption' },
@@ -131,7 +132,7 @@ export default {
         this.petName = ''
         // 失焦出现笔 input消失
         this.$refs.name.addEventListener('blur', () => {
-          if (this.petName === '') this.petName = '小栈'
+          if (this.petName === '') this.petName = localStorage.getItem('emotion_app_petName')
           this.flag = 0
           this.$refs.pen.style.display = 'block'
           this.setPetName()
@@ -210,8 +211,12 @@ export default {
   margin: 0 auto;
   width: 353px;
 }
+.top-time {
+  width: 390px;
+  background-color: #FDF4E4;
+}
 .sidebarPic {
-  margin-top: 20px;
+  // margin-top: 20px;
   margin-left: 12px;
   img {
     width: 30px;
@@ -219,7 +224,7 @@ export default {
   }
 }
 .occupied {
-  margin-top: 84px;
+  margin-top: 34px;
 }
 .pet {
   margin-top: 12px;

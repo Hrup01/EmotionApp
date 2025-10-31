@@ -21,12 +21,12 @@ export default {
   data () {
     return {
       contentList: [
-        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), username: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
       ],
     }
   },
@@ -46,6 +46,7 @@ export default {
     })
     console.log('获取推荐列表',res)
     // this.contentList = res.data.data
+    // console.log('打印图片地址',this.contentList[0].imageUrls[0])
   }
 }
 </script>
@@ -53,7 +54,7 @@ export default {
 <style lang="less" scoped>
 .recommend {
   margin-bottom: 94px;
-  height: 682px;
+  height: 648px;
   overflow: auto;
 }
 .wrapper {

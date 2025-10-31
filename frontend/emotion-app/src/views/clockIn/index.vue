@@ -128,12 +128,12 @@ export default {
 }
 .header {
     width: 390px;
-    height: 355px;
+    height: 340px;
     .integral {
-        margin-top: 24px;
+        margin-top: 16px;
         padding-top: 16px;
         width: 366px;
-        height: 119px;
+        height: 110px;
         border-radius: 20px 20px 0 0;
         background: linear-gradient(26.8deg, #ffffff 0%, #fec38a 100%);
         box-shadow: inset 2px 6px 16px 0 #ffffffcc;
@@ -210,7 +210,7 @@ export default {
 }
 .footer {
     width: 366px;
-    height: 430px;
+    height: 415px;
     border-radius: 20px;
     background: #ffffff;
     .title {
@@ -218,7 +218,7 @@ export default {
         margin-left: 12px;
     }
     ul {
-        margin-top: 24px;
+        margin-top: 16px;
         display: flex;
         flex-wrap: wrap;
         li {

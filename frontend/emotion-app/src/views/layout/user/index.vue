@@ -1,8 +1,9 @@
 <template>
   <div id="user">
     <div class="header">
+      <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
       <div class="top">
-        <img src="@/assets/image/我的/编辑2.png" alt="" class="editor" @click="$router.push('/postNotes')">
+        <img src="@/assets/image/我的/编辑2.png" alt="" class="editor" @click="$router.push('/user/editInformation')">
         <img src="@/assets/image/我的/设置.png" alt="" class="set">
       </div>
       <div class="userMessage">
@@ -84,11 +85,15 @@ export default {
   background-size: cover;
   font-weight: 600;
   // background-color: pink;
+  .top-time {
+    width: 390px;
+    background-color: transparent;
+  }
   .top {
     // margin-top: 66px;
     img {
       position: absolute;
-      top: 66px;
+      top: 50px;
       width: 20px;
       height: 20px;
     }
@@ -100,7 +105,7 @@ export default {
     }
   }
   .userMessage {
-    margin-top: 100px;
+    margin-top: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,6 +1,6 @@
 <template>
   <div id="AI">
-    <nav-bar></nav-bar>
+    <nav-bar :is-transparent="isTransparent"></nav-bar>
     <div class="title wrapper">AI情绪教练</div>
     <div class="dialog wrapper">
       <!-- 无对话时 -->
@@ -58,6 +58,7 @@ export default {
     },
     data () {
       return {
+        isTransparent: true,
         token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
         message: '向小栈发送信息',
         answer: '',

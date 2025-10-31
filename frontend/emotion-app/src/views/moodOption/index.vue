@@ -1,6 +1,6 @@
 <template>
   <div id="moodOption">
-    <NavBar :title="title"></NavBar>
+    <NavBar :title="title" :is-mood-option="isMoodOption"></NavBar>
     <div class="top wrapper">
       <!-- 上方的表情 -->
       <div class="pic"><img :src="currentEmojiUrl" alt="" class="optionMood"></div>
@@ -42,6 +42,7 @@ export default {
     },
     data () {
       return {
+        isMoodOption: true,
         flag: 'ture',
         currentEmojiUrl: require('@/assets/image/10.png'),
         currentEmojiName: '开心',
