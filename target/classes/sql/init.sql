@@ -12,6 +12,10 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL COMMENT '密码（BCrypt加密）',
     phone VARCHAR(20) COMMENT '手机号（可选）',
     avatar_url VARCHAR(255) COMMENT '头像URL',
+    nickname VARCHAR(50) COMMENT '昵称',
+    gender VARCHAR(10) COMMENT '性别（MALE/FEMALE/OTHER）',
+    birthday DATE COMMENT '生日',
+    points INT DEFAULT 0 COMMENT '积分',
     status ENUM('ONLINE', 'OFFLINE', 'DISABLED', 'DELETED') DEFAULT 'ONLINE' COMMENT '用户状态',
     last_login_time TIMESTAMP NULL COMMENT '最后登录时间',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -19,6 +23,14 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_username (username),
     INDEX idx_status (status)
 ) COMMENT '用户表';
+
+-- 为已存在的用户表添加新字段
+-- 注意：如果字段已存在，执行以下语句会报错，需要手动判断或使用存储过程
+-- 使用方法：如果表已存在，请先检查字段是否存在，然后再执行相应的ALTER TABLE语句
+-- ALTER TABLE users ADD COLUMN nickname VARCHAR(50) COMMENT '昵称' AFTER avatar_url;
+-- ALTER TABLE users ADD COLUMN gender VARCHAR(10) COMMENT '性别（MALE/FEMALE/OTHER）' AFTER nickname;
+-- ALTER TABLE users ADD COLUMN birthday DATE COMMENT '生日' AFTER gender;
+-- ALTER TABLE users ADD COLUMN points INT DEFAULT 0 COMMENT '积分' AFTER birthday;
 
 -- 创建情绪日记表
 CREATE TABLE IF NOT EXISTS emotion_diaries (
