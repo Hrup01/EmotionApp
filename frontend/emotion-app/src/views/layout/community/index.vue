@@ -1,10 +1,11 @@
 <template>
   <div id="community">
+    <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
     <!-- 头部导航栏 -->
     <div class="top wrapper">
       <img src="@/assets/image/汉堡图标.png" alt="">
       <sencond-nav-bar :navbar-list="navbarList"></sencond-nav-bar>
-      <img src="@/assets/image/添加.png" alt="">
+      <img src="@/assets/image/添加.png" alt="" @click="$router.push('/postNotes')">
     </div>
     <!-- 二级导航出口 -->
      <router-view></router-view>
@@ -35,8 +36,12 @@ export default {
   margin: 0 auto;
   width: 366px;
 }
+.top-time {
+  width: 390px;
+  background-color: #ffefcf;
+}
 .top {
-  margin-top: 20px;
+  // margin-top: 20px;
   display: flex;
   justify-content: space-between;
   height: 44px;

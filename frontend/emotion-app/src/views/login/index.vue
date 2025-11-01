@@ -4,35 +4,53 @@
         <h1>HELLO ^ ^</h1>
         <p>欢迎使用情绪小栈 </p>
     </div>
-    <div class="subject">
+    <div class="subject" ref="subject">
         <div class="top">
-            <div class="login">
-                <p>账号登录</p>
-                <img src="@/assets/image/line.png" alt="">
+            <div class="login" @click="toLogin">
+                <p ref="loginMode">账号登录</p>
+                <img src="@/assets/image/line.png" alt="" v-show="isLogin">
             </div>
-            <div class="register">
-                <p>注册账号</p>
-                <img src="@/assets/image/line.png" alt="" v-show="false">
+            <div class="register" @click="toRegister">
+                <p ref="registerMode">注册账号</p>
+                <img src="@/assets/image/line.png" alt="" v-show="!isLogin">
             </div>
         </div>
-        <div class="center">
+        <div class="loginTab" v-if="isLogin">
             <input type="text" placeholder="请输入账号" name="account" class="account-icon" v-model="account">
             <input type="password" placeholder="请输入密码" name="password" class="password-icon" v-model="password" v-show="flag === 1">
             <img src="../../assets/image/eye.png" alt="" class="eye" @click="changeFlag">
             <input type="text" placeholder="请输入密码" name="password" class="password-icon" v-model="password" v-show="flag === 0">
+        </div>
+        <!-- 注册 -->
+        <div class="registerTab" v-else>
+            <input type="text" placeholder="请输入账号" name="account" class="account-icon" v-model="account">
+            <input type="password" placeholder="请输入密码" name="password" class="password-icon" v-model="password" v-show="flag === 1">
+            <img src="../../assets/image/eye.png" alt="" class="eye" @click="changeFlag">
+            <input type="text" placeholder="请输入密码" name="password" class="password-icon" v-model="password" v-show="flag === 0">
+            <!-- 再次输入密码 -->
+            <input type="password" placeholder="请再次输入密码" name="password-again" class="password-again-icon" v-model="passwordAgain" v-show="aginFlag === 1">
+            <img src="../../assets/image/eye.png" alt="" class="password-again-eye" @click="changeLastFlag">
+            <input type="text" placeholder="请再次输入密码" name="password-again" class="password-again-icon" v-model="passwordAgain" v-show="aginFlag === 0">
         </div>
         <div class="bottom">
             <div class="cir" @click="checked" ref="cir"></div>
             <p>已经阅读并同意<span>用户协议、隐私政策</span></p>
         </div>
     </div>
-    <button @click="login" ref="login">登录</button>
-    <div class="other">
+    <button @click="login" ref="login" v-if="isLogin">登录</button>
+    <!-- 注册 -->
+    <button @click="register" ref="register" v-else>注册</button>
+    <!-- 登录 -->
+    <div class="loginOther" v-if="isLogin">
         <div class="left">验证码登录</div>
         <div class="right">
             <div class="forget">忘记密码</div>
             <div class="register">立即注册</div>
         </div>
+    </div>
+    <!-- 注册 -->
+     <div class="registerOther" v-else>
+        <div class="toLogin">已有密码？去登录</div>
     </div>
   </div>
 </template>
@@ -45,12 +63,16 @@ export default {
     data () {
         return {
             flag: 1,
+            aginFlag: 1,
             account: '',
             password: '',
-            isCheck: 0
+            passwordAgain: '',
+            isCheck: 0,
+            isLogin: true
         }
     },
     methods: {
+        // 密码是否可见
         changeFlag () {
             if (this.flag === 1) {
                  this.flag = 0
@@ -59,6 +81,15 @@ export default {
                 this.flag = 1
             }
         },
+        changeLastFlag() {
+            if (this.aginFlag === 1) {
+                 this.aginFlag = 0
+            }
+            else {
+                this.aginFlag = 1
+            }
+        },
+        // 是否勾选同意协议
         checked () {
             if (!this.isCheck) {
                 this.isCheck = 1
@@ -70,36 +101,72 @@ export default {
                 this.$refs.cir.classList.remove('check')
             }
         },
-        // 校验账户和密码
-        // vaildFn () {
-        //     if (!/^[a-zA-Z0-9]&/.test(this.account)) {
-        //         this.$toast('请输入正确的账号')
-        //         return false
-        //     } 
-        //     if (!/^[a-zA-Z0-9]&/.test(this.password)) {
-        //         this.$toast('请输入正确的密码')
-        //         return false
-        //     }
-        //     return true
-        // }, // 感觉没必要
+        // 登录
         async login () {
             // 1.判断
-            // 2.重置表单
+            if (!this.isCheck) return this.$toast('请先同意协议')
+            // 2.改变效果
+            // this.$refs.login.classList.add('active')
+            // 3.提交用户信息
+            const res = await axios.post('http://localhost:8080/api/auth/login', { 
+                username: this.account,
+                password: this.password
+            })
+            console.log(res)
+            // 4.存储 userInfo (token、信息)
+            this.$store.commit('user/setUserInfo', res.data.data)
+            // 5.重置表单
             this.account = ''
             this.password = ''
             this.$refs.cir.classList.remove('check')
-            // 3.改变效果
-            // this.$refs.login.classList.add('active')
-            // 4.提交用户信息
-            const res = await axios.post('http://localhost:8080/api/auth/login', { 
-                username: 'zs',
-                password: 123456
+            // 6.跳转页面
+            this.$router.push('/home')
+        },
+        // 注册
+        async register () {
+            // 判断 --> 1.两次的密码要一致
+            if (this.password !== this.passwordAgain) return this.$toast('两次的密码要一致')
+            // 2.有无同意协议
+            if (!this.isCheck) return this.$toast('请先同意协议')
+            const res = await axios.post('http://localhost:8080/api/auth/register', {
+                username: this.account,
+                password: this.password
             })
             console.log(res)
-            // 5.存储 userInfo (token、信息)
-            this.$store.commit('user/setUserInfo', res.data.data)
-            // 6.跳转页面
-            this.$router.push('/')
+            // 重置表单
+            this.account = ''
+            this.password = ''
+            this.passwordAgain = ''
+            this.$refs.cir.classList.remove('check')
+        },
+        // 改变模式样式
+        switchingMode () {
+            const subject = this.$refs.subject
+            // console.log(subject.childNodes[1])
+            if (subject.childNodes[1].classList.contains('registerTab')) {
+                // console.log('登录页面',11)
+                subject.style.height = '424px'
+            }else {
+                subject.style.height = '345px'
+            }
+        },
+        // 变为注册模式
+        toRegister () {
+            this.isLogin = false
+            this.$refs.loginMode.style.color = '#00000080'
+            this.$refs.registerMode.style.color = '#F2A600'
+            this.$nextTick(() => {
+                this.switchingMode()
+            })
+        },
+        // 变为登录模式
+        toLogin () {
+            this.isLogin = true
+            this.$refs.loginMode.style.color = '#F2A600'
+            this.$refs.registerMode.style.color = '#00000080'
+            this.$nextTick(() => {
+                this.switchingMode()
+            })
         }
     },
 }
@@ -180,7 +247,8 @@ export default {
             font-weight: 550;
         }
     }
-    .center {
+    .loginTab,
+    .registerTab {
         margin-top: 51px;
         margin-left: 10px;
         position: relative;
@@ -198,7 +266,8 @@ export default {
             background: #fdf5e180 url('../../assets/image/zhanghao.png') no-repeat 37px;
             background-size: 20px;
         }
-        [name = password] {
+        [name = password],
+        [name = password-again] {
             padding-left: 74px;
             margin-top: 44px;
             width: 300px;
@@ -210,8 +279,14 @@ export default {
         }
         .eye {
             position: absolute;
-            right: 60px;
             top: 110px;
+            right: 60px;
+            width: 20px;
+        }
+        .password-again-eye {
+            position: absolute;
+            top: 205px;
+            right: 60px;
             width: 20px;
         }
     }
@@ -252,7 +327,7 @@ button {
     font-size: 20px;
     transition: all 1s;
 }
-.other {
+.loginOther {
     margin-top: 53px;
     padding: 16px;
     display: flex;
@@ -277,6 +352,16 @@ button {
         .forget {
             border-bottom:1px #4781b3 solid;
         }
+    }
+}
+.registerOther {
+    color: #4781b3;
+    font-size: 12px;
+    .toLogin {
+        margin-top: 30px;
+        margin-left: 121px;
+        width: 98px;
+        border-bottom:1px #4781b3 solid;
     }
 }
 .active {

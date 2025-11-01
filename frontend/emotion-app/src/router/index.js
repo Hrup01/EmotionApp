@@ -13,6 +13,7 @@ import Attention from '@/views/layout/community/attention.vue'
 import User from '@/views/layout/user/index.vue'
 import Note from '@/views/layout/user/note.vue'
 import Collect from '@/views/layout/user/collect.vue'
+const EditInformation = () => import ('@/views/layout/user/editInformation.vue') 
 
 // 一级路由
 const Login = () => import ('@/views/login')
@@ -34,24 +35,12 @@ const CountDown = () => import ('@/views/countDown')
 const NoteDetail = () => import ('@/views/noteDetail')
 const PrivateLetter = () => import ('@/views/privateLetter')
 const WoodFish = () => import ('@/views/woodFish')
-// import Login from '@/views/login'
-// import MoodOption from '@/views/moodOption'
-// import Log from '@/views/log'
-// import AI from '@/views/AI'
-// import WhiteNoise from '@/views/whiteNoise'
-// import OtherHomePage from '@/views/otherHomePage'
-// import MessageCenter from '@/views/messageCenter'
-// import NewFollow from '@/views/newFollow'
-// import Comment from '@/views/comment'
-// import LikeReceived from '@/views/likeReceived'
-// import MyAttention from '@/views/myAttention'
-// import PostNotes from '@/views/postNotes'
-// import State from '@/views/state'
-// import Meditation from '@/views/meditation'
-// import CountDown from '@/views/countDown'
-// import NoteDetail from '@/views/noteDetail'
-// import PrivateLetter from '@/views/privateLetter'
-// import WoodFish from '@/views/woodFish'
+const MoreSet = () => import ('@/views/woodFish/moreSet')
+const ClockIn = () => import ('@/views/clockIn')
+const DiaryNoteBook = () => import ('@/views/diaryNoteBook')
+const DiaryDetail = () => import ('@/views/diaryNoteBook/diaryDetail')
+
+import test from '@/views/test.vue'
 
 Vue.use(VueRouter)
 
@@ -81,6 +70,7 @@ const router = new VueRouter({
       ],
       redirect: '/home'
     },
+    { path: '/test', component: test },
     { path: '/login', component: Login },
     { path: '/weeklyReports', component: WeeklyReports },
     { path: '/moodOption', component: MoodOption },
@@ -100,6 +90,11 @@ const router = new VueRouter({
     { path: '/noteDetail/:id', component: NoteDetail },
     { path: '/privateLetter/:id', component: PrivateLetter },
     { path: '/woodFish', component: WoodFish },
+    { path: '/woodFish/moreSet', component: MoreSet },
+    { path: '/clockIn', component: ClockIn },
+    { path: '/user/editInformation', component: EditInformation },
+    { path: '/diaryNoteBook', component: DiaryNoteBook },
+    { path: '/diaryDetail/:season', component: DiaryDetail },
   ]
 })
 

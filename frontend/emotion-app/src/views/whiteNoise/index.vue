@@ -37,6 +37,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+// import Bus from '@/utlis/EventBus'
 // import stateItem from '@/components/stateItem.vue'
 export default {
     name: 'whiteNoise',
@@ -51,7 +52,12 @@ export default {
             // prevOptionAudio: '',
             currentOptionAudio: '',
             // nextOptionAudio: '',
+            // 最后选择的白噪音
+            lastWhiteNoise: '',
+            totalSecond: '',
+            timer: null,
             isPlay: false,
+            isClick: false,
             whiteNoiseList: [
                 { id: 0, audioUrl: require('@/assets/audio/白噪音/海洋.mp3'), picUrl: require('@/assets/image/白噪音/海洋.png'), text: '海洋', ref: 'sea' },
                 { id: 1, audioUrl: require('@/assets/audio/白噪音/山间瀑布.mp3'), picUrl: require('@/assets/image/白噪音/山间瀑布.png'), text: '山间瀑布', ref: 'waterfall' },
@@ -93,6 +99,8 @@ export default {
             // console.log(this.currentOptionAudio)
             // 改变控件图片
             this.isPlay = true
+            // 将当前选择的白噪音存到本地存储中
+            localStorage.setItem('currentWhiteNoise', id)
         },
         pauseAudio () {
             this.isPlay = false
@@ -104,9 +112,14 @@ export default {
         // 下面控件的操作
         ctrlPlayAudio () {
             this.isPlay = true
+            this.isClick = true
             // 获取选择白噪音的索引值
-            const id = this.currentOptionAudio
-            this.playAudio(id)
+            if (this.currentOptionAudio) {
+                this.playAudio(this.currentOptionAudio)
+            }else {
+                this.currentOptionAudio = this.lastWhiteNoise
+                this.playAudio(this.lastWhiteNoise)
+            }
         },
         // 切换上一首
         prevAudio () {
@@ -120,6 +133,39 @@ export default {
             if (id > 15) return
             console.log(this.whiteNoiseList[id].ref)
             this.playAudio(id)
+        }
+    },
+    mounted () {
+        // 从vuex中获取倒计时的时间
+        this.totalSecond = this.$store.state.countDown.playTime
+        console.log('白噪音组件的时间：', this.totalSecond);
+        // 从本地存储中获取上次选择的白噪音
+        this.lastWhiteNoise = localStorage.getItem('currentWhiteNoise')
+        // if (lastWhiteNoise !== null) {
+        //     console.log('上次选择的白噪音索引：', lastWhiteNoise);
+        //     // 如果有点击下方控件再播放
+        //     if (this.isClick) {
+        //         this.currentOptionAudio = lastWhiteNoise
+        //         this.playAudio(lastWhiteNoise)
+        //     }
+        // }
+        // 倒计时结束后暂停白噪音播放
+        // 如果传了倒计时时间就开始计时
+        if (this.totalSecond) {
+            console.log('开始计时：', this.totalSecond);
+            setTimeout(() => {
+                this.pauseAudio()
+                // 重置vuex中的时间 --- 倒计时页面也要重置
+                // this.timer = setInterval(() => {
+                //     this.$store.commit('countDown/changePlayTime')
+                //     console.log('倒计时剩余时间：', this.$store.state.countDown.playTime)
+                //     // 如果时间减到0就清除定时器
+                //     if (this.$store.state.countDown.playTime <= 0) {
+                //         clearInterval(this.timer)
+                //         this.timer = null
+                //     }
+                // }) ???
+            }, this.totalSecond * 1000)
         }
     }
 }

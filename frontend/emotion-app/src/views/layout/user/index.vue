@@ -1,8 +1,9 @@
 <template>
   <div id="user">
     <div class="header">
+      <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
       <div class="top">
-        <img src="@/assets/image/我的/编辑2.png" alt="" class="editor" @click="$router.push('/postNotes')">
+        <img src="@/assets/image/我的/编辑2.png" alt="" class="editor" @click="$router.push('/user/editInformation')">
         <img src="@/assets/image/我的/设置.png" alt="" class="set">
       </div>
       <div class="userMessage">
@@ -63,9 +64,9 @@ export default {
         fansCount: 100,
         functionList: [
           { id: 0, bgUrl: require('@/assets/image/我的/状态背景.png'), picUrl: require('@/assets/image/我的/状态.png'), name: '状态选择', ref: 'state', toUrl: '/state' },
-          { id: 1, bgUrl: require('@/assets/image/我的/日记背景.png'), picUrl: require('@/assets/image/我的/日记.png'), name: '日记记录', ref: 'dairy', toUrl: '/state' },
-          { id: 2, bgUrl: require('@/assets/image/我的/手账背景.png'), picUrl: require('@/assets/image/我的/手账.png'), name: '手账记录', ref: 'scrapbook', toUrl: '/state' },
-          { id: 3, bgUrl: require('@/assets/image/我的/打卡背景.png'), picUrl: require('@/assets/image/我的/打卡.png'), name: '打卡奖励', ref: 'clockin', toUrl: '/state' },
+          { id: 1, bgUrl: require('@/assets/image/我的/日记背景.png'), picUrl: require('@/assets/image/我的/日记.png'), name: '日记记录', ref: 'dairy', toUrl: '/moodOption' },
+          { id: 2, bgUrl: require('@/assets/image/我的/手账背景.png'), picUrl: require('@/assets/image/我的/手账.png'), name: '手账记录', ref: 'scrapbook', toUrl: '/' },
+          { id: 3, bgUrl: require('@/assets/image/我的/打卡背景.png'), picUrl: require('@/assets/image/我的/打卡.png'), name: '打卡奖励', ref: 'clockin', toUrl: '/clockIn' },
           { id: 4, bgUrl: require('@/assets/image/我的/商店背景.png'), picUrl: require('@/assets/image/我的/商店.png'), name: '商店', ref: 'shop', toUrl: '/state' }
         ],
         navbarList: { firstName: '笔记', sencondName: '收藏', bottomPicUrl: require('@/assets/image/我的/笔记_选中.png'), firstToUrl: '/user/note', secondToUrl: '/user/collect' },
@@ -84,11 +85,15 @@ export default {
   background-size: cover;
   font-weight: 600;
   // background-color: pink;
+  .top-time {
+    width: 390px;
+    background-color: transparent;
+  }
   .top {
     // margin-top: 66px;
     img {
       position: absolute;
-      top: 66px;
+      top: 50px;
       width: 20px;
       height: 20px;
     }
@@ -100,7 +105,7 @@ export default {
     }
   }
   .userMessage {
-    margin-top: 100px;
+    margin-top: 60px;
     display: flex;
     flex-direction: column;
     align-items: center;

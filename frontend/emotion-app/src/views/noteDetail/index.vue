@@ -91,6 +91,7 @@ export default {
         return {
             navbarTitle: '笔记',
             marginLeft: '130px',
+            // isCenter: true,
             flag: false,
             likeCount: 123,
             commentCount: '',
@@ -316,7 +317,7 @@ export default {
     .navbarRightPic {
         .more {
             position: fixed;
-            top: 50px;
+            top: 20px;
             right: 22px;
             width: 24px;
         }

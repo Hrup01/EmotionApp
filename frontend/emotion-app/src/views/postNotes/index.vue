@@ -1,6 +1,6 @@
 <template>
   <div id="postNotes">
-    <nav-bar :title="navbartitle"></nav-bar>
+    <nav-bar :title="navbartitle" :is-post-notes="isPostNotes"></nav-bar>
     <div class="navbarRightPic" @click="createPost">
         <img src="@/assets/image/笔记页面/路径 1.png" alt="">
     </div>
@@ -53,6 +53,7 @@ export default {
     },
     data () {
         return {
+            isPostNotes: true,
             token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             navbartitle: '发布笔记',
             // haveRight: true,
@@ -98,17 +99,17 @@ export default {
         },
         // 创建帖子
         async createPost () {
-            const res = await axios.post('http://localhost:8080/api/community/posts', {}, {
+            console.log(this.images)
+            const res = await axios.post('http://localhost:8080/api/community/posts', this.images, {
                 params: {
                     content: this.content,
-                    images: this.images
                 },
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
             })
             console.log(res)
-            this.$router.push('/community/recommend')
+            // this.$router.go(-1)
         }
     },
     mounted () {
@@ -120,9 +121,10 @@ export default {
             this.$refs.upload[0].click()
             this.$refs.upload[0].addEventListener('change', e => {
                 const fd = new FormData()
-                fd.append('img',e.target.files[0])
+                console.log(e.target.files[0])
+                fd.append('images',e.target.files[0])
                 this.images = fd
-                // console.log(fd)
+                console.log(fd)
                 // console.log(this.images)
             })
         })

@@ -31,7 +31,7 @@
     <div class="footer" ref="footer">
         <div class="sendMessage">
             <textarea name="" id="" v-model="content" @focus="changeContent" ref="textarea"></textarea>
-            <div class="send" @click="sendMessage">发送</div>
+            <div class="send" ref="send">发送</div>
             <div class="add"><img src="@/assets/image/私信/添加.png" alt="" @click="addFunction"></div>
         </div>
         <div class="moreFunction" v-show="isAddFunction">
@@ -44,7 +44,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
     name: 'privateLetter',
     components: {
@@ -89,41 +89,41 @@ export default {
             this.$refs.upload.click()
         },
         // 发送消息
-        async sendMessage () {
-            if (this.content === '发送消息...') return
-            // console.log(11)
-            if (this.content != '') {
-                // 异步任务 --> 微任务
-                const res = await axios.post(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
-                    // 去除前后空格
-                    content: this.content.trim()
-                }, {
-                    headers: {
-                        Authorization: 'Bearer ' + this.token
-                    }
-                })
-                console.log('我发送的信息',res)
-                // 渲染页面
-                this.getUserMessage()
-            }
-            // 异步任务 --> 宏任务
-            setTimeout(( () => this.content = '发送消息...'),100)
-        },
+        // async sendMessage () {
+        //     if (this.content === '发送消息...') return
+        //     // console.log(11)
+        //     if (this.content != '') {
+        //         // 异步任务 --> 微任务
+        //         const res = await axios.post(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
+        //             // 去除前后空格
+        //             content: this.content.trim()
+        //         }, {
+        //             headers: {
+        //                 Authorization: 'Bearer ' + this.token
+        //             }
+        //         })
+        //         console.log('我发送的信息',res)
+        //         // 渲染页面
+        //         this.render()
+        //     }
+        //     // 异步任务 --> 宏任务
+        //     setTimeout(( () => this.content = '发送消息...'),100)
+        // },
         // 获取与指定用户的私信对话
-        async getUserMessage () {
-            const res = await axios.get(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
-                params: {
-                    page: 0,
-                    size: 20
-                },
-                headers: {
-                    Authorization: 'Bearer ' + this.token
-                }
-            })
-            console.log('对方发送的信息',res)
-            this.answer = res.data.data[0].content
-            this.render()
-        },
+        // async getUserMessage () {
+        //     const res = await axios.get(`http://localhost:8080/api/community/dm/${this.toUserId}`, {
+        //         params: {
+        //             page: 0,
+        //             size: 20
+        //         },
+        //         headers: {
+        //             Authorization: 'Bearer ' + this.token
+        //         }
+        //     })
+        //     console.log('对方发送的信息',res)
+        //     this.answer = res.data.data[0].content
+        //     this.render()
+        // },
         // 渲染页面函数
         render () {
         if (this.myContent !== '') {
@@ -143,7 +143,54 @@ export default {
       },
     },
     mounted () {
-        // this.getUserMessage()
+        // 使用websocket获取与指定用户的私信对话
+        // let ws = new WebSocket(`ws://localhost:8080/ws/dm/${this.toUserId}?token=${this.token}`)
+        // const openEvent = () => {
+        //     console.log('连接成功')
+        // }
+        // const getMessage = (event) => {
+        //     const messageData = JSON.parse(event.data)
+        //     console.log('收到的信息', messageData)
+        //     this.answer = messageData.content
+        //     this.render()
+        // }
+        // const closeEvent = () => {
+        //     console.log('连接关闭')
+        //     reconnect()
+        // }
+        // const errorEvent = () => {
+        //     console.log('连接错误')
+        // }
+        // ws.addEventListener('open', openEvent)
+        // ws.addEventListener('message', getMessage)
+        // ws.addEventListener('close', closeEvent)
+        // ws.addEventListener('error', errorEvent)
+        // // 发送信息
+        // const sendMessage = () => {
+        //     if (this.content === '发送消息...') return
+        //     if (this.content != '') {
+        //         const message = {
+        //             toUserId: this.toUserId,
+        //             content: this.content.trim()
+        //         }
+        //         ws.send(JSON.stringify(message))
+        //         this.render()
+        //     }
+        //     setTimeout(( () => this.content = '发送消息...'),100)
+        // }
+        // this.$refs.send.addEventListener('click', sendMessage)
+        // // 重连机制
+        // const reconnect = () => {
+        //     setTimeout(() => {
+        //         console.log('正在重连...')
+        //         ws = new WebSocket(`ws://localhost:8080/ws/dm/${this.toUserId}?token=${this.token}`)
+        //         ws.addEventListener('open', openEvent)
+        //         ws.addEventListener('message', getMessage)
+        //         ws.addEventListener('close', closeEvent)
+        //         ws.addEventListener('error', errorEvent)
+        //         this.$refs.send.addEventListener('click', sendMessage)
+        //     }, 5000)
+        // }
     }
 }
 </script>

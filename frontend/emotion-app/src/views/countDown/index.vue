@@ -49,6 +49,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+// import Bus from '@/utlis/EventBus'
 export default {
   name: 'countDown',
   components: {
@@ -61,7 +62,7 @@ export default {
       minute: '00',
       second: '02',
       finshStop: false,
-      isUserDefined: false,
+      isUserDefined: true,
       timeList: [
         { id: 0, text: '不定时', isCheck: false, totalSecond: '' },
         { id: 1, text: '10分钟', isCheck: false, totalSecond: '600' },
@@ -87,10 +88,8 @@ export default {
       // console.log(this.timeList[index].totalSecond)
       this.totalSecond = this.timeList[index].totalSecond
       this.startCounting()
-      // 白噪音页面开始播放
-
-      // 传递播放时间
-      this.$store.commit('countDown/setwhiteNoisePlayTime', this.timeList[index].totalSecond)
+      // // 传递播放时间
+      this.$store.commit('countDown/setwhiteNoisePlayTime', this.totalSecond)
     },
     // 渲染页面倒计时
     render () {
@@ -114,6 +113,8 @@ export default {
     }
   },
   mounted () {
+    // 获取vuex中的倒计时总秒数
+    this.totalSecond = this.$store.state.countDown.playTime
     // 组件渲染完成后将totalSecond转成对应的时分秒
     this.render()
   },
