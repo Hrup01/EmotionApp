@@ -18,7 +18,7 @@ public class EmotionAIController {
     private final ChatClient chatClient;
     @GetMapping(value = "/chat",produces = "application/json;charset=utf-8")
     public Flux<Result<String>> chat(@RequestParam String prompt, @RequestParam String chatId) {
-        // 1. 调用AI接口，获取流式响应
+        //调用AI接口，获取流式响应
         Flux<String> aiFlux = chatClient.prompt()
                 .user(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, chatId))
