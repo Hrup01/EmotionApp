@@ -1,12 +1,13 @@
 package com.groupb.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.groupb.pojo.User;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDateTime;
 
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
     
     @Select("SELECT id, username, password, phone, avatar_url as avatarUrl, status, last_login_time as lastLoginTime, " +
             "create_time as createTime, update_time as updateTime FROM users WHERE username = #{username} LIMIT 1")
