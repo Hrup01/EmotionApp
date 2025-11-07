@@ -30,6 +30,8 @@ public class AIChatMessageServiceImpl implements AIChatMessageService, ChatMemor
     @Autowired
     private AIChatHistoryMapper aiChatHistoryMapper;
 
+
+
     private static int inCount=0;//计数，奇数保存用户信息，偶数保存助手信息
 
     //提供JDK21-的api(removeLast,getLast)
@@ -91,18 +93,6 @@ public class AIChatMessageServiceImpl implements AIChatMessageService, ChatMemor
 
         Assert.notNull(conversationId, "保存会话内容时，会话Id不能为空");
         inCount++;//开始计数
-//        Set<AIChatMessage> existingIds = ConcurrentHashMap.newKeySet();
-//        find(conversationId).forEach(m -> {
-//            existingIds.add(m);
-//        });
-
-        //判重
-
-
-//        List<AIChatMessage> toInsert = messages.stream()
-//                .map(m -> new AIChatMessage(m, conversationId))
-//                .filter(x -> !existingIds.contains(x))
-//                .toList();
 
         int count=0;//有效添加数--每次添加一条数据，在增强中一次交互触发俩次saveAll
         List<AIChatMessage> toInsert=new ArrayList<>();
@@ -149,7 +139,7 @@ public class AIChatMessageServiceImpl implements AIChatMessageService, ChatMemor
     }
 
     /**
-     * 减少message-AIChatMessage之间的转化
+     * 减少Message-AIChatMessage之间的转化
      * @param conversationId 会话Id
      * @return AIChatMessage
      */

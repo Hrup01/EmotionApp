@@ -11,7 +11,7 @@ spring:
     url: jdbc:mysql://localhost:3306/emotionApp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: zy060320
+    password: 2900584594
     druid:
       # 初始化连接池大小
       initial-size: 5

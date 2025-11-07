@@ -26,5 +26,8 @@ public class AIChatHistory {
     //业务类型(目前仅有chat类型)
     private String type;
 
+    @TableField("summary")//会话总结
+    private String summary;
+
 
 }
