@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend wrapper">
+  <div class="recommend wrapper" ref="scrollContainer">
     <contentItem 
       v-for="item in contentList"
       :key="item.id"
@@ -12,7 +12,7 @@
 
 <script>
 import contentItem from '@/components/contentItem.vue'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
   name: 'recommendPage',
   components: {
@@ -20,33 +20,44 @@ export default {
   },
   data () {
     return {
+      scrollTop: 0, // 记录滚动位置
       contentList: [
-        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
-        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 0, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈1', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 1, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈2', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 2, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈3', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 3, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈4', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 4, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈5', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
+        { id: 5, headPortraitUrl: require('@/assets/image/头像1.png'), bgUrl: require('@/assets/image/背景1.png'), authorName: '小小栈6', likeCount: 123, commentCount: 123, title: '云朵是天空温柔的枕头' },
       ],
     }
   },
-  async mounted () {
-    const token = JSON.parse(localStorage.getItem('emotion_app_info')).token
-    // console.log(token)
-    // 获取推荐列表
-    const res = await axios.get('http://localhost:8080/api/community/feed', {
-      params: {
-        type: 'recommend',
-        page: 0,
-        size: 10,
-      },
-      headers: {
-          Authorization: 'Bearer ' + token
-      }
+  // async mounted () {
+  //   const token = JSON.parse(localStorage.getItem('emotion_app_info')).token
+  //   // console.log(token)
+  //   // 获取推荐列表
+  //   const res = await axios.get('http://localhost:8080/api/community/feed', {
+  //     params: {
+  //       type: 'recommend',
+  //       page: 0,
+  //       size: 10,
+  //     },
+  //     headers: {
+  //         Authorization: 'Bearer ' + token
+  //     }
+  //   })
+  //   console.log('获取推荐列表',res)
+  //   // this.contentList = res.data.data
+  //   // console.log('打印图片地址',this.contentList[0].imageUrls[0])
+  // },
+  activated () {
+    console.log('从缓存中取出')
+    this.$nextTick(() => {
+      this.$refs.scrollContainer.scrollTop = this.scrollTop
     })
-    console.log('获取推荐列表',res)
-    // this.contentList = res.data.data
-    // console.log('打印图片地址',this.contentList[0].imageUrls[0])
+  },
+  deactivated () {
+    console.log('存入缓存', this.$refs.scrollContainer.scrollTop)
+    this.scrollTop = this.$refs.scrollContainer.scrollTop
   }
 }
 </script>

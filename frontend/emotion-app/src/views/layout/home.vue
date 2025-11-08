@@ -36,7 +36,7 @@
         <img src="@/assets/image/首页/日记.png" alt="" class="dairy">
         <p>日记</p>
       </router-link>
-      <router-link to="">
+      <router-link to="/bulletJournal/0">
         <img src="@/assets/image/首页/涂鸦.png" alt="" class="graffiti">
         <p>手账</p>
       </router-link>
@@ -44,7 +44,7 @@
         <img src="@/assets/image/首页/周报.png" alt="" class="weeklyReport">
         <p>周报</p>
       </router-link>
-      <router-link to="">
+      <router-link to="/psychologicalTestIndex">
         <img src="@/assets/image/首页/心理测评.png" alt="" class="psychological">
         <p>心理测评</p>
       </router-link>

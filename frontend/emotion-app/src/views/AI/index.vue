@@ -1,6 +1,10 @@
 <template>
   <div id="AI">
     <nav-bar :is-transparent="isTransparent"></nav-bar>
+    <div class="right">
+      <img src="@/assets/image/AI/新增对话.png" alt="">
+      <img src="@/assets/image/AI/历史记录进入按钮.png" alt="">
+    </div>
     <div class="title wrapper">AI情绪教练</div>
     <div class="dialog wrapper">
       <!-- 无对话时 -->
@@ -30,6 +34,7 @@
           <div class="answer" v-else-if="item.role === 'ai'">
             <div class="item">
               <img src="@/assets/image/AI/AI头像.png" alt="">
+              <!-- <p v-if="isLoading"></p> -->
               <p>{{ item.content }}</p>
             </div>
           </div>
@@ -43,14 +48,23 @@
           <img src="@/assets/image/AI/发送.png" alt="" @click="sendMessage">
         </div>
       </div>
+
+      <!-- 历史会话记录 -->
     </div>
   </div>
 </template>
 
 <script>
+/*
+请求: 1.获取ai回答 -- methods -- 完成
+      2.添加历史会话 -- 离开组件时 -- beforeDestroy -- 完成
+      3.删除历史会话 -- methods
+      4.获取全部历史会话 -- 组件渲染完成 -- mounted -- 完成 (获取chatId)
+      5.获取会话内容 -- methods
+*/
 import axios from 'axios'
-// import request from '@/utlis/request'
 import NavBar from '@/components/NavBar.vue'
+import { generateChatID } from '@/utlis/chatID'
 export default {
     name: 'AIPage',
     components: {
@@ -66,7 +80,14 @@ export default {
         haveContent: false,
         // 存储所有聊天记录
         chatMessages: [],
-        intervalId: null
+        intervalId: null,
+        chatId: '',
+        // 历史会话的chatId
+        historyChatId: '',
+        isLoading: false,
+        // // 流式输出
+        // isStreaming: false, // 是否流式输出
+        // currentIndex: -1 //当前流式对话在chatMessages中的索引
       }
     },
     methods: {
@@ -75,12 +96,12 @@ export default {
         const res = await axios.get('http://localhost:8080/ai/chat', {
           params: {
             prompt: this.userSentence,
-            chatId: 1
+            chatId: this.chatId
           },
-          responseType: 'stream',
+          responseType: 'text',
           headers: {
-                Authorization: 'Bearer ' + this.token
-            }
+              Authorization: 'Bearer ' + this.token
+          }
         })
         // 先推送一个空的ai回答占位符
         this.chatMessages.push({ role: 'ai', content: '' })
@@ -108,6 +129,44 @@ export default {
                 this.intervalId = null
             }
         }, 50)
+
+        // try {
+        //   await axios.get('http://localhost:8080/ai/chat', {
+        //     params: {
+        //       prompt: this.userSentence,
+        //       chatId: this.chatId
+        //     },
+        //     responseType: 'text',
+        //     headers: {
+        //         Authorization: 'Bearer ' + this.token
+        //     },
+        //     onDownloadProgress: (progressEvent) => {
+        //       console.log(progressEvent.currentTarget)
+        //       const chunk = progressEvent.currentTarget.responseText
+        //       const regex = /\{[^}]+\}/g
+        //       const chunks = chunk.match(regex) || []
+        //       chunks.forEach((chunk) => {
+        //         if (chunk.trim()) {
+        //           const { data } = JSON.parse(chunk)
+        //           // console.log(data)
+        //           // this.answer += data
+        //           const lastMsg = this.chatMessages.findLast(item => item.role === 'ai')
+        //           console.log(lastMsg)
+        //           if (lastMsg) {
+        //             lastMsg.content += data
+        //             this.$set(lastMsg, 'content', lastMsg.content)
+        //           }
+        //         }
+        //       })
+        //       this.$nextTick(() => {
+        //           const box = this.$refs.haveContent
+        //           box[box.length - 1].scrollIntoView({ behavior: 'smooth' })
+        //       })
+        //     }
+        //   })
+        // } catch (error) {
+        //   console.log('请求失败')
+        // }
       },
       // 发送消息
       sendMessage () {
@@ -117,6 +176,8 @@ export default {
             this.userSentence = this.message.trim()
             // 推送 用户信息 到聊天记录
             this.chatMessages.push({ role: 'user', content: this.userSentence })
+            // 先推送一个空的ai回答占位符
+            // this.chatMessages.push({ role: 'ai', content: '' })
             // 自动滚动到底部
             this.$nextTick(() => {
                 const box = this.$refs.haveContent
@@ -126,11 +187,13 @@ export default {
         this.message = '向小栈发送信息'
         this.$refs.textarea.blur()
         // this.$refs.message.style.bottom = '31px'
-        // 获得后端传回的ai回答
         this.answer = ''
+        // 发送消息后开启加载状态
+        this.isLoading = true 
+        // 获得后端传回的ai回答
         this.getAIAnswer()
-      },
 
+      },
       changeMessage () {
         // 使文本域到键盘上方
         // this.$refs.message.style.bottom = '0'
@@ -142,11 +205,61 @@ export default {
             }
         })
       },
+      // 生成唯一的chatId
+      initChatId () {
+        const storedChatId = sessionStorage.getItem('chatId')
+        if (storedChatId) {
+          this.chatId = storedChatId
+        }else {
+          const newChatId = generateChatID()
+          sessionStorage.setItem('chatId', newChatId)
+          this.chatId = newChatId
+        }
+      },
+      // 结束前推送会话记录
+      async postConversation () {
+        const res = await axios.post(`http://localhost:8080/ai/chatHistory/${this.chatId}`, {}, {
+          headers: {
+              Authorization: 'Bearer ' + this.token
+          }
+        })
+        console.log('推送会话记录: ', res)
+      },
+      // 获取会话内容
+      async getConversationContent () {
+        const res = await axios.get(`http://localhost:8080/ai/message/${this.historyChatId}`, {
+          headers: {
+              Authorization: 'Bearer ' + this.token
+          }
+        })
+        console.log(res)
+      }
     },
+    created () {
+      // 创建组件时就生成chatId
+      this.initChatId()
+    },
+    // async mounted () {
+    //   // 获取全部历史会话记录
+    //   const res = await axios.get('http://localhost:8080/ai/chatHistory', {
+    //     headers: {
+    //           Authorization: 'Bearer ' + this.token
+    //       }
+    //   })
+    //   console.log('全部历史会话记录: ',res.data.data)
+    //   // 推送chatId到数组中
+    //   // res.data.data.forEach((item) => {
+    //   //   this.historyChatId.push = item.chatId
+    //   // })
+    //   this.historyChatId = res.data.data[0].chatId
+    //   // console.log('历史会话id: ', this.historyChatId)
+    //   // this.getConversationContent()
+    // },
     beforeDestroy () {
       if (this.intervalId) {
         clearInterval(this.intervalId)
       }
+      // this.postConversation()
     }
 }
 </script>
@@ -160,6 +273,14 @@ export default {
 .wrapper {
   margin: 0 auto;
   width: 365px;
+}
+.right {
+  position: absolute;
+  top: 38px;
+  right: 12px;
+  img {
+    width: 48px;
+  }
 }
 .title {
   margin-top: 100px;

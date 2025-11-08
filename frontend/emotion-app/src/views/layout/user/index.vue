@@ -65,7 +65,7 @@ export default {
         functionList: [
           { id: 0, bgUrl: require('@/assets/image/我的/状态背景.png'), picUrl: require('@/assets/image/我的/状态.png'), name: '状态选择', ref: 'state', toUrl: '/state' },
           { id: 1, bgUrl: require('@/assets/image/我的/日记背景.png'), picUrl: require('@/assets/image/我的/日记.png'), name: '日记记录', ref: 'dairy', toUrl: '/moodOption' },
-          { id: 2, bgUrl: require('@/assets/image/我的/手账背景.png'), picUrl: require('@/assets/image/我的/手账.png'), name: '手账记录', ref: 'scrapbook', toUrl: '/' },
+          { id: 2, bgUrl: require('@/assets/image/我的/手账背景.png'), picUrl: require('@/assets/image/我的/手账.png'), name: '手账记录', ref: 'scrapbook', toUrl: '/bulletJournalRecord' },
           { id: 3, bgUrl: require('@/assets/image/我的/打卡背景.png'), picUrl: require('@/assets/image/我的/打卡.png'), name: '打卡奖励', ref: 'clockin', toUrl: '/clockIn' },
           { id: 4, bgUrl: require('@/assets/image/我的/商店背景.png'), picUrl: require('@/assets/image/我的/商店.png'), name: '商店', ref: 'shop', toUrl: '/state' }
         ],

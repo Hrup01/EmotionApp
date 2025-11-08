@@ -39,6 +39,14 @@ const MoreSet = () => import ('@/views/woodFish/moreSet')
 const ClockIn = () => import ('@/views/clockIn')
 const DiaryNoteBook = () => import ('@/views/diaryNoteBook')
 const DiaryDetail = () => import ('@/views/diaryNoteBook/diaryDetail')
+const BulletJournal = () => import ('@/views/bullet-journal')
+const BulletJournalRecord = () => import ('@/views/bullet-journal/record.vue')
+const EmotionalPuzzle = () => import ('@/views/emotional-puzzle/')
+const PuzzleOption = () => import ('@/views/emotional-puzzle/puzzleOption.vue')
+const PsychologicalTestIndex = () => import ('@/views/psychologicalTest')
+const PsychologicalTest = () => import ('@/views/psychologicalTest/psychologicalTest.vue')
+const HistoryTest = () => import ('@/views/psychologicalTest/historyTest.vue')
+const TestResult = () => import ('@/views/psychologicalTest/testResult.vue')
 
 import test from '@/views/test.vue'
 
@@ -49,13 +57,15 @@ const router = new VueRouter({
     { path: '/', 
       component: Layout,
       children: [
-        { path: '/home', component: Home },
-        { path: '/heal', component: Heal },
+        { path: '/home', component: Home, meta: {keepAlive: false} },
+        { path: '/heal', component: Heal, meta: {keepAlive: false} },
         { path: '/community',
           component: Community,
+          // meta: {keepAlive: true}, //标记需缓存
           children: [
-            { path: '/community/recommend', component: Recommend },
-            { path: '/community/attention', component: Attention }
+            { path: '/community/recommend', component: Recommend,  meta: {keepAlive: true} },
+            { path: '/community/attention', component: Attention },
+            // { path: '/noteDetail/:id', component: NoteDetail }
           ],
           redirect: '/community/recommend'
         },
@@ -95,6 +105,14 @@ const router = new VueRouter({
     { path: '/user/editInformation', component: EditInformation },
     { path: '/diaryNoteBook', component: DiaryNoteBook },
     { path: '/diaryDetail/:season', component: DiaryDetail },
+    { path: '/bulletJournal/:id', component: BulletJournal },
+    { path: '/bulletJournalRecord', component: BulletJournalRecord },
+    { path: '/emotionalPuzzle', component: EmotionalPuzzle },
+    { path: '/puzzleOption', component: PuzzleOption },
+    { path: '/psychologicalTestIndex', component: PsychologicalTestIndex },
+    { path: '/psychologicalTest', component: PsychologicalTest },
+    { path: '/historyTest', component: HistoryTest },
+    { path: '/testResult', component: TestResult },
   ]
 })
 

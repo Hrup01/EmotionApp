@@ -1,6 +1,6 @@
 <template>
   <div id="otherHomePage">
-    <NavBar></NavBar>
+    <NavBar :isTransparent="isTransparent"></NavBar>
     <div class="navbarRightPic">
         <img src="@/assets/image/更多1.png" alt="" class="more" @click="changeFlag">
         <div class="hiden" ref="hiden" v-show="flag">
@@ -61,6 +61,7 @@ export default {
     },
     data () {
         return {
+            isTransparent: 1,
             flag: false,
             blackList: false,
             report: false,
@@ -80,6 +81,7 @@ export default {
         changeFlag () {
             this.flag = this.flag ? false : true
         },
+        // 是否关注
         changeFollowedState () {
             this.isfollowed = this.isfollowed ? false : true
         }

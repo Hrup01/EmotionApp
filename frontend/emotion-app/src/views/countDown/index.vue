@@ -62,7 +62,7 @@ export default {
       minute: '00',
       second: '02',
       finshStop: false,
-      isUserDefined: true,
+      isUserDefined: false,
       timeList: [
         { id: 0, text: '不定时', isCheck: false, totalSecond: '' },
         { id: 1, text: '10分钟', isCheck: false, totalSecond: '600' },

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="test">
+    <!-- <div class="test">
         <keep-alive>
           <router-link to="nodedetail/1">111</router-link>
           <router-link to="nodedetail/2">111</router-link>
@@ -15,15 +15,19 @@
           <router-link to="nodedetail/11">111</router-link>
           <router-link to="nodedetail/12">111</router-link>
         </keep-alive>
-    </div>
+    </div> -->
+    <tooltip></tooltip>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-
+import tooltip from '@/components/tooltip.vue'
 export default {
   name: 'testPage',
+  components: {
+    tooltip
+  },
   data () {
     return {
       token: JSON.parse(localStorage.getItem('emotion_app_info')).token,

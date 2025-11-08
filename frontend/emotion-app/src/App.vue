@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <img src="@/assets/image/时间.png" alt=""> -->
     <router-view/>
-    <!-- <keep-alive :include="['layoutPage']">
+    <!-- <keep-alive>
       <router-view/>
     </keep-alive> -->
   </div>

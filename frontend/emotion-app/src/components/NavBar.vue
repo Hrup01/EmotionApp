@@ -16,7 +16,7 @@
 <script>
 
 export default {
-  props: ['title', 'haveRight', 'leftPic', 'rightPic', 'marginLeft', 'isTransparent', 'isPostNotes', 'isMoodOption', 'isDiaryNoteBook'],
+  props: ['title', 'haveRight', 'leftPic', 'rightPic', 'marginLeft'],
   // data () {
   //   return {
   //     rightPic: '@/assets/image/更多1.png'
@@ -25,12 +25,6 @@ export default {
   mounted () {
     // console.log(this.marginLeft)
     this.$refs.title.style.marginLeft = this.marginLeft
-    // AI页面 顶部图片背景透明
-    const topTime = this.$refs.topTime
-    if (this.isTransparent) topTime.style.backgroundColor = 'transparent'
-    if (this.isPostNotes) topTime.style.backgroundColor = '#ffefcf'
-    if (this.isMoodOption) topTime.style.backgroundColor = '#FEF8EC'
-    if (this.isDiaryNoteBook) topTime.style.backgroundColor = '#feefce'
   }
 }
 </script>
@@ -45,19 +39,18 @@ export default {
   width: 390px;
   .top-time {
     width: 390px;
-    background-color: #FDF4E4;
-    // background-color: transparent;
+    // background-color: #FDF4E4;
+    background-color: transparent;
   }
   .left {
     margin-right: 14px;
     margin-left: 13px;
     display: flex;
-    height: 24px;
-    // width: 24px;
+    align-items: center;
     img {
     margin-left: 9px;
     margin-top: 3px;
-    width: 24px;
+    width: 28px;
     }
     .otherPic {
       width: 24px;

@@ -1,0 +1,183 @@
+<template>
+  <div id="psychologicalTest">
+    <NavBar></NavBar>
+    <img src="@/assets/image/测评/狗.png" alt="" class="dog">
+    <div class="test-num wrapper">
+        <div class="progress">题 {{ progress }}/<span class="total">10</span></div>
+        <div class="progress-bar">
+            <div class="base item"></div>
+            <div class="superstratum item" :style="{width: progress * 10 + '%'}"></div>
+        </div>
+    </div>
+    <div class="subject wrapper">
+        <div class="question">{{ question }}</div>
+        <ul class="options">
+            <li>
+                <img src="@/assets/image/测评/A.png" alt="">
+                <div class="A item">几乎没有</div>
+            </li>
+            <li>
+                <img src="@/assets/image/测评/B.png" alt="">
+                <div class="B item">有时有</div>
+            </li>
+            <li>
+                <img src="@/assets/image/测评/C.png" alt="">
+                <div class="C item">经常有</div>
+            </li>
+            <li>
+                <img src="@/assets/image/测评/D.png" alt="">
+                <div class="D item">几乎总是有</div>
+            </li>
+        </ul>
+    </div>
+    <div class="bottom">
+        <div class="prev item" @click="prevQuestion">上一题</div>
+        <div class="next item" v-if="!isFinish" @click="nextQuestion">下一题</div>
+        <div class="submit item" v-else @click="submitSelect">提交</div>
+    </div>
+  </div>
+</template>
+
+<script>
+import NavBar from '@/components/NavBar.vue'
+export default {
+    components: {
+        NavBar
+    },
+    data () {
+        return {
+            progress: 1,
+            // percent: 10,
+            question: '10 . 出现睡眠问题(如入睡困难、多梦、早醒)',
+            isFinish: false
+        }
+    },
+    methods: {
+        // 点击上/下一题 -- 1.改问题 2.改进度 - 如果->10 则isFinish = true
+        prevQuestion () {
+            if (this.progress === 1) return
+            if (this.isFinish) this.isFinish = false
+            this.progress --
+        },
+        nextQuestion () {
+            if (this.progress === 10) return
+            if (this.progress === 9) this.isFinish = true
+            this.progress ++
+        },
+        // 选择选项
+        selectOption () {
+            
+        },
+        // 提交选择
+        submitSelect () {
+            // post
+
+            this.$router.push('testResult')
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+#psychologicalTest {
+    width: 390px;
+    height: 852px;
+    background: linear-gradient(180deg, #faf4e6 0%, #f7e4b9 100%);
+}
+.wrapper {
+    margin: 0 auto;
+    width: 316px;
+}
+.dog {
+    position: absolute;
+    top: 142px;
+    right: 33px;
+    width: 102px;
+}
+.test-num {
+    .progress {
+        margin-top: 15px;
+        color: #000000cc;
+        font-size: 24px;
+        .total {
+            font-size: 18px;
+        }
+    }
+    .progress-bar {
+        position: relative;
+        margin-top: 4px;
+        width: 90px;
+        height: 8px;
+        .item {
+            position: absolute;
+            top: 0;
+            height: 8px;
+            border-radius: 8px;
+        }
+        .base {
+            width: 90px;
+            background: #ffffff;
+        }
+        .superstratum {
+            background: #f3cf80;
+            transition: all 0.3s;
+        }
+    }
+}
+.subject {
+    margin-top: 60px;
+    .question {
+        margin: 0 auto;
+        width: 222px;
+        color: #000000c7;
+        font-size: 18px;
+    }
+    .options {
+        margin-top: 15px;
+        li {
+            position: relative;
+            width: 320px;
+            height: 94px;
+            .item {
+                // position: relative;
+                margin-top: 24px;
+                margin-left: 16px;
+                padding: 10px 62px;
+                width: 300px;
+                height: 46px;
+                border-radius: 60px;
+                border: 1px solid #f3cf80;
+                background: #ffffffa8;
+                font-size: 18px;
+            }
+            img {
+                position: absolute;
+                top: 10px;
+                left: -2px;
+                width: 66px;
+            }
+        }
+        
+    }
+}
+.bottom {
+    margin: 26px auto;
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    .item {
+        width: 145px;
+        height: 50px;
+        border-radius: 65px;
+        border: 1px solid #f3cf80;
+        background: #ffffffc7;
+        line-height: 50px;
+        text-align: center;
+        font-size: 20px;
+    }
+    .next,
+    .submit {
+        background: #f3cf80;
+    }
+}
+</style>

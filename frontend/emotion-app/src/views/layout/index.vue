@@ -2,6 +2,9 @@
   <div id="layout">
     <!-- 二级路由出口 -->
     <router-view></router-view>
+    <!-- <keep-alive>
+      <router-view></router-view>
+    </keep-alive> -->
     <!-- 底部导航栏 -->
     <div class="tabbar">
       <div class="home active" ref="home">

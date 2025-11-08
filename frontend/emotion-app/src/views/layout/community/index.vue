@@ -8,7 +8,10 @@
       <img src="@/assets/image/添加.png" alt="" @click="$router.push('/postNotes')">
     </div>
     <!-- 二级导航出口 -->
-     <router-view></router-view>
+    <!-- <router-view></router-view> -->
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -23,7 +26,15 @@ export default {
       return {
         navbarList: { firstName: '关注', sencondName: '推荐', bottomPicUrl: require('@/assets/image/阴影.png'), firstToUrl: '/community/attention', secondToUrl: '/community/recommend' }
       }
-    }
+    },
+  // activated () {
+  //   this.$nextTick(() => {
+  //     this.$refs.scrollContainer.scrollTop = this.scrollTop
+  //   })
+  // },
+  // deactivated () {
+  //   this.scrollTop = this.$refs.scrollContainer.scrollTop
+  // }
 }
 </script>
 

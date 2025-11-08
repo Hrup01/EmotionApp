@@ -8,9 +8,9 @@ export default {
             year: '',
             // 属于该季节的三个月份
             month: {
-                first: '',
-                sencond: '',
-                last: ''
+                firstMonth: '',
+                sencondMonth: '',
+                lastMonth: ''
             }
         }
     },
