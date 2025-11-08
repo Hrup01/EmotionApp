@@ -1,12 +1,8 @@
 package com.groupb.util;
 
-
 import com.groupb.pojo.User;
 import com.groupb.service.UserService;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.NaturalId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,7 +10,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class UserInformationUtil {
-
     @Autowired
     private UserService userService;
 
@@ -48,5 +43,4 @@ public class UserInformationUtil {
             return null;
         }
     }
-
 }
