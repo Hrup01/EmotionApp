@@ -239,6 +239,44 @@ public class UserProfileController {
     }
 
     /**
+     * 更新用户性别
+     * API接口：PUT /api/user/profile/gender
+     *
+     * @param request 包含gender的请求体
+     * gender可选值：MALE、FEMALE、OTHER
+     * @return 更新结果
+     */
+    @PutMapping("/gender")
+    public Result<Void> updateGender(@RequestBody Map<String, String> request) {
+        try {
+            //1. 获取当前用户ID
+            Long userId = SecurityContextUtil.getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+            //2. 获取性别,验证传输性别合法性
+            String gender = request.get("gender");
+            if (gender == null || gender.trim().isEmpty()) {
+                return Result.error("性别不能为空");
+            }
+            gender = gender.trim();
+            if (!gender.equals("MALE") && !gender.equals("FEMALE") && !gender.equals("OTHER")) {
+                return Result.error("性别参数错误");
+            }
+            //3. 更新性别
+            boolean success = userService.updateGender(userId, gender);
+            if (!success) {
+                return Result.error("更新性别失败");
+            }
+            log.info("更新用户性别成功: userId={}, gender={}", userId, gender);
+            return Result.success(null, "性别更新成功");
+        } catch (Exception e) {
+            log.error("更新性别过程中发生错误", e);
+            return Result.error("更新性别失败：" + e.getMessage());
+        }
+    }
+
+    /**
      * 批量更新用户个人资料
      * API接口：PUT /api/user/profile
      * 
