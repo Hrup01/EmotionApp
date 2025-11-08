@@ -1,5 +1,9 @@
 package com.groupb.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,13 +17,19 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@TableName("private_message")
 public class PrivateMessage {
-    private Long id;
-    private Long fromUserId;
-    private Long toUserId;
-    private String content;
-    private Integer status;
-    private LocalDateTime createdAt;
+    @TableId(type = IdType.AUTO)
+    private Long id;//主键
+    @TableField("from_user_name")
+    private String fromUserName;//发送信息用户名
+    @TableField("to_user_name")
+    private String toUserName;//接收信息用户名
+    private String content;//内容
+    @TableField("is_read")
+    private Boolean isRead=false;//是否已读
+    @TableField("send_time")
+    private LocalDateTime sendTime;//发送时间
 }
 
 
