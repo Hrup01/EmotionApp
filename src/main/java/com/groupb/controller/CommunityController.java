@@ -513,62 +513,62 @@ public class CommunityController {
         return Result.success(Map.of("banned", banned), "查询成功");
     }
 
-    /**
-     * 发送私信
-     * API接口：POST /api/community/dm/{toUserId}
-     * 
-     * 请求参数：
-     * - content: 私信内容（必填）
-     * 
-     * 实现步骤：
-     * 1. 获取当前用户ID
-     * 2. 提取私信内容
-     * 3. 调用服务层发送私信
-     * 4. 处理异常情况
-     * 
-     * @param toUserId 接收者用户ID
-     * @param body 请求体，包含私信内容
-     * @return 发送结果
-     */
-    @PostMapping("/dm/{toUserId}")
-    public Result<Void> sendDm(@PathVariable Long toUserId, @RequestBody Map<String, Object> body) {
-        try {
-            Long userId = getCurrentUserId();
-            if (userId == null) {
-                return Result.error("用户未登录");
-            }
-            String content = (String) body.getOrDefault("content", "");
-            communityService.sendMessage(userId, toUserId, content);
-            return Result.success(null, "发送成功");
-        } catch (Exception e) {
-            return Result.error("发送失败: " + e.getMessage());
-        }
-    }
+//    /**
+//     * 发送私信
+//     * API接口：POST /api/community/dm/{toUserId}
+//     *
+//     * 请求参数：
+//     * - content: 私信内容（必填）
+//     *
+//     * 实现步骤：
+//     * 1. 获取当前用户ID
+//     * 2. 提取私信内容
+//     * 3. 调用服务层发送私信
+//     * 4. 处理异常情况
+//     *
+//     * @param toUserId 接收者用户ID
+//     * @param body 请求体，包含私信内容
+//     * @return 发送结果
+//     */
+//    @PostMapping("/dm/{toUserId}")
+//    public Result<Void> sendDm(@PathVariable Long toUserId, @RequestBody Map<String, Object> body) {
+//        try {
+//            Long userId = getCurrentUserId();
+//            if (userId == null) {
+//                return Result.error("用户未登录");
+//            }
+//            String content = (String) body.getOrDefault("content", "");
+//            communityService.sendMessage(userId, toUserId, content);
+//            return Result.success(null, "发送成功");
+//        } catch (Exception e) {
+//            return Result.error("发送失败: " + e.getMessage());
+//        }
+//    }
 
-    /**
-     * 获取与指定用户的私信对话
-     * API接口：GET /api/community/dm/{peerUserId}
-     * 
-     * 请求参数：
-     * - page: 页码（默认0）
-     * - size: 每页大小（默认20）
-     * 
-     * @param peerUserId 对方用户ID
-     * @param page 页码
-     * @param size 每页大小
-     * @return 私信列表
-     */
-    @GetMapping("/dm/{peerUserId}")
-    public Result<List<MessageDTO>> listDm(@PathVariable Long peerUserId,
-                                          @RequestParam(defaultValue = "0") Integer page,
-                                          @RequestParam(defaultValue = "20") Integer size) {
-        Long userId = getCurrentUserId();
-        if (userId == null) {
-            return Result.error("用户未登录");
-        }
-        List<MessageDTO> list = communityService.getConversation(userId, peerUserId, page, size);
-        return Result.success(list, "获取会话成功");
-    }
+//    /**
+//     * 获取与指定用户的私信对话
+//     * API接口：GET /api/community/dm/{peerUserId}
+//     *
+//     * 请求参数：
+//     * - page: 页码（默认0）
+//     * - size: 每页大小（默认20）
+//     *
+//     * @param peerUserId 对方用户ID
+//     * @param page 页码
+//     * @param size 每页大小
+//     * @return 私信列表
+//     */
+//    @GetMapping("/dm/{peerUserId}")
+//    public Result<List<MessageDTO>> listDm(@PathVariable Long peerUserId,
+//                                          @RequestParam(defaultValue = "0") Integer page,
+//                                          @RequestParam(defaultValue = "20") Integer size) {
+//        Long userId = getCurrentUserId();
+//        if (userId == null) {
+//            return Result.error("用户未登录");
+//        }
+//        List<MessageDTO> list = communityService.getConversation(userId, peerUserId, page, size);
+//        return Result.success(list, "获取会话成功");
+//    }
 
     /**
      * 获取最近联系人列表

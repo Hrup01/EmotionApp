@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 简易AI配置类--阉割版AI
+ * 简易AI配置类
  */
 @Configuration
 public class EmotionAIConfig {
