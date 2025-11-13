@@ -12,15 +12,11 @@ import java.util.List;
 public interface PuzzleGameService {
     
     /**
-     * 创建新游戏
+     * 创建新游戏（使用静态资源中的图片）
+     * @param rank 难度等级，如rank1, rank2等，对应静态资源中的Rank1, Rank2目录
      */
-    Result<PuzzleGameDTO> createGame(String theme, String difficulty);
-    
-    /**
-     * 创建新游戏（支持自定义比例）
-     */
-    Result<PuzzleGameDTO> createGame(String theme, String difficulty, String aspectRatio, int rows, int cols);
-    
+    Result<PuzzleGameDTO> createGame(String rank);
+
     /**
      * 获取游戏状态
      */
@@ -45,6 +41,11 @@ public interface PuzzleGameService {
      * 完成游戏
      */
     Result<PuzzleGameDTO> completeGame(String gameId);
+    
+    /**
+     * 调试：强制完成游戏（仅测试环境使用）
+     */
+    Result<PuzzleGameDTO> debugSolveGame(String gameId);
     
     /**
      * 获取用户游戏历史

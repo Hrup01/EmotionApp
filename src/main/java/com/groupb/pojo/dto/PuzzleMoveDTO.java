@@ -13,3 +13,13 @@ public class PuzzleMoveDTO {
     private int moves;         // 当前移动次数
     private int timeSpent;     // 当前用时
 }
+
+
+
+
+
+
+
+
+
+

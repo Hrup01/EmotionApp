@@ -25,17 +25,14 @@ public class PuzzleGameController {
     /**
      * 创建新游戏
      * POST /api/puzzle/create
+     * 只能使用静态资源中的图片，不能自定义切割
+     * rank参数：rank1, rank2等，对应静态资源中的Rank1, Rank2目录
      */
     @PostMapping("/create")
     public Result<PuzzleGameDTO> createGame(
-            @RequestParam(defaultValue = "girl") String theme,
-            @RequestParam(defaultValue = "medium") String difficulty,
-            @RequestParam(defaultValue = "1:1") String aspectRatio,
-            @RequestParam(defaultValue = "4") int rows,
-            @RequestParam(defaultValue = "4") int cols) {
-        log.info("创建拼图游戏: theme={}, difficulty={}, aspectRatio={}, rows={}, cols={}", 
-                theme, difficulty, aspectRatio, rows, cols);
-        return puzzleGameService.createGame(theme, difficulty, aspectRatio, rows, cols);
+            @RequestParam(defaultValue = "rank1") String rank) {
+        log.info("创建拼图游戏: rank={}", rank);
+        return puzzleGameService.createGame(rank);
     }
     
     /**
@@ -113,22 +110,24 @@ public class PuzzleGameController {
     }
     
     /**
-     * 获取可用的游戏主题
-     * GET /api/puzzle/themes
+     * 获取可用的难度等级（rank列表）
+     * GET /api/puzzle/ranks
+     * 返回resources/image目录下可用的难度等级
+     * 建议直接使用 /api/puzzle/image/ranks 接口获取
      */
-    @GetMapping("/themes")
-    public Result<List<String>> getThemes() {
-        List<String> themes = List.of("girl", "animal", "sport");
-        return Result.success(themes, "获取主题列表成功");
+    @GetMapping("/ranks")
+    public Result<List<String>> getRanks() {
+        // 目前只支持rank1
+        List<String> ranks = List.of("rank1");
+        return Result.success(ranks, "获取难度等级列表成功");
     }
-    
+
     /**
-     * 获取可用的难度等级
-     * GET /api/puzzle/difficulties
+     * 调试：强制完成游戏（仅测试使用）
      */
-    @GetMapping("/difficulties")
-    public Result<List<String>> getDifficulties() {
-        List<String> difficulties = List.of("easy", "medium", "hard");
-        return Result.success(difficulties, "获取难度列表成功");
+    @PostMapping("/debug/solve")
+    public Result<PuzzleGameDTO> debugSolveGame(@RequestParam String gameId) {
+        log.warn("[DEBUG] 强制完成拼图: gameId={}", gameId);
+        return puzzleGameService.debugSolveGame(gameId);
     }
 }
