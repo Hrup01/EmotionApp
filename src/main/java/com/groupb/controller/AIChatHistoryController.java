@@ -2,17 +2,18 @@ package com.groupb.controller;
 
 
 import com.groupb.pojo.AIChatHistory;
-import com.groupb.pojo.AIChatMessage;
 import com.groupb.pojo.dto.Result;
 import com.groupb.service.AIChatHistoryService;
 import com.groupb.service.AIChatMessageService;
 import com.groupb.service.serviceImpl.AIChatMessageServiceImpl;
+import com.groupb.util.AI.AIEmotionHistorySummary;
 import com.groupb.util.UserInformationUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/ai/chatHistory")
@@ -48,11 +49,11 @@ public class AIChatHistoryController {
             log.error("未获取用户信息");
             return Result.error("未获取用户信息");
         }
-
         AIChatHistory aiChatHistory = chatHistoryService.saveChatHistory(userId, chatId, typeName);
         return Result.success(aiChatHistory);
 
     }
+
 
     /**
      * 获取会话历史列表

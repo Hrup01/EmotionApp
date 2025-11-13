@@ -1,12 +1,13 @@
 package com.groupb.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.groupb.pojo.PrivateMessage;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
-public interface PrivateMessageMapper {
+public interface PrivateMessageMapper extends BaseMapper<PrivateMessage> {
 
     @Insert("INSERT INTO private_message(from_user_id, to_user_id, content, status) VALUES(#{fromUserId}, #{toUserId}, #{content}, #{status})")
     @Options(useGeneratedKeys = true, keyProperty = "id")

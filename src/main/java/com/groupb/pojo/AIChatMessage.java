@@ -23,6 +23,8 @@ public class AIChatMessage {
     @TableField("message_id")
     private long messageId;//主键自增长
     private String chatId;//会话Id
+    private String role;//角色
+    private String content;//内容
 
     @Override
     public boolean equals(Object o) {
@@ -35,10 +37,6 @@ public class AIChatMessage {
     public int hashCode() {
         return Objects.hash(chatId, role, content);
     }
-
-    private String role;//角色
-    private String content;//内容
-
 
     public AIChatMessage(Message message, String chatId) {
 

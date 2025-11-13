@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -94,5 +95,95 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userMapper.findByUsername(username);
+    }
+
+    @Override
+    public User findById(long id) {
+        return userMapper.findById(id);
+    }
+
+    @Override
+    public boolean updateAvatar(long userId, String avatarUrl) {
+        try {
+            int result = userMapper.updateAvatarUrl(userId, avatarUrl, LocalDateTime.now());
+            if (result > 0) {
+                log.info("更新用户头像成功: userId={}, avatarUrl={}", userId, avatarUrl);
+                return true;
+            } else {
+                log.warn("更新用户头像失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("更新用户头像异常: userId={}", userId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateNickname(long userId, String nickname) {
+        try {
+            int result = userMapper.updateNickname(userId, nickname, LocalDateTime.now());
+            if (result > 0) {
+                log.info("更新用户昵称成功: userId={}, nickname={}", userId, nickname);
+                return true;
+            } else {
+                log.warn("更新用户昵称失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("更新用户昵称异常: userId={}", userId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateGender(long userId, String gender) {
+        try {
+            int result = userMapper.updateGender(userId, gender, LocalDateTime.now());
+            if (result > 0) {
+                log.info("更新用户性别成功: userId={}, gender={}", userId, gender);
+                return true;
+            } else {
+                log.warn("更新用户性别失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("更新用户性别异常: userId={}", userId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateBirthday(long userId, LocalDate birthday) {
+        try {
+            int result = userMapper.updateBirthday(userId, birthday, LocalDateTime.now());
+            if (result > 0) {
+                log.info("更新用户生日成功: userId={}, birthday={}", userId, birthday);
+                return true;
+            } else {
+                log.warn("更新用户生日失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("更新用户生日异常: userId={}", userId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateProfile(long userId, String avatarUrl, String nickname, String gender, LocalDate birthday) {
+        try {
+            int result = userMapper.updateProfile(userId, avatarUrl, nickname, gender, birthday, LocalDateTime.now());
+            if (result > 0) {
+                log.info("更新用户个人资料成功: userId={}", userId);
+                return true;
+            } else {
+                log.warn("更新用户个人资料失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("更新用户个人资料异常: userId={}", userId, e);
+            return false;
+        }
     }
 }

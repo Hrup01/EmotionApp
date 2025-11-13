@@ -1,12 +1,10 @@
 package com.groupb.pojo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -19,6 +17,10 @@ public class User {
     private String username;//用户名
     private String password;//密码
     private String avatarUrl;//头像url
+    private String nickname;//昵称
+    private String gender;//性别（MALE/FEMALE/OTHER）
+    private LocalDate birthday;//生日
+    private Integer points = 0;//积分
     private UserStatus status = UserStatus.ONLINE;//用户状态
     private LocalDateTime lastLoginTime;
     private LocalDateTime createTime;//创建时间

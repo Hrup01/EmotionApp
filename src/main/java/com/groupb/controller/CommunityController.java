@@ -11,6 +11,7 @@ import com.groupb.service.UserService;
 import com.groupb.util.SecurityContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -43,6 +44,9 @@ public class CommunityController {
     
     @Autowired
     private UserService userService;
+    
+    @Value("${file.upload.path:./uploads}")
+    private String uploadPath;
 
     private Long getCurrentUserId() {
         // 优先从JWT token中获取用户ID
@@ -148,7 +152,7 @@ public class CommunityController {
                         String fileName = System.currentTimeMillis() + "_" + UUID.randomUUID().toString().replace("-", "") + extension;
                         String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
                         String relativePath = datePath + "/" + fileName;
-                        String fullPath = "F:/image/" + relativePath;
+                        String fullPath = uploadPath + File.separator + relativePath;
                         
                         // 创建目录
                         File directory = new File(fullPath).getParentFile();

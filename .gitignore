@@ -1,0 +1,15 @@
+# 编译产物（Maven/Gradle）
+target/
+out/
+build/
+!mvnw
+!gradlew
+
+# IDE 临时文件
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 零散 Class 文件（防止非目录下的 .class）
+*.class
