@@ -553,7 +553,7 @@ public class CommunityServiceImpl implements CommunityService {
         pm.setContent(content.trim());
         pm.setStatus(1);
         privateMessageMapper.insert(pm);
-        
+
         // 4. 兼容旧DTO返回链路（如需）
         MessageDTO m = new MessageDTO();
         m.setId(pm.getId());
@@ -562,12 +562,12 @@ public class CommunityServiceImpl implements CommunityService {
         m.setContent(content.trim());
         m.setCreatedAt(LocalDateTime.now());
         messages.add(m);
-        
+
         // 5. 缓存私信
         String messageCacheKey = USER_MESSAGES_CACHE_PREFIX + fromUserId + ":" + toUserId;
         redisService.rightPush(messageCacheKey, m);
         redisService.expire(messageCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-        
+
         // 6. 私信发送成功，记录日志
         log.info("用户 {} 向用户 {} 发送了私信，内容长度: {}", fromUserId, toUserId, content.trim().length());
     }

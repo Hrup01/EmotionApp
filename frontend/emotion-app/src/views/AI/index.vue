@@ -239,27 +239,27 @@ export default {
       // 创建组件时就生成chatId
       this.initChatId()
     },
-    // async mounted () {
-    //   // 获取全部历史会话记录
-    //   const res = await axios.get('http://localhost:8080/ai/chatHistory', {
-    //     headers: {
-    //           Authorization: 'Bearer ' + this.token
-    //       }
-    //   })
-    //   console.log('全部历史会话记录: ',res.data.data)
-    //   // 推送chatId到数组中
-    //   // res.data.data.forEach((item) => {
-    //   //   this.historyChatId.push = item.chatId
-    //   // })
-    //   this.historyChatId = res.data.data[0].chatId
-    //   // console.log('历史会话id: ', this.historyChatId)
-    //   // this.getConversationContent()
-    // },
+    async mounted () {
+      // 获取全部历史会话记录
+      const res = await axios.get('http://localhost:8080/ai/chatHistory', {
+        headers: {
+              Authorization: 'Bearer ' + this.token
+          }
+      })
+      console.log('全部历史会话记录: ',res.data.data)
+      // 推送chatId到数组中
+      // res.data.data.forEach((item) => {
+      //   this.historyChatId.push = item.chatId
+      // })
+      this.historyChatId = res.data.data[0].chatId
+      // console.log('历史会话id: ', this.historyChatId)
+      // this.getConversationContent()
+    },
     beforeDestroy () {
       if (this.intervalId) {
         clearInterval(this.intervalId)
       }
-      // this.postConversation()
+      this.postConversation()
     }
 }
 </script>

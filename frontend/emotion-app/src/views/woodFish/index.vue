@@ -24,7 +24,7 @@
         <img src="@/assets/image/木鱼/小木鱼.png" alt="">
       </div>
       <!-- 敲击出现悬浮文字 -->
-      <div class="suspendedText">
+      <div class="suspendedText" style="display: none;">
         <ul>
           <li v-for="item in charDetailList" 
           :key="item.id" 

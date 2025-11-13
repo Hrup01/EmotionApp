@@ -1,21 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div class="test">
-        <keep-alive>
-          <router-link to="nodedetail/1">111</router-link>
-          <router-link to="nodedetail/2">111</router-link>
-          <router-link to="nodedetail/3">111</router-link>
-          <router-link to="nodedetail/4">111</router-link>
-          <router-link to="nodedetail/5">111</router-link>
-          <router-link to="nodedetail/6">111</router-link>
-          <router-link to="nodedetail/7">111</router-link>
-          <router-link to="nodedetail/8">111</router-link>
-          <router-link to="nodedetail/9">111</router-link>
-          <router-link to="nodedetail/10">111</router-link>
-          <router-link to="nodedetail/11">111</router-link>
-          <router-link to="nodedetail/12">111</router-link>
-        </keep-alive>
-    </div> -->
     <tooltip></tooltip>
   </div>
 </template>

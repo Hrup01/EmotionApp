@@ -4,7 +4,7 @@
       <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
       <div class="top">
         <img src="@/assets/image/我的/编辑2.png" alt="" class="editor" @click="$router.push('/user/editInformation')">
-        <img src="@/assets/image/我的/设置.png" alt="" class="set">
+        <img src="@/assets/image/我的/设置.png" alt="" class="set" @click="$router.push('/user/setup')">
       </div>
       <div class="userMessage">
         <img src="@/assets/image/我的/头像.png" alt="">
@@ -67,7 +67,7 @@ export default {
           { id: 1, bgUrl: require('@/assets/image/我的/日记背景.png'), picUrl: require('@/assets/image/我的/日记.png'), name: '日记记录', ref: 'dairy', toUrl: '/moodOption' },
           { id: 2, bgUrl: require('@/assets/image/我的/手账背景.png'), picUrl: require('@/assets/image/我的/手账.png'), name: '手账记录', ref: 'scrapbook', toUrl: '/bulletJournalRecord' },
           { id: 3, bgUrl: require('@/assets/image/我的/打卡背景.png'), picUrl: require('@/assets/image/我的/打卡.png'), name: '打卡奖励', ref: 'clockin', toUrl: '/clockIn' },
-          { id: 4, bgUrl: require('@/assets/image/我的/商店背景.png'), picUrl: require('@/assets/image/我的/商店.png'), name: '商店', ref: 'shop', toUrl: '/state' }
+          { id: 4, bgUrl: require('@/assets/image/我的/商店背景.png'), picUrl: require('@/assets/image/我的/商店.png'), name: '商店', ref: 'shop', toUrl: '/shop' }
         ],
         navbarList: { firstName: '笔记', sencondName: '收藏', bottomPicUrl: require('@/assets/image/我的/笔记_选中.png'), firstToUrl: '/user/note', secondToUrl: '/user/collect' },
         pStyle: { color: '#300000', fontSize: '14px' },

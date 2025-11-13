@@ -258,42 +258,42 @@ export default {
             // 2.回复他人的评论
         }
     },
-    async mounted () {
-        // 获取帖子详情
-        const postDetailRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}`, {
-            headers: {
-                Authorization: 'Bearer ' + this.token
-            }
-        })
-        console.log('获取帖子详情',postDetailRes)
-        // 获取帖子评论列表
-        const postCommentRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/comments`, {
-            headers: {
-                Authorization: 'Bearer ' + this.token
-            }
-        })
-        console.log('获取帖子评论列表',postCommentRes)
-        // 评论数
-        this.commentCount = this.commentList.length
-        // this.commentList = postCommentRes.data.data
-        // console.log(this.commentList)
-        // 查看帖子是否收藏
-        const collectRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/favorite-status`, {
-            headers: {
-                Authorization: 'Bearer ' + this.token
-            }
-        })
-        console.log('查看帖子是否收藏',collectRes)
-        this.isCollect = collectRes.data.data.isFavorited
-        // 查看用户是否关注
-        const userFollowedtRes = await axios.get(`http://localhost:8080/api/community/follow-status/${this.postId}`, {
-            headers: {
-                Authorization: 'Bearer ' + this.token
-            }
-        })
-        console.log('查看用户是否关注',userFollowedtRes)
-        this.followed = userFollowedtRes.data.data.isFollowing
-    }
+    // async mounted () {
+    //     // 获取帖子详情
+    //     const postDetailRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}`, {
+    //         headers: {
+    //             Authorization: 'Bearer ' + this.token
+    //         }
+    //     })
+    //     console.log('获取帖子详情',postDetailRes)
+    //     // 获取帖子评论列表
+    //     const postCommentRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/comments`, {
+    //         headers: {
+    //             Authorization: 'Bearer ' + this.token
+    //         }
+    //     })
+    //     console.log('获取帖子评论列表',postCommentRes)
+    //     // 评论数
+    //     this.commentCount = this.commentList.length
+    //     // this.commentList = postCommentRes.data.data
+    //     // console.log(this.commentList)
+    //     // 查看帖子是否收藏
+    //     const collectRes = await axios.get(`http://localhost:8080/api/community/posts/${this.postId}/favorite-status`, {
+    //         headers: {
+    //             Authorization: 'Bearer ' + this.token
+    //         }
+    //     })
+    //     console.log('查看帖子是否收藏',collectRes)
+    //     this.isCollect = collectRes.data.data.isFavorited
+    //     // 查看用户是否关注
+    //     const userFollowedtRes = await axios.get(`http://localhost:8080/api/community/follow-status/${this.postId}`, {
+    //         headers: {
+    //             Authorization: 'Bearer ' + this.token
+    //         }
+    //     })
+    //     console.log('查看用户是否关注',userFollowedtRes)
+    //     this.followed = userFollowedtRes.data.data.isFollowing
+    // }
 }
 </script>
 

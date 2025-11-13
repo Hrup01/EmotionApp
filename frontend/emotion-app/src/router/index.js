@@ -47,6 +47,8 @@ const PsychologicalTestIndex = () => import ('@/views/psychologicalTest')
 const PsychologicalTest = () => import ('@/views/psychologicalTest/psychologicalTest.vue')
 const HistoryTest = () => import ('@/views/psychologicalTest/historyTest.vue')
 const TestResult = () => import ('@/views/psychologicalTest/testResult.vue')
+const SetUp = () => import ('@/views/layout/user/setup.vue')
+const Shop = () => import ('@/views/shop')
 
 import test from '@/views/test.vue'
 
@@ -57,15 +59,13 @@ const router = new VueRouter({
     { path: '/', 
       component: Layout,
       children: [
-        { path: '/home', component: Home, meta: {keepAlive: false} },
-        { path: '/heal', component: Heal, meta: {keepAlive: false} },
+        { path: '/home', component: Home },
+        { path: '/heal', component: Heal },
         { path: '/community',
           component: Community,
-          // meta: {keepAlive: true}, //标记需缓存
           children: [
-            { path: '/community/recommend', component: Recommend,  meta: {keepAlive: true} },
+            { path: '/community/recommend', component: Recommend },
             { path: '/community/attention', component: Attention },
-            // { path: '/noteDetail/:id', component: NoteDetail }
           ],
           redirect: '/community/recommend'
         },
@@ -103,6 +103,7 @@ const router = new VueRouter({
     { path: '/woodFish/moreSet', component: MoreSet },
     { path: '/clockIn', component: ClockIn },
     { path: '/user/editInformation', component: EditInformation },
+    { path: '/user/setup', component: SetUp },
     { path: '/diaryNoteBook', component: DiaryNoteBook },
     { path: '/diaryDetail/:season', component: DiaryDetail },
     { path: '/bulletJournal/:id', component: BulletJournal },
@@ -113,6 +114,7 @@ const router = new VueRouter({
     { path: '/psychologicalTest', component: PsychologicalTest },
     { path: '/historyTest', component: HistoryTest },
     { path: '/testResult', component: TestResult },
+    { path: '/shop', component: Shop },
   ]
 })
 
