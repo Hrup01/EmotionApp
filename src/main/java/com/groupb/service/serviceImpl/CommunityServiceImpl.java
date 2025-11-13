@@ -519,82 +519,82 @@ public class CommunityServiceImpl implements CommunityService {
             return count > 0;
         }
     }
+                    //私信已用webSocket替代，此处注释
+//    /**
+//     * 发送私信
+//     * 实现步骤：
+//     * 1. 检查发送者是否被封禁
+//     * 2. 创建私信实体并保存到数据库
+//     * 3. 将私信数据缓存到Redis
+//     * 4. 记录操作日志
+//     *
+//     * @param fromUserId 发送者用户ID
+//     * @param toUserId 接收者用户ID
+//     * @param content 私信内容
+//     */
+//    @Override
+//    public void sendMessage(Long fromUserId, Long toUserId, String content) {
+//        // 1. 检查用户是否被封禁
+//        enforceBan(fromUserId);
+//
+//        // 2. 基本内容验证
+//        if (content == null || content.trim().isEmpty()) {
+//            throw new IllegalArgumentException("私信内容不能为空");
+//        }
+//
+//        if (content.length() > 1000) {
+//            throw new IllegalArgumentException("私信内容不能超过1000字符");
+//        }
+//
+//        // 3. 创建私信记录
+//        PrivateMessage pm = new PrivateMessage();
+//        pm.setFromUserId(fromUserId);
+//        pm.setToUserId(toUserId);
+//        pm.setContent(content.trim());
+//        pm.setStatus(1);
+//        privateMessageMapper.insert(pm);
+//
+//        // 4. 兼容旧DTO返回链路（如需）
+//        MessageDTO m = new MessageDTO();
+//        m.setId(pm.getId());
+//        m.setFromUserId(fromUserId);
+//        m.setToUserId(toUserId);
+//        m.setContent(content.trim());
+//        m.setCreatedAt(LocalDateTime.now());
+//        messages.add(m);
+//
+//        // 5. 缓存私信
+//        String messageCacheKey = USER_MESSAGES_CACHE_PREFIX + fromUserId + ":" + toUserId;
+//        redisService.rightPush(messageCacheKey, m);
+//        redisService.expire(messageCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+//
+//        // 6. 私信发送成功，记录日志
+//        log.info("用户 {} 向用户 {} 发送了私信，内容长度: {}", fromUserId, toUserId, content.trim().length());
+//    }
 
-    /**
-     * 发送私信
-     * 实现步骤：
-     * 1. 检查发送者是否被封禁
-     * 2. 创建私信实体并保存到数据库
-     * 3. 将私信数据缓存到Redis
-     * 4. 记录操作日志
-     * 
-     * @param fromUserId 发送者用户ID
-     * @param toUserId 接收者用户ID
-     * @param content 私信内容
-     */
-    @Override
-    public void sendMessage(Long fromUserId, Long toUserId, String content) {
-        // 1. 检查用户是否被封禁
-        enforceBan(fromUserId);
-        
-        // 2. 基本内容验证
-        if (content == null || content.trim().isEmpty()) {
-            throw new IllegalArgumentException("私信内容不能为空");
-        }
-        
-        if (content.length() > 1000) {
-            throw new IllegalArgumentException("私信内容不能超过1000字符");
-        }
-        
-        // 3. 创建私信记录
-        PrivateMessage pm = new PrivateMessage();
-        pm.setFromUserId(fromUserId);
-        pm.setToUserId(toUserId);
-        pm.setContent(content.trim());
-        pm.setStatus(1);
-        privateMessageMapper.insert(pm);
-
-        // 4. 兼容旧DTO返回链路（如需）
-        MessageDTO m = new MessageDTO();
-        m.setId(pm.getId());
-        m.setFromUserId(fromUserId);
-        m.setToUserId(toUserId);
-        m.setContent(content.trim());
-        m.setCreatedAt(LocalDateTime.now());
-        messages.add(m);
-
-        // 5. 缓存私信
-        String messageCacheKey = USER_MESSAGES_CACHE_PREFIX + fromUserId + ":" + toUserId;
-        redisService.rightPush(messageCacheKey, m);
-        redisService.expire(messageCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
-
-        // 6. 私信发送成功，记录日志
-        log.info("用户 {} 向用户 {} 发送了私信，内容长度: {}", fromUserId, toUserId, content.trim().length());
-    }
-
-    /**
-     * 获取两个用户之间的私信对话
-     * 
-     * @param userId 当前用户ID
-     * @param peerUserId 对方用户ID
-     * @param page 页码
-     * @param size 每页大小
-     * @return 私信列表
-     */
-    @Override
-    public List<MessageDTO> getConversation(Long userId, Long peerUserId, int page, int size) {
-        int offset = Math.max(page, 0) * Math.max(size, 1);
-        List<com.groupb.pojo.PrivateMessage> list = privateMessageMapper.listConversation(userId, peerUserId, offset, size);
-        return list.stream().map(pm -> {
-            MessageDTO m = new MessageDTO();
-            m.setId(pm.getId());
-            m.setFromUserId(pm.getFromUserId());
-            m.setToUserId(pm.getToUserId());
-            m.setContent(pm.getContent());
-            m.setCreatedAt(pm.getCreatedAt());
-            return m;
-        }).collect(java.util.stream.Collectors.toList());
-    }
+//    /**
+//     * 获取两个用户之间的私信对话
+//     *
+//     * @param userId 当前用户ID
+//     * @param peerUserId 对方用户ID
+//     * @param page 页码
+//     * @param size 每页大小
+//     * @return 私信列表
+//     */
+//    @Override
+//    public List<MessageDTO> getConversation(Long userId, Long peerUserId, int page, int size) {
+//        int offset = Math.max(page, 0) * Math.max(size, 1);
+//        List<com.groupb.pojo.PrivateMessage> list = privateMessageMapper.listConversation(userId, peerUserId, offset, size);
+//        return list.stream().map(pm -> {
+//            MessageDTO m = new MessageDTO();
+//            m.setId(pm.getId());
+//            m.setFromUserId(pm.getFromUserId());
+//            m.setToUserId(pm.getToUserId());
+//            m.setContent(pm.getContent());
+//            m.setCreatedAt(pm.getCreatedAt());
+//            return m;
+//        }).collect(java.util.stream.Collectors.toList());
+//    }
 
     @Override
     public List<Long> getRecentContacts(Long userId) {

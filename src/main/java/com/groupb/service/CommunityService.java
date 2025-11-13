@@ -96,7 +96,7 @@ public interface CommunityService {
      * @param toUserId 接收者id
      * @param content 内容
      */
-    void sendMessage(Long fromUserId, Long toUserId, String content);
+    //void sendMessage(Long fromUserId, Long toUserId, String content);
     /**
      * 获取对话
      * @param userId 用户id
@@ -105,7 +105,7 @@ public interface CommunityService {
      * @param size 页大小
      * @return 私信DTO列表
      */
-    List<MessageDTO> getConversation(Long userId, Long peerUserId, int page, int size);
+    //List<MessageDTO> getConversation(Long userId, Long peerUserId, int page, int size);
     /**
      * 获取最近联系人
      * @param userId 用户id
