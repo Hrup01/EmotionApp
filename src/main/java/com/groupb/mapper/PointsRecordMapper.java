@@ -1,5 +1,6 @@
 package com.groupb.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.groupb.pojo.PointsRecord;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
-public interface PointsRecordMapper {
+public interface PointsRecordMapper extends BaseMapper<PointsRecord> {
 
     @Insert("INSERT INTO points_records (user_id, delta, balance_after, source_type, business_id, remark, created_at) " +
             "VALUES (#{userId}, #{delta}, #{balanceAfter}, #{sourceType}, #{businessId}, #{remark}, #{createdAt})")
