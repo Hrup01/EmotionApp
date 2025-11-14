@@ -2,6 +2,7 @@ package com.groupb.pojo.dto;
 
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 拼图游戏DTO
@@ -20,5 +21,15 @@ public class PuzzleGameDTO {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private boolean completed;     // 是否完成
-    private String message;        // 提示信息
+    private String message;// 提示信息
+
+
+    // 新增：拼图图片块列表
+    private List<PuzzlePiece> originalPieces;
+
+    @Data
+    public static class PuzzlePiece {
+        private int originalIndex;
+        private String url;
+    }
 }
