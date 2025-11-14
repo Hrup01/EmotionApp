@@ -27,9 +27,13 @@ public class ShopOrderController {
      */
     @PostMapping
     public Result<ShopOrder> createShopOrder(@RequestBody ShopOrder shopOrder) {
-        ShopOrder createShopOrder = shopOrderService.createShopOrder(shopOrder);//创建订单
         PointsChangeResponse pointsChangeResponse = shopOrderService.changePointByOrder(shopOrder);//积分变更，创建流水
-        if (createShopOrder==null||pointsChangeResponse==null) {
+        if (pointsChangeResponse==null) {
+            log.error("购买失败");
+            return Result.error("购买失败");
+        }
+        ShopOrder createShopOrder = shopOrderService.createShopOrder(shopOrder);//创建订单
+        if (createShopOrder==null) {
             log.error("购买失败");
             return Result.error("购买失败");
         }else{
