@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class PuzzleGameDTO {
     private String gameId;         // 游戏唯一标识
-    private String theme;          // 游戏主题
-    private String difficulty;     // 难度等级
-    private String aspectRatio;    // 图片比例
+    private String gameRank;       // 游戏关卡
     private int rows;              // 拼图行数
     private int cols;              // 拼图列数
     private int[][] currentState;  // 当前游戏状态
@@ -20,6 +18,7 @@ public class PuzzleGameDTO {
     private int timeSpent;         // 游戏用时(秒)
     private String status;         // 游戏状态
     private LocalDateTime startTime;
-    private boolean isCompleted;   // 是否完成
+    private LocalDateTime endTime;
+    private boolean completed;     // 是否完成
     private String message;        // 提示信息
 }

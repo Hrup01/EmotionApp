@@ -1,21 +1,22 @@
 package com.groupb.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 /**
  * 拼图游戏实体类
  */
 @Data
+@TableName("puzzle_game")
 public class PuzzleGame {
+    @TableId
     private Long id;
     private Long userId;           // 用户ID
     private String gameId;         // 游戏唯一标识
-    private String theme;          // 游戏主题 (girl, animal, sport)
-    private String difficulty;     // 难度等级 (easy, medium, hard)
-    private String aspectRatio;    // 图片比例 (1:1, 3:4, 4:3)
-    private Integer rows;          // 拼图行数
-    private Integer cols;          // 拼图列数
+    private String gameRank;       // 游戏关卡
     private String currentState;   // 当前游戏状态 (JSON格式的4x4数组)
     private String targetState;    // 目标状态 (JSON格式的4x4数组)
     private Integer moves;         // 移动次数

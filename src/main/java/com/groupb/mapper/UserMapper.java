@@ -56,4 +56,7 @@ public interface UserMapper extends BaseMapper<User> {
             "birthday = IFNULL(#{birthday}, birthday), " +
             "update_time = #{updateTime} WHERE id = #{id}")
     int updateProfile(long id, String avatarUrl, String nickname, String gender, LocalDate birthday, LocalDateTime updateTime);
+
+    @Update("UPDATE users SET points = #{points}, update_time = #{updateTime} WHERE id = #{id}")
+    int updatePoints(long id, int points, LocalDateTime updateTime);
 }

@@ -1,13 +1,12 @@
 package com.groupb.pojo;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -28,6 +27,9 @@ public class AIChatHistory {
 
     @TableField("summary")//会话总结
     private String summary;
+
+    @TableField(value="create_time",fill= FieldFill.INSERT)
+    private LocalDateTime createTime;//创建时间
 
 
 }

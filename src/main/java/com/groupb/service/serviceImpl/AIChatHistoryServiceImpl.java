@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class AIChatHistoryServiceImpl implements AIChatHistoryService {
 
     @Override
     public AIChatHistory saveChatHistory(Long userId,String chatId,String type) {
-        AIChatHistory aiChatHistory = new AIChatHistory(userId, chatId, type,null);
+        AIChatHistory aiChatHistory = new AIChatHistory(userId, chatId, type,null, LocalDateTime.now());
         aiChatHistoryMapper.insert(aiChatHistory);
         log.info("会话历史保存成功");
         return aiChatHistory;
