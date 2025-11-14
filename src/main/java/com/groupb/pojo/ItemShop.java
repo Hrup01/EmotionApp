@@ -30,6 +30,9 @@ public class ItemShop {
     private String type;
     //商品状态，1--上架，0--下架
     private Integer status=1;//默认为1
+    //商品图片
+    @TableField("image_url")
+    private String imageUrl;
     //创建时间
     @TableField(value="create_time",fill = FieldFill.INSERT)
     private LocalDateTime createTime;
