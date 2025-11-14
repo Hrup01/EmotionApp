@@ -44,7 +44,7 @@ public class DefaultPointsPolicyResolver implements PointsPolicyResolver {
             case OPERATION_EVENT:
                 return clamp(requested, -200, 200);
             case COMPENSATION:
-                return clamp(requested, -500, 500);
+                return clamp(requested, -5000, 5000);
             case CUSTOM:
                 // 对于完全自定义的来源，必须显式允许客户端覆盖
                 throw new IllegalArgumentException("CUSTOM 类型需要开启 allowClientOverride 以明确积分值");

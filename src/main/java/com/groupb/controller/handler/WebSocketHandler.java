@@ -68,7 +68,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         PrivateMessage msg = objectMapper.readValue(payload, PrivateMessage.class);
         //设置msg消息
         msg.setFromUserName(fromUsername);
-        msg.setSendTime(LocalDateTime.now());
         msg.setIsRead(false);//设置未读
         //发送内容和接收对象不能为空
         if (msg.getToUserName()==null||msg.getContent()==null) {
@@ -135,7 +134,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         LambdaQueryWrapper<PrivateMessage> queryWrapper = new LambdaQueryWrapper<PrivateMessage>()
                 .eq(PrivateMessage::getToUserName, username)//接收方用户名匹配
                 .eq(PrivateMessage::getIsRead, false)//未读消息
-                .orderByAsc(PrivateMessage::getSendTime);//按发送时间升序
+                .orderByAsc(PrivateMessage::getCreatTime);//按发送时间升序
 
         //从数据库查询离线消息
         List<PrivateMessage> offlineMessages = privateMessageMapper.selectList(queryWrapper);

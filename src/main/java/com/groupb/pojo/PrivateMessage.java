@@ -1,9 +1,6 @@
 package com.groupb.pojo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,8 +25,8 @@ public class PrivateMessage {
     private String content;//内容
     @TableField("is_read")
     private Boolean isRead=false;//是否已读
-    @TableField("send_time")
-    private LocalDateTime sendTime;//发送时间
+    @TableField(value="creat_time",fill = FieldFill.INSERT)
+    private LocalDateTime creatTime;//发送时间
 }
 
 
