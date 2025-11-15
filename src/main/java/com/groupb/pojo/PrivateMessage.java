@@ -25,8 +25,8 @@ public class PrivateMessage {
     private String content;//内容
     @TableField("is_read")
     private Boolean isRead=false;//是否已读
-    @TableField(value="creat_time",fill = FieldFill.INSERT)
-    private LocalDateTime creatTime;//发送时间
+    @TableField(value="create_time",fill = FieldFill.INSERT)
+    private LocalDateTime createTime;//发送时间
 }
 
 
