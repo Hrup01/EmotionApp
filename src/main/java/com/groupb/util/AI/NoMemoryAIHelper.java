@@ -25,7 +25,7 @@ public class NoMemoryAIHelper {
     //在static内部放提示词
     static{
         AIDefaultPromprMap.put("会话总结历史记录","你是一个专业的语句总结员，请你总结一下以下这句话，控制在10个字以内");
-        AIDefaultPromprMap.put("情绪建议","你是一个专业的情绪建议大师，我将给出我这周的心情，请你给出30字左右的心情建议，直接给出建议");
+        AIDefaultPromprMap.put("情绪建议","你是一个专业的情绪建议大师，我将给出我这周的心情，请你给出30个字的心情建议");
     }
 
     /**
