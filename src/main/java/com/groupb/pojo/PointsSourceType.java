@@ -12,6 +12,16 @@ public enum PointsSourceType {
     GAME_COMPLETE,
 
     /**
+     * 情绪日记记录
+     */
+    EMOTION_DIARY,
+
+    /**
+     * 社区（笔记/帖子）发布
+     */
+    COMMUNITY_POST,
+
+    /**
      * 连续签到奖励
      */
     CONTINUOUS_CHECK_IN,
@@ -20,6 +30,11 @@ public enum PointsSourceType {
      * 单次签到奖励
      */
     DAILY_CHECK_IN,
+
+    /**
+     * 连续签到阶段性奖励
+     */
+    CHECK_IN_STREAK,
 
     /**
      * 手动运营活动发放

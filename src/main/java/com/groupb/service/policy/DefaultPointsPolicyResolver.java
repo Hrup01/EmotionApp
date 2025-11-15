@@ -21,6 +21,8 @@ public class DefaultPointsPolicyResolver implements PointsPolicyResolver {
 
     public DefaultPointsPolicyResolver() {
         defaultRewardTable.put(PointsSourceType.GAME_COMPLETE, 10);
+        defaultRewardTable.put(PointsSourceType.EMOTION_DIARY, 20);
+        defaultRewardTable.put(PointsSourceType.COMMUNITY_POST, 20);
         defaultRewardTable.put(PointsSourceType.CONTINUOUS_CHECK_IN, 30);
         defaultRewardTable.put(PointsSourceType.DAILY_CHECK_IN, 10);
     }
@@ -32,8 +34,9 @@ public class DefaultPointsPolicyResolver implements PointsPolicyResolver {
 
         int requested = safeRequestedPoints(request);
 
-        if (defaultRewardTable.containsKey(sourceType)) {
-            return defaultRewardTable.get(sourceType);
+        Integer defaultReward = defaultRewardTable.get(sourceType);
+        if (defaultReward != null && !request.isAllowClientOverride()) {
+            return defaultReward;
         }
 
         if (request.isAllowClientOverride()) {
