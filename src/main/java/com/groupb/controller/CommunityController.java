@@ -498,6 +498,20 @@ public class CommunityController {
     }
 
     /**
+     * 获取当前用户关注的用户ID列表
+     * API接口：GET /api/community/followings
+     */
+    @GetMapping("/followings")
+    public Result<List<Long>> getFollowings() {
+        Long userId = getCurrentUserId();
+        if (userId == null) {
+            return Result.error("用户未登录");
+        }
+        List<Long> followings = communityService.getFollowings(userId);
+        return Result.success(followings, "获取关注列表成功");
+    }
+
+    /**
      * 获取用户的社区封禁状态
      * API接口：GET /api/community/ban-status
      * 

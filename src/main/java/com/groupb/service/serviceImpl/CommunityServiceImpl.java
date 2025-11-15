@@ -757,6 +757,39 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     /**
+     * 获取当前用户关注的用户ID列表
+     */
+    @Override
+    public List<Long> getFollowings(Long userId) {
+        try {
+            String followsCacheKey = USER_FOLLOWS_CACHE_PREFIX + userId;
+            Set<Object> cachedSet = redisService.getSet(followsCacheKey);
+            if (cachedSet != null && !cachedSet.isEmpty()) {
+                List<Long> result = cachedSet.stream()
+                        .filter(Objects::nonNull)
+                        .map(obj -> Long.valueOf(obj.toString()))
+                        .collect(Collectors.toList());
+                log.debug("从缓存获取关注列表: userId={}, size={}", userId, result.size());
+                return result;
+            }
+
+            List<Long> followings = followMapper.listFollowings(userId);
+            if (followings != null && !followings.isEmpty()) {
+                for (Long targetId : followings) {
+                    redisService.addToSet(followsCacheKey, targetId);
+                }
+                redisService.expire(followsCacheKey, CACHE_EXPIRE_HOURS, TimeUnit.HOURS);
+            }
+            log.debug("从数据库获取关注列表: userId={}, size={}", userId, followings != null ? followings.size() : 0);
+            return followings;
+        } catch (Exception e) {
+            log.error("获取关注列表失败: userId={}", userId, e);
+            // 降级：直接查询数据库
+            return followMapper.listFollowings(userId);
+        }
+    }
+
+    /**
      * 敏感词检测和违规记录
      * 实现步骤：
      * 1. 检测内容是否包含敏感词
