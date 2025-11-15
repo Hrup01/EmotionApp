@@ -9,6 +9,7 @@ import com.groupb.pojo.dto.PointsChangeRequest;
 import com.groupb.pojo.dto.PointsChangeResponse;
 import com.groupb.service.PointsService;
 import com.groupb.service.ShopOrderService;
+import com.groupb.util.CheckPointsUtil;
 import jakarta.el.LambdaExpression;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,9 @@ public class ShopOrderServiceImpl implements ShopOrderService {
 
     @Autowired
     private PointsService pointsService;
+
+    @Autowired
+    private CheckPointsUtil checkPointsUtil;
 
     //创建订单
     @Override
@@ -75,7 +79,12 @@ public class ShopOrderServiceImpl implements ShopOrderService {
     @Override
     public PointsChangeResponse changePointByOrder(ShopOrder shopOrder) {
         log.info("积分变更");
-        return pointsService.changePoints(buildRequestByOrder(shopOrder));
+        boolean b = checkPointsUtil.checkPoints(shopOrder);//检测积分是否足够
+        if(b){
+            return pointsService.changePoints(buildRequestByOrder(shopOrder));
+        }else{
+            return null;
+        }
     }
 
     //根据订单创建积分请求体

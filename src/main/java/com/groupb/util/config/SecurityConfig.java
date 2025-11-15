@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,6 +36,7 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder(12);
 	}
 
+
 	//基础安全过滤器链配置：放行 /login 等公开端点，关闭CSRF并改用无状态会话
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,6 +49,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/auth/**").permitAll()   // 允许认证相关接口无需认证
 				.requestMatchers("/api/emotion/types").permitAll() // 允许获取情绪类型无需认证
 								.requestMatchers("/ai/**").permitAll() //允许AI对话无需认证（开发阶段）
+								.requestMatchers("/webSocket/**").permitAll()//允许websocket无需认证
 				.requestMatchers("/api/emotion/recent").permitAll() // 允许获取最近情绪无需认证（开发阶段）
 				.requestMatchers("/api/test/**").permitAll()   // 允许测试接口无需认证
 				.requestMatchers("/api/doc").permitAll()       // 允许API文档无需认证
