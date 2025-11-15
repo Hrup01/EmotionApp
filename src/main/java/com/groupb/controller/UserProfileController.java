@@ -88,6 +88,27 @@ public class UserProfileController {
         }
     }
 
+    @DeleteMapping
+    public Result<Void> deactivateCurrentUser() {
+        try {
+            Long userId = SecurityContextUtil.getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+
+            boolean success = userService.deactivateUser(userId);
+            if (!success) {
+                return Result.error("注销用户失败");
+            }
+
+            log.info("用户注销成功: userId={}", userId);
+            return Result.success(null, "用户已成功注销");
+        } catch (Exception e) {
+            log.error("用户注销失败", e);
+            return Result.error("用户注销失败：" + e.getMessage());
+        }
+    }
+
     /**
      * 更新用户头像
      * API接口：POST /api/user/profile/avatar

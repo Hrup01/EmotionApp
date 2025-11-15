@@ -80,4 +80,11 @@ public interface UserService {
      * @return 是否更新成功
      */
     boolean updateProfile(long userId, String avatarUrl, String nickname, String gender, LocalDate birthday);
+
+    /**
+     * 注销（停用）用户账号，通常将用户状态标记为 DELETED
+     * @param userId 用户ID
+     * @return 是否注销成功
+     */
+    boolean deactivateUser(long userId);
 }
