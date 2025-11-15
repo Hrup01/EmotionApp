@@ -37,6 +37,11 @@ public enum PointsSourceType {
     CHECK_IN_STREAK,
 
     /**
+     * 手账上传完成奖励
+     */
+    HAND_ACCOUNT,
+
+    /**
      * 手动运营活动发放
      */
     OPERATION_EVENT,

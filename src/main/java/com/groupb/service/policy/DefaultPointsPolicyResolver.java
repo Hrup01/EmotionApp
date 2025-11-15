@@ -25,6 +25,7 @@ public class DefaultPointsPolicyResolver implements PointsPolicyResolver {
         defaultRewardTable.put(PointsSourceType.COMMUNITY_POST, 20);
         defaultRewardTable.put(PointsSourceType.CONTINUOUS_CHECK_IN, 30);
         defaultRewardTable.put(PointsSourceType.DAILY_CHECK_IN, 10);
+        defaultRewardTable.put(PointsSourceType.HAND_ACCOUNT, 10);
     }
 
     @Override
