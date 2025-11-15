@@ -68,6 +68,26 @@ public class UserProfileController {
         }
     }
 
+    @GetMapping("/points")
+    public Result<Integer> getCurrentUserPoints() {
+        try {
+            Long userId = SecurityContextUtil.getCurrentUserId();
+            if (userId == null) {
+                return Result.error("用户未登录");
+            }
+
+            User user = userService.findById(userId);
+            if (user == null) {
+                return Result.error("用户不存在");
+            }
+
+            return Result.success(user.getPoints(), "获取用户积分成功");
+        } catch (Exception e) {
+            log.error("获取用户积分失败", e);
+            return Result.error("获取用户积分失败：" + e.getMessage());
+        }
+    }
+
     /**
      * 更新用户头像
      * API接口：POST /api/user/profile/avatar

@@ -13,8 +13,9 @@ public interface EmotionService {
     
     /**
      * 保存或更新情绪日记
+     * @return true 表示创建了新的日记（可用于发放积分），false 表示对既有记录进行了更新
      */
-    void saveDiary(Long userId, EmotionDTO dto);
+    boolean saveDiary(Long userId, EmotionDTO dto);
     
     /**
      * 获取指定日期的情绪日记

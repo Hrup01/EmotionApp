@@ -2,29 +2,36 @@ package com.groupb.service.serviceImpl;
 
 import com.groupb.mapper.EmotionDiaryMapper;
 import com.groupb.pojo.EmotionDiary;
-import com.groupb.pojo.dto.*;
+import com.groupb.pojo.PointsSourceType;
+import com.groupb.pojo.dto.EmotionDTO;
+import com.groupb.pojo.dto.PointsChangeRequest;
 import com.groupb.service.EmotionService;
+import com.groupb.service.PointsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class EmotionServiceImpl implements EmotionService {
 
-    @Autowired
-    private EmotionDiaryMapper emotionDiaryMapper;
-    
-     //@Autowired
-     //private RestTemplate restTemplate; // 暂时注释，实际使用时需要配置
+    private final EmotionDiaryMapper emotionDiaryMapper;
+    private final PointsService pointsService;
+
+    public EmotionServiceImpl(EmotionDiaryMapper emotionDiaryMapper, PointsService pointsService) {
+        this.emotionDiaryMapper = emotionDiaryMapper;
+        this.pointsService = pointsService;
+    }
 
     @Override
-    public void saveDiary(Long userId, EmotionDTO dto) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean saveDiary(Long userId, EmotionDTO dto) {
         EmotionDiary diary = new EmotionDiary();
         BeanUtils.copyProperties(dto, diary);
         diary.setUserId(userId);
@@ -36,6 +43,7 @@ public class EmotionServiceImpl implements EmotionService {
         
         // 检查是否已存在该日期的日记
         EmotionDiary existingDiary = emotionDiaryMapper.findByUserAndDate(userId, diary.getDiaryDate());
+        boolean created = false;
         
         if (existingDiary != null) {
             // 更新现有日记，保持原有的打卡天数
@@ -47,7 +55,11 @@ public class EmotionServiceImpl implements EmotionService {
             int checkInCount = calculateCheckInCount(userId, diary.getDiaryDate());
             diary.setCheckInCount(checkInCount);
             emotionDiaryMapper.insert(diary);
+            created = true;
+            grantDiaryRewards(userId, diary.getDiaryDate(), checkInCount);
         }
+
+        return created;
     }
 
     @Override
@@ -156,5 +168,44 @@ public class EmotionServiceImpl implements EmotionService {
             // 断档了，重新从1开始
             return 1;
         }
+    }
+
+    private void grantDiaryRewards(Long userId, LocalDate diaryDate, int checkInCount) {
+        PointsChangeRequest diaryReward = buildPointsRequest(
+                userId,
+                PointsSourceType.EMOTION_DIARY,
+                20,
+                "DIARY-" + diaryDate,
+                "情绪日记打卡奖励",
+                false
+        );
+        pointsService.changePoints(diaryReward);
+
+        int dayInCycle = ((checkInCount - 1) % 7) + 1;
+        PointsChangeRequest dailyCheckInReward = buildPointsRequest(
+                userId,
+                PointsSourceType.DAILY_CHECK_IN,
+                dayInCycle,
+                "CHECKIN-DAILY-" + diaryDate,
+                "每日打卡奖励",
+                true
+        );
+        pointsService.changePoints(dailyCheckInReward);
+    }
+
+    private PointsChangeRequest buildPointsRequest(Long userId,
+                                                   PointsSourceType sourceType,
+                                                   int requestedPoints,
+                                                   String businessId,
+                                                   String remark,
+                                                   boolean allowOverride) {
+        PointsChangeRequest request = new PointsChangeRequest();
+        request.setUserId(userId);
+        request.setSourceType(sourceType.name());
+        request.setRequestedPoints(requestedPoints);
+        request.setBusinessId(businessId);
+        request.setRemark(remark);
+        request.setAllowClientOverride(allowOverride);
+        return request;
     }
 }
