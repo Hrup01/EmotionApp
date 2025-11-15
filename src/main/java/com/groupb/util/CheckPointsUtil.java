@@ -18,6 +18,11 @@ public class CheckPointsUtil {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * 检测商品购买积分是否足够
+     * @param shopOrder 订单
+     * @return 布尔类型 true--足够，false--不足
+     */
     public boolean checkPoints(ShopOrder shopOrder) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getId, shopOrder.getUserId())
