@@ -25,8 +25,8 @@ export default {
             isMyAttention: true,
             attentionList: [
                 { id: 0, url: require('@/assets/image/消息中心/头像1.png'), name: '小栈', followed: false },
-                { id: 1, url: require('@/assets/image/消息中心/头像2.png'), name: 'CaCa', followed: false },
-                { id: 2, url: require('@/assets/image/消息中心/头像3.png'), name: 'CaCa', followed: true },
+                { id: 1, url: require('@/assets/image/消息中心/头像2.png'), name: '222', followed: true },
+                { id: 2, url: require('@/assets/image/消息中心/头像3.png'), name: '111', followed: true },
                 { id: 3, url: require('@/assets/image/消息中心/头像4.png'), name: 'CaCa', followed: true },
                 { id: 4, url: require('@/assets/image/消息中心/头像5.png'), name: 'CaCa', followed: false },
                 { id: 5, url: require('@/assets/image/消息中心/头像6.png'), name: 'CaCa', followed: false },

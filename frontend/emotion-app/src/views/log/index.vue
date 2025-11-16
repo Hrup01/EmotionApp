@@ -118,17 +118,26 @@ export default {
             this.currentContent = '输入心得，记录你的情绪变化'
             // 2.post
             console.log(this.emotionType)
-            const res = await axios.post('http://localhost:8080/api/emotion/diary', {}, {
+            // const diaryRes = await axios.post('http://localhost:8080/api/emotion/diary', {}, {
+            //     params: {
+            //         diaryDate: this.exactDate,
+            //         emotionType: this.emotionType,
+            //         content: this.content
+            //     },
+            //     headers: {
+            //         Authorization: 'Bearer ' + this.token
+            //     }
+            // })
+            // console.log('发布日志结果',diaryRes)
+            const moodRes = await axios.post('http://localhost:8080/dayEmotionRecord', {}, {
                 params: {
-                    diaryDate: this.exactDate,
-                    emotionType: this.emotionType,
-                    content: this.content
+                    emotion: this.emotionType
                 },
                 headers: {
                     Authorization: 'Bearer ' + this.token
                 }
             })
-            console.log('发布日志结果',res)
+            console.log('上传心情结果', moodRes)
         },
         changeColor () {
             // const realShow = this.$refs.realShow
@@ -210,6 +219,7 @@ export default {
     img {
         position: relative;
         top: 50px;
+        right: 20px;
         width: 24px;
         height: 24px;
     }

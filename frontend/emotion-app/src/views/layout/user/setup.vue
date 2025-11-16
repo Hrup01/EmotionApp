@@ -16,6 +16,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import { removeInfo } from '@/utlis/storage'
 export default {
     name: 'setUp',
     components: {
@@ -30,8 +31,12 @@ export default {
     methods: {
         // 推出登录
         logOut () {
-
+            // 清除本地存储的用户信息
+            removeInfo()
+            // 跳转到登录页面
+            this.$router.push('/login')
         }
+        // 注销账户
     }
 }
 </script>

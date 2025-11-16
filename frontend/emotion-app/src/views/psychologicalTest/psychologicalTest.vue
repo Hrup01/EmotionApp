@@ -10,23 +10,23 @@
         </div>
     </div>
     <div class="subject wrapper">
-        <div class="question">{{ question }}</div>
+        <div class="question">{{ question[progress - 1].content }}</div>
         <ul class="options">
-            <li>
+            <li @click="selectOption('none')">
                 <img src="@/assets/image/测评/A.png" alt="">
-                <div class="A item">几乎没有</div>
+                <div class="A item" ref="none">几乎没有</div>
             </li>
-            <li>
-                <img src="@/assets/image/测评/B.png" alt="">
-                <div class="B item">有时有</div>
+            <li @click="selectOption('sometimme')">
+                <img src="@/assets/image/测评/B.png" alt="" ref="B">
+                <div class="B item" ref="sometimme">有时有</div>
             </li>
-            <li>
-                <img src="@/assets/image/测评/C.png" alt="">
-                <div class="C item">经常有</div>
+            <li @click="selectOption('offen')">
+                <img src="@/assets/image/测评/C.png" alt="" ref="C">
+                <div class="C item" ref="offen">经常有</div>
             </li>
-            <li>
-                <img src="@/assets/image/测评/D.png" alt="">
-                <div class="D item">几乎总是有</div>
+            <li @click="selectOption('all')">
+                <img src="@/assets/image/测评/D.png" alt="" ref="D">
+                <div class="D item" ref="all">几乎总是有</div>
             </li>
         </ul>
     </div>
@@ -48,7 +48,13 @@ export default {
         return {
             progress: 1,
             // percent: 10,
-            question: '10 . 出现睡眠问题(如入睡困难、多梦、早醒)',
+            question: [
+                { content: '1 . 感到紧张、焦虑或烦躁', option: '' },
+                { content: '2 . 无法停止或控制担忧', option: '' },
+                { content: '3 . 出现睡眠问题(如入睡困难、多梦、早醒)', option: '' },
+            ],
+            // 当前的选择
+            currentOption: '',
             isFinish: false
         }
     },
@@ -58,15 +64,43 @@ export default {
             if (this.progress === 1) return
             if (this.isFinish) this.isFinish = false
             this.progress --
+            // 从数组中得知选择
+            const option = this.question[this.progress - 1].option
+            // console.log(option)
+            this.$refs.none.style.backgroundColor = '#fff'
+            this.$refs.sometimme.style.backgroundColor = '#fff'
+            this.$refs.offen.style.backgroundColor = '#fff'
+            this.$refs.all.style.backgroundColor = '#fff'
+            this.$refs[option].style.backgroundColor = '#F3CF80'
         },
         nextQuestion () {
             if (this.progress === 10) return
             if (this.progress === 9) this.isFinish = true
             this.progress ++
+            this.$refs.none.style.backgroundColor = '#fff'
+            this.$refs.sometimme.style.backgroundColor = '#fff'
+            this.$refs.offen.style.backgroundColor = '#fff'
+            this.$refs.all.style.backgroundColor = '#fff'
+            // 从数组中得知选择
+            // const option = this.question[this.progress].option
+            // this.$refs[option].style.backgroundColor = '#F3CF80'
+            // 将选择推到数组里
+            this.question[this.progress - 2].option = this.currentOption
+            // console.log(this.question)
         },
         // 选择选项
-        selectOption () {
-            
+        selectOption (option) {
+            // 变颜色
+            // console.log(this.$refs[options])
+            // 其他颜色变为白色
+            // const options = document.querySelectorAll('#psychologicalTest .options li')
+            // console.log(options)
+            this.$refs.none.style.backgroundColor = '#fff'
+            this.$refs.sometimme.style.backgroundColor = '#fff'
+            this.$refs.offen.style.backgroundColor = '#fff'
+            this.$refs.all.style.backgroundColor = '#fff'
+            this.$refs[option].style.backgroundColor = '#F3CF80'
+            this.currentOption = option
         },
         // 提交选择
         submitSelect () {

@@ -10,7 +10,7 @@
         <!-- <input type="text" name="emojiName" v-else v-model="currentEmojiName" @keydown="confirmText" ref="editText"> -->
         <!-- <img src="@/assets/image/pen.png" alt="" @click="changeText" v-show="flag"> -->
       </div>
-      <div class="text" @click="$router.push(`/log/${currentEmojiEnglish}`)">就这样</div>
+      <div class="text" @click="$router.push(`/log/${currentEmojiName}`)">就这样</div>
       <div class="recentlyOption">
         <ul>
           <!-- 后面用 js 渲染 -->

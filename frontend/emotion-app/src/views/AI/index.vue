@@ -2,8 +2,8 @@
   <div id="AI">
     <nav-bar :is-transparent="isTransparent"></nav-bar>
     <div class="right">
-      <img src="@/assets/image/AI/新增对话.png" alt="">
-      <img src="@/assets/image/AI/历史记录进入按钮.png" alt="">
+      <img src="@/assets/image/AI/新增对话.png" alt="" @click="addNewChatMessage">
+      <img src="@/assets/image/AI/历史记录进入按钮.png" alt="" @click="isHistory = true">
     </div>
     <div class="title wrapper">AI情绪教练</div>
     <div class="dialog wrapper">
@@ -31,7 +31,7 @@
           <div class="userSentence" v-if="item.role === 'user'">
               <div class="item">{{ item.content }}</div>
           </div>
-          <div class="answer" v-else-if="item.role === 'ai'">
+          <div class="answer" v-else-if="item.role === 'assistant'">
             <div class="item">
               <img src="@/assets/image/AI/AI头像.png" alt="">
               <!-- <p v-if="isLoading"></p> -->
@@ -48,8 +48,48 @@
           <img src="@/assets/image/AI/发送.png" alt="" @click="sendMessage">
         </div>
       </div>
-
-      <!-- 历史会话记录 -->
+    </div>
+    <!-- 历史会话记录 -->
+    <div class="history" v-show="isHistory">
+      <div class="mask"></div>
+      <div class="subject">
+        <div class="cancel">
+          <img src="@/assets/image/AI/返回.png" alt="" @click="isHistory = false">
+          <p>历史会话</p>
+        </div>
+        <div class="record">
+          <div class="week" v-show="weekHistoryRecords.length > 0">
+            <div class="time">本周</div>
+            <ul>
+              <li v-for="item in weekHistoryRecords" :key="item.chatId">
+                <p @click="getConversationContent(item.chatId)">{{ item.summary }}</p>
+                <img src="@/assets/image/AI/关闭.png" alt="" v-show="showDelect" @click="delectHistoryRecord(item.chatId)">
+              </li>
+            </ul>
+          </div>
+          <div class="month" v-show="monthHistoryRecords.length > 0">
+            <div class="time">本月</div>
+            <ul>
+              <li v-for="item in monthHistoryRecords" :key="item.chatId">
+                <p>{{ item.summary }}</p>
+                <img src="@/assets/image/AI/关闭.png" alt="" v-show="showDelect" @click="delectHistoryRecord(item.chatId)">
+              </li>
+            </ul>
+          </div>
+          <div class="year" v-show="yearHistoryRecords.length > 0">
+            <div class="time">本年</div>
+            <ul>
+              <li v-for="item in yearHistoryRecords" :key="item.chatId">
+                <p>{{ item.summary }}</p>
+                <img src="@/assets/image/AI/关闭.png" alt="" v-show="showDelect" @click="delectHistoryRecord(item.chatId)">
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="bin">
+          <img src="@/assets/image/AI/删除.png" alt="" @click="showDelect = showDelect ? false : true">
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -83,11 +123,19 @@ export default {
         intervalId: null,
         chatId: '',
         // 历史会话的chatId
-        historyChatId: '',
+        // historyChatId: '',
         isLoading: false,
-        // // 流式输出
-        // isStreaming: false, // 是否流式输出
-        // currentIndex: -1 //当前流式对话在chatMessages中的索引
+        // 历史会话记录相关
+        isHistory: false,
+        showDelect: false,
+        // 本周历史会话记录
+        weekHistoryRecords: [],
+        // 本月历史会话记录
+        monthHistoryRecords: [],
+        // 本年历史会话记录
+        yearHistoryRecords: [],
+        // 点击了历史会话
+        isClickHistoryChat: false
       }
     },
     methods: {
@@ -104,7 +152,7 @@ export default {
           }
         })
         // 先推送一个空的ai回答占位符
-        this.chatMessages.push({ role: 'ai', content: '' })
+        this.chatMessages.push({ role: 'assistant', content: '' })
         // console.log(JSON.parse(res.data))
         const aiAnswer = JSON.parse(res.data)
         aiAnswer.forEach(item => {
@@ -226,13 +274,46 @@ export default {
         console.log('推送会话记录: ', res)
       },
       // 获取会话内容
-      async getConversationContent () {
-        const res = await axios.get(`http://localhost:8080/ai/message/${this.historyChatId}`, {
+      async getConversationContent (historyChatId) {
+        this.isClickHistoryChat = true
+        const res = await axios.get(`http://localhost:8080/ai/message/${historyChatId}`, {
           headers: {
               Authorization: 'Bearer ' + this.token
           }
         })
-        console.log(res)
+        console.log('具体会话内容',res)
+        // 前面如果有对话记录则清空
+        this.isHistory = false
+        this.chatMessages = []
+        // 将数组倒过来赋值给chatMessages
+        this.chatMessages = res.data.data.reverse()
+        // console.log('倒过来数组',res.data.data.reverse())
+        // 将本地存储的内容改为当前这个
+        localStorage.setItem('chatMessages', JSON.stringify(this.chatMessages))
+      },
+      // 新增对话
+      addNewChatMessage () {
+        this.isClickHistoryChat = false
+        // 清空当前对话记录
+        this.chatMessages = []
+        this.haveContent = false
+        // 生成新的chatId
+        const newChatId = generateChatID()
+        sessionStorage.setItem('chatId', newChatId)
+        this.chatId = newChatId
+        // 清空本地存储的聊天记录和更新chatId
+        localStorage.removeItem('chatMessages')
+      },
+      // 删除历史会话记录
+      async delectHistoryRecord (chatId) {
+        await axios.delete(`http://localhost:8080/ai/chatHistory/${chatId}`, {
+          headers: {
+              Authorization: 'Bearer ' + this.token
+          }
+        })
+        // console.log('删除历史会话记录', res)
+        // 将记录从数组中删去
+        this.weekHistoryRecords = this.weekHistoryRecords.filter(item => item.chatId != chatId)
       }
     },
     created () {
@@ -240,26 +321,61 @@ export default {
       this.initChatId()
     },
     async mounted () {
+      this.isClickHistoryChat = true
+      // 先从本地存储获取聊天记录和chatId
+      const storedMessages = localStorage.getItem('chatMessages')
+      const prevChatId = localStorage.getItem('prevChatId')
+      // 更改会话存储中的chatId
+      sessionStorage.setItem('chatId', prevChatId)
+      if (storedMessages) {
+        this.chatMessages = JSON.parse(storedMessages)
+        this.haveContent = this.chatMessages.length > 0 ? true : false
+      }
       // 获取全部历史会话记录
       const res = await axios.get('http://localhost:8080/ai/chatHistory', {
         headers: {
               Authorization: 'Bearer ' + this.token
           }
       })
-      console.log('全部历史会话记录: ',res.data.data)
-      // 推送chatId到数组中
-      // res.data.data.forEach((item) => {
-      //   this.historyChatId.push = item.chatId
-      // })
-      this.historyChatId = res.data.data[0].chatId
-      // console.log('历史会话id: ', this.historyChatId)
-      // this.getConversationContent()
+      // console.log('全部历史会话记录: ',res.data.data)
+      // 过滤掉空对话和没有时间的对话
+      const filteredData = res.data.data.filter(item => item.summary != '空对话' && item.createTime != null)
+      // console.log('过滤后的历史会话记录: ', filteredData)
+      // 判断该会话记录距离现在过去多久，以一周，一月，一年分类显示
+      const now = new Date()
+      filteredData.forEach(item => {
+        const createTime = new Date(item.createTime)
+        const diffTime = now - createTime
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+        if (diffDays <= 7) {
+          item.timeCategory = '本周'
+        } else if (diffDays <= 30) {
+          item.timeCategory = '本月'
+        } else if (diffDays <= 365) {
+          item.timeCategory = '本年'
+        } else {
+          item.timeCategory = '更早'
+        }
+      })
+      // console.log('分类后的历史会话记录: ', filteredData)
+      // this.historyRecords = filteredData
+      this.weekHistoryRecords = filteredData.filter(item => item.timeCategory === '本周')
+      this.monthHistoryRecords = filteredData.filter(item => item.timeCategory === '本月')
+      this.yearHistoryRecords = filteredData.filter(item => item.timeCategory === '本年')
     },
     beforeDestroy () {
+      // 移除会话存储中的chatId
+      sessionStorage.removeItem('chatId')
+      // 如果没有对话则不推送会话记录
+      if (this.chatMessages.length === 0) return
+      if (this.isClickHistoryChat) return
       if (this.intervalId) {
         clearInterval(this.intervalId)
       }
       this.postConversation()
+      // 将聊天记录和chatId存到本地存储
+      localStorage.setItem('chatMessages', JSON.stringify(this.chatMessages))
+      localStorage.setItem('prevChatId', this.chatId)
     }
 }
 </script>
@@ -391,6 +507,66 @@ export default {
             background: #fbddd9;
           }
         }
+      }
+    }
+  }
+}
+.history {
+  position: fixed;
+  top: 0;
+  display: flex;
+  width: 390px;
+  height: 844px;
+  .mask {
+    width: 90px;
+    height: 100%;
+    background: #00000080;
+  }
+  .subject {
+    padding: 28px 16px;
+    width: 300px;
+    height: 100%;
+    background: #ffefcf;
+    .cancel {
+      display: flex;
+      align-items: center;
+      img {
+        margin-right: 78px;
+        width: 24px;
+      }
+    }
+    .record {
+      margin-top: 50px;
+      .time {
+        margin: 16px 0;
+        color: #6b6b6b;
+        font-size: 14px;
+      }
+      ul {
+        li {
+          display: flex;
+          align-items: center;
+          width: 272px;
+          height: 60px;
+          img {
+            margin-top: 2px;
+            width: 16px;
+            height: 16px;
+          }
+          p {
+            width: 252px;
+            color: #472000cc;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+    .bin {
+      position: fixed;
+      right: 15px;
+      bottom: 20px;
+      img {
+        width: 24px;
       }
     }
   }

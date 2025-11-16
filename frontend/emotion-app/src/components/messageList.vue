@@ -2,7 +2,7 @@
     <div class="messageList wrapper">
         <ul ref="messageList">
             <li v-for="item in list" :key="item.id">
-                <img :src="item.url" alt="" class="headPic">
+                <img :src="item.url" alt="" class="headPic" @click="$router.push(`/otherHomePage?name=${item.name}&followed=true`)">
                 <div class="text">
                     <div class="name">{{ item.name }} <p v-show="isComment">对我的笔记发表了评论</p></div>
                     <p>{{ item.content }}</p>
@@ -41,7 +41,11 @@ export default {
             }else {
                 this.$emit('changeFollow', { id, followed: true })
             }
-        }
+        },
+        // // 跳转到他人主页 -- 传递数组
+        // toOtherHomePage () {
+        //     this.$router.push('/otherHomePage?')
+        // }
     },
     mounted () {
         // 根据传来的数据设置高度

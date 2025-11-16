@@ -29,7 +29,7 @@
                     <p>正在关注</p>
                     <img src="@/assets/image/已关注.png" alt="">
                 </div>
-                <div class="privateLetter" @click="$router.push(`/privateLetter/${userId}`)">
+                <div class="privateLetter" @click="$router.push(`/privateLetter/${username}`)">
                     <p>私信</p>
                     <img src="@/assets/image/私信.png" alt="">
                 </div>
@@ -74,7 +74,9 @@ export default {
                 { id: 1, pic: require('@/assets/image/笔记背景2.png'), text: '这里是第二段文字', likeCount: 123, commentCount: 123 },
                 { id: 2, pic: require('@/assets/image/笔记背景3.png'), text: '这里是第三段文字', likeCount: 123, commentCount: 123 },
                 { id: 3, pic: require('@/assets/image/笔记背景4.png'), text: '这里是第四段文字', likeCount: 123, commentCount: 123 }
-            ]
+            ],
+            // 用户信息
+            username: ''
         }
     },
     methods: {
@@ -84,6 +86,18 @@ export default {
         // 是否关注
         changeFollowedState () {
             this.isfollowed = this.isfollowed ? false : true
+        }
+    },
+    mounted () {
+        // 获取传过来的参数
+        const query = this.$route.query
+        // console.log(query)
+        this.username = query.name
+        console.log(this.username)
+        if (query.followed === 'true') {
+            this.isfollowed = true
+        } else {
+            this.isfollowed = false
         }
     }
 }

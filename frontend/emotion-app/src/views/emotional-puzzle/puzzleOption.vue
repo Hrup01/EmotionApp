@@ -8,9 +8,6 @@
           <li><img src="@/assets/image/拼图/简单1.png" alt=""></li>
           <li><img src="@/assets/image/拼图/简单2.png" alt=""></li>
           <li><img src="@/assets/image/拼图/简单3.png" alt=""></li>
-          <li><img src="@/assets/image/拼图/简单4.png" alt=""></li>
-          <li><img src="@/assets/image/拼图/简单5.png" alt=""></li>
-          <li><img src="@/assets/image/拼图/简单6.png" alt=""></li>
         </ul>
       </div>
       <div class="border"></div>
@@ -63,28 +60,24 @@ export default {
   border-radius: 10px;
   background: #fdf9f0;
   .title {
+    margin: 30px 0;
     img {
       margin-left: 8px;
       width: 91px;
     }
   }
-  .simpleness {
-    margin-top: 16px;
-  }
   ul {
-    margin-top: 16px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     li {
-      margin-bottom: 20px;
       img {
         width: 110px;
       }
     }
   }
   .border {
-    margin-bottom: 19px;
+    margin-top: 29px;
     width: 350px;
     height: 2px;
     background-color: #f5d99c;

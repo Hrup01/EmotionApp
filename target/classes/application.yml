@@ -11,7 +11,7 @@ spring:
     url: jdbc:mysql://localhost:3306/emotionApp?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: Hrup041001.
+    password: zy060320
     druid:
       # 初始化连接池大小
       initial-size: 5
@@ -33,6 +33,19 @@ spring:
       test-on-return: false
       # 空闲时检测连接有效性（建议开启）
       test-while-idle: true
+  # Redis配置
+  redis:
+    host: 192.168.80.130
+    port: 6379
+    password: 123321
+    database: 0
+    timeout: 5s             # 连接超时时间
+    lettuce:
+      pool:
+        max-active: 8       # 最大连接数
+        max-idle: 8         # 最大空闲连接数
+        min-idle: 0         # 最小空闲连接数
+        max-wait: 5s        # 获取连接最大等待时间
   # Jackson配置
   jackson:
     date-format: yyyy-MM-dd

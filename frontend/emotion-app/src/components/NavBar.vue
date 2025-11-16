@@ -39,7 +39,6 @@ export default {
   width: 390px;
   .top-time {
     width: 390px;
-    // background-color: #FDF4E4;
     background-color: transparent;
   }
   .left {

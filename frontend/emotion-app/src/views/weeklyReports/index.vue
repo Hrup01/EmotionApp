@@ -52,7 +52,7 @@
         <div class="suggest">
           <ul>
             <li v-for="item in suggestList" :key="item.id">
-              <img :src="item.url" alt="">
+              <img :src="item.url" alt="" v-show="item.text !== ''">
               <p>{{ item.text }}</p>
             </li>
           </ul>
@@ -95,74 +95,56 @@ export default {
           { id: 6, url: require('@/assets/image/空缺心情_笑.png'), day: '日'}
         ],
         suggestList: [
-          { id: 7, url: require('@/assets/image/green.png'), text: '有意识地将注意力停留在积极时刻上，延长和深化愉悦感，促进积极情绪的内化。'},
-          { id: 8, url: require('@/assets/image/purple.png'), text: '主动与他人分享您的快乐。社会性的分享能强化积极情绪，并增强您的社会支持网络.'},
-          { id: 9, url: require('@/assets/image/yellow.png'), text: '将愉悦感转化为探索新兴趣或技能的动力。成就感的获得能为您持续的幸福感提供新源泉。'},
+          { id: 7, url: require('@/assets/image/green.png'), text: ''},
+          { id: 8, url: require('@/assets/image/purple.png'), text: ''},
+          { id: 9, url: require('@/assets/image/yellow.png'), text: ''},
         ],
         total: 7,
-        time: 6,
+        time: '',
         moodText: '开心',
         emojiUrl: require('@/assets/image/icon_1.png'),
         title: '心情周报',
       }
     },
     async mounted () {
-      // 获取用户当前连续打卡天数
-      const checkInDays = await axios.get('http://localhost:8080/api/emotion/check-in-count',{
+      // 获取上周每日记录
+      const moodResponse = await axios.get('http://localhost:8080/dayEmotionRecord', {
         headers: {
-          Authorization: 'Bearer ' + this.token
+          Authorization: `Bearer ${this.token}`
         }
       })
-      console.log('获取用户当前连续打卡天数',checkInDays)
-      // console.log('连续打卡天数',checkInDays.data.data.checkInCount)
-      this.time = checkInDays.data.data.checkInCount
+      console.log('上周每日记录', moodResponse.data.data)
+      // 获取上周一周周报
+      const weeklyReports = await axios.get('http://localhost:8080/weeklyReport', {
+        headers: {
+          Authorization: `Bearer ${this.token}`
+        }
+      })
+      console.log('上周一周周报', weeklyReports.data.data)
+      // 记录次数
+      this.time = weeklyReports.data.data.count
       // 渲染打卡次数可视化
       const progress = this.time / (this.total * 3.5)
       const endDeg = progress * 360
       // console.log(endDeg)
       this.$refs.outer.style.background = `conic-gradient(#A3EBAF 0% ,#BEF3A5 ${endDeg}%, #F0FAF2 ${endDeg}% 360%)`
-      // 获取用户最近使用的情绪
-      const recentMood = await axios.get('http://localhost:8080/api/emotion/recent',{
-        params: {
-          limit: 4,
-          userId: 1
-        },
-        headers: {
-          Authorization: 'Bearer ' + this.token
-        }
-      })
-      console.log('获取用户最近使用的情绪',recentMood)
-      // this.moodList = recentMood.data
-      // if (recentMood.data.data.length === 0) {
-      //   this.moodList = this.moodList.map((item) => {
-      //     // item.url = require('@/assets/image/空缺心情_笑.png')
-      //     // console.log(item)
-      //   })
-      //   console.log(this.moodList)
-      //   // 计算本周占比最大的情绪
-      //   // const moodCount = {}
-      //   // recentMood.data.data.forEach(item => {
-      //   //   if (moodCount[item.emotionId]) {
-      //   //     moodCount[item.emotionId]++
-      //   //   } else {
-      //   //     moodCount[item.emotionId] = 1
-      //   //   }
-      //   // })
-      //   // const sortedMoods = Object.entries(moodCount).sort((a,b) => b[1] - a[1])
-      //   // const topMoodId = sortedMoods[0][0]
-      //   // const moodTextMap = {
-      //   //   1: '开心',
-      //   //   2: '难过',
-      //   //   3: '生气',
-      //   //   4: '惊讶',
-      //   //   5: '害怕',
-      //   //   6: '厌恶'
-      //   // }
-      //   // this.moodText = moodTextMap[topMoodId]
-      //   // this.emojiUrl = require(`@/assets/image/icon_${topMoodId}.png`)
-      // }
-      // console.log(recentMood.data.data.length)
-      // console.log(this.moodList)
+      // 最大占比情绪
+      this.moodText = weeklyReports.data.data.moreEmotion
+      // AI建议
+      const emotionAdvice = weeklyReports.data.data.emotionAdvice
+      // console.log('emotionAdvice', emotionAdvice)
+      // 定义正则，用于分割#
+      const regex = /#([^#]+)#/g
+      const suggestList = []
+      let match
+      // 循环提取建议内容
+      while ((match = regex.exec(emotionAdvice)) !== null) {
+        suggestList.push(match[1])
+      }
+      // 将建议内容赋值到suggestList中
+      for (let i = 0; i < this.suggestList.length; i++) {
+        this.suggestList[i].text = suggestList[i] || ''
+      }
     }
 }
 </script>
@@ -347,10 +329,12 @@ export default {
       margin-top: 28px;
       margin-left: 19px;
       display: flex;
+      align-items: center;
       img {
+        flex-shrink: 0;
         margin-top: 4px;
         margin-right: 14px;
-        width: 38px;
+        // width: 38px;
         height: 24px;
         
       }

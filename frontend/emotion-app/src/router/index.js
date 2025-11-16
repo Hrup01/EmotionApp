@@ -16,6 +16,7 @@ import Collect from '@/views/layout/user/collect.vue'
 const EditInformation = () => import ('@/views/layout/user/editInformation.vue') 
 
 // 一级路由
+import GuidePage from '@/views/guidePage'
 const Login = () => import ('@/views/login')
 const WeeklyReports = () => import ('@/views/weeklyReports')
 const MoodOption = () => import ('@/views/moodOption')
@@ -24,9 +25,9 @@ const AI = () => import ('@/views/AI')
 const WhiteNoise = () => import ('@/views/whiteNoise')
 const OtherHomePage = () => import ('@/views/otherHomePage')
 const MessageCenter = () => import ('@/views/messageCenter')
-const NewFollow = () => import ('@/views/newFollow')
-const Comment = () => import ('@/views/comment')
-const LikeReceived = () => import ('@/views/likeReceived')
+const NewFollow = () => import ('@/views/messageCenter/newFollow')
+const Comment = () => import ('@/views/messageCenter/comment')
+const LikeReceived = () => import ('@/views/messageCenter/likeReceived')
 const MyAttention = () => import ('@/views/myAttention')
 const PostNotes = () => import ('@/views/postNotes')
 const State = () => import ('@/views/state')
@@ -49,6 +50,7 @@ const HistoryTest = () => import ('@/views/psychologicalTest/historyTest.vue')
 const TestResult = () => import ('@/views/psychologicalTest/testResult.vue')
 const SetUp = () => import ('@/views/layout/user/setup.vue')
 const Shop = () => import ('@/views/shop')
+const MyDraft = () => import ('@/views/myDraft')
 
 import test from '@/views/test.vue'
 
@@ -81,13 +83,14 @@ const router = new VueRouter({
       redirect: '/home'
     },
     { path: '/test', component: test },
+    { path: '/guidePage', component: GuidePage },
     { path: '/login', component: Login },
     { path: '/weeklyReports', component: WeeklyReports },
     { path: '/moodOption', component: MoodOption },
     { path: '/log/:mood', component: Log },
     { path: '/ai', component: AI },
     { path: '/whiteNoise', component: WhiteNoise },
-    { path: '/otherHomePage/:id', component: OtherHomePage },
+    { path: '/otherHomePage', component: OtherHomePage },
     { path: '/messageCenter', component: MessageCenter },
     { path: '/newFollow', component: NewFollow },
     { path: '/comment', component: Comment },
@@ -98,7 +101,7 @@ const router = new VueRouter({
     { path: '/meditation', component: Meditation },
     { path: '/countDown', component: CountDown },
     { path: '/noteDetail/:id', component: NoteDetail },
-    { path: '/privateLetter/:id', component: PrivateLetter },
+    { path: '/privateLetter/:username', component: PrivateLetter },
     { path: '/woodFish', component: WoodFish },
     { path: '/woodFish/moreSet', component: MoreSet },
     { path: '/clockIn', component: ClockIn },
@@ -115,7 +118,24 @@ const router = new VueRouter({
     { path: '/historyTest', component: HistoryTest },
     { path: '/testResult', component: TestResult },
     { path: '/shop', component: Shop },
+    { path: '/myDraft', component: MyDraft },
   ]
+})
+
+// 全局前置导航守卫
+router.beforeEach((to, from, next) => {
+  // console.log(to, from)
+  // 如果访问的是引导页，直接放行
+  if (to.path === '/guidePage') {
+    return next()
+  }
+  // 获取token
+  const token = window.localStorage.getItem('emotion_app_info') ? JSON.parse(window.localStorage.getItem('emotion_app_info')).token : ''
+  // 如果没有token，强制跳转到引导页
+  if (!token && to.path !== '/guidePage' && to.path !== '/login') {
+    return next('/guidePage')
+  }
+  next()
 })
 
 export default router

@@ -73,7 +73,7 @@
             <div class="title">涂鸦</div>
         </div>
         <ul>
-            <li v-for="(item, index) in paintingList" :key="item.id"><img :src="item.url" alt="" @click="changeColor(item.color, index)"></li>
+            <li v-for="(item, index) in paintingList" :key="item.id"><img :src="item.url" alt="" :ref="item.ref" @click="changeColor(item.color, index, item.ref)"></li>
         </ul>
     </div>
     <!-- 手账模板详情 -->
@@ -131,16 +131,16 @@ export default {
                 { id: 11, url: require('@/assets/image/手账/素材12.png') }
             ],
             // 涂鸦
-            isDrawing: true,
+            isDrawing: false,
             paintingList: [
-                { id: 0, url: require('@/assets/image/手账/铅笔.png'), color: '#000', isEraser: false },
-                { id: 1, url: require('@/assets/image/手账/蜡笔_绿.png'), color: 'green', isEraser: false },
-                { id: 2, url: require('@/assets/image/手账/蜡笔_红.png'), color: 'red', isEraser: false },
-                { id: 3, url: require('@/assets/image/手账/蜡笔_黄.png'), color: 'yellow', isEraser: false },
-                { id: 4, url: require('@/assets/image/手账/蜡笔_橙6.png'), color: 'orange', isEraser: false },
-                { id: 5, url: require('@/assets/image/手账/蜡笔_蓝.png'), color: 'blue', isEraser: false },
-                { id: 6, url: require('@/assets/image/手账/蜡笔_紫.png'), color: 'purple', isEraser: false },
-                { id: 7, url: require('@/assets/image/手账/橡皮.png'), color: '', isEraser: true }
+                { id: 0, url: require('@/assets/image/手账/铅笔.png'), color: '#000', ref: 'black' },
+                { id: 1, url: require('@/assets/image/手账/蜡笔_绿.png'), color: 'green', ref: 'green' },
+                { id: 2, url: require('@/assets/image/手账/蜡笔_红.png'), color: 'red', ref: 'red' },
+                { id: 3, url: require('@/assets/image/手账/蜡笔_黄.png'), color: 'yellow', ref: 'yellow' },
+                { id: 4, url: require('@/assets/image/手账/蜡笔_橙6.png'), color: 'orange', ref: 'orange' },
+                { id: 5, url: require('@/assets/image/手账/蜡笔_蓝.png'), color: 'blue', ref: 'blue' },
+                { id: 6, url: require('@/assets/image/手账/蜡笔_紫.png'), color: 'purple', ref: 'purple' },
+                { id: 7, url: require('@/assets/image/手账/橡皮.png'), color: '', ref: 'eraser' }
             ],
             // 模板
             isTemplate: false,
@@ -176,7 +176,7 @@ export default {
         changeFlag () {
             this.flag = this.flag ? false : true
         },
-        // 通过循环改变数组中显示状态
+        // 通过循环改变数组中(模板选中)显示状态
         changeState (fnum) {
             this.templateList.map((item) => {
                 if (fnum === 0) {
@@ -286,10 +286,13 @@ export default {
             // 如果是橡皮 --- 镂空
             if (this.isEraser) {
                 this.ctx.globalCompositeOperation = 'destination-out'
-                console.log('是橡皮', this.isEraser)
+                // console.log('是橡皮', this.isEraser)
             }else {
+                // 重置为默认
+                this.ctx.globalCompositeOperation = 'source-over'
                 // 画笔颜色
                 this.ctx.strokeStyle = this.stroke
+                // console.log('不是橡皮', this.stroke)
             }
             // 画笔大小
             this.ctx.lineWidth = this.lineWidth
@@ -301,12 +304,27 @@ export default {
             this.ctx.stroke()
         },
         // 改变画笔颜色
-        changeColor (color, index) {
-            console.log(index)
-            if (index === this.paintingList.length - 1) return this.isEraser = true
-            this.isEraser = false
-            this.stroke = color
+        changeColor (color, index, ref) {
+            // console.log(index)
+            // console.log(this.isEraser)
+            if (index === this.paintingList.length - 1) {
+                this.isEraser = true
+            }
+            else {
+                this.isEraser = false
+                this.stroke = color
+            }
             // console.log(color)
+            // 其他画笔恢复原位
+            this.paintingList.forEach((item, idx) => {
+                if (idx !== index) {
+                    this.$refs[item.ref][0].style.bottom = '-25%'
+                }
+            })
+            // 画笔突出
+            // console.log(this.$refs[ref][0])
+            this.$refs[ref][0].style.bottom = '-5%'
+            
         },
         // 改变画笔粗细
         tothin () {
@@ -339,6 +357,8 @@ export default {
         this.canvasOffesetY = canvasRect.top
         // this.canvas.width = window.innerWidth - this.canvasOffesetX
         // this.canvas.height = window.innerHeight - this.canvasOffesetY
+        // 默认选中铅笔
+        this.changeColor('#000', 0, 'black')
     }
 }
 </script>
@@ -401,6 +421,7 @@ export default {
         }
     }
 }
+// 画布
 .body {
     margin: 26px 0;
     padding: 32px 15px;
@@ -458,6 +479,7 @@ export default {
         }
     }
 }
+// 素材库详情
 .material-library-detail {
     position: fixed;
     bottom: 0;
@@ -532,6 +554,7 @@ export default {
         }
     }
 }
+// 涂鸦详情
 .painting-detail {
     position: fixed;
     bottom: 0;

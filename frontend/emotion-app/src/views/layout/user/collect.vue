@@ -40,7 +40,7 @@ ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  height: 340px;
+  height: 338px;
   overflow-y: auto;
 }
 </style>

@@ -105,9 +105,9 @@ export default {
       componentList: [
         { id: 0, url: require('@/assets/image/侧边栏/日记本.png'), name: '日记本', toUrl: '/diaryNoteBook' },
         { id: 1, url: require('@/assets/image/侧边栏/消息中心.png'), name: '消息中心', toUrl: '/messageCenter' },
-        { id: 2, url: require('@/assets/image/侧边栏/草稿.png'), name: '我的草稿', toUrl: '/moodOption' },
+        { id: 2, url: require('@/assets/image/侧边栏/草稿.png'), name: '我的草稿', toUrl: '/myDraft' },
         { id: 3, url: require('@/assets/image/侧边栏/我的收藏.png'), name: '我的收藏', toUrl: '/moodOption' },
-        { id: 4, url: require('@/assets/image/侧边栏/我的关注.png'), name: '我的关注', toUrl: '/moodOption' },
+        { id: 4, url: require('@/assets/image/侧边栏/我的关注.png'), name: '我的关注', toUrl: '/myAttention' },
         { id: 5, url: require('@/assets/image/侧边栏/浏览历史.png'), name: '浏览历史', toUrl: '/moodOption' },
         { id: 6, url: require('@/assets/image/侧边栏/帮助与反馈.png'), name: '帮助与反馈', toUrl: '/moodOption' },
         { id: 7, url: require('@/assets/image/侧边栏/社区公约.png'), name: '社区公约', toUrl: '/moodOption' },

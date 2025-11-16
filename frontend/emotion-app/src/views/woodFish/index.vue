@@ -3,11 +3,11 @@
     <nav-bar :title="navbarTitle"></nav-bar>
     <div class="top wrapper">
       <ul>
-        <li class="dressUp" @click="isDressUp = true">
+        <li class="dressUp" @click="isDressUp = isDressUp ? false : true">
           <img src="@/assets/image/木鱼/装扮.png" alt="">
           <p>木鱼装扮</p>
         </li>
-        <li class="char" @click="isCharDetail = true">
+        <li class="char" @click="isCharDetail = isCharDetail ? false : true">
           <img src="@/assets/image/木鱼/悬浮文字.png" alt="">
           <p>悬浮文字</p>
         </li>
@@ -24,17 +24,17 @@
         <img src="@/assets/image/木鱼/小木鱼.png" alt="">
       </div>
       <!-- 敲击出现悬浮文字 -->
-      <div class="suspendedText" style="display: none;">
-        <ul>
-          <li v-for="item in charDetailList" 
-          :key="item.id" 
-          v-show="item.ref !== 'custom'"
+      <div class="suspendedText" style="display: block;">
+        <ul ref="suspendedText">
+          <!-- <li v-for="(item, index) in floatingText" 
+          :key="index" 
           class="item"
           >
             {{ item.name }}
-          </li>
+          </li> -->
         </ul>  
       </div>
+      <!-- 大木鱼主体 -->
       <div class="bigWoodFish">
         <img src="@/assets/image/木鱼/大木鱼棍.png" alt="" class="bigStick" ref="stick">
         <img src="@/assets/image/木鱼/大木鱼.png" alt="" ref="stuff" @mousedown="strickWoodFish">
@@ -45,7 +45,7 @@
       <div class="jiantou"></div>
       <div class="kuangjia">
         <ul class="dressUp">
-          <li><img src="" alt=""></li>
+          <li v-for="item in dressUpList" :key="item.id"><img :src="item.woodFishUrl" alt=""></li>
         </ul>
       </div>
     </div>
@@ -102,12 +102,12 @@ export default {
     return {
       navbarTitle: '电子木鱼',
       time: 0,
-      // dressUpList: [
-      //   { id: 0, woodFishUrl: require(''), stickUrl: require(''), ref: '' },
-      //   { id: 1, woodFishUrl: require(''), stickUrl: require(''), ref: '' },
-      //   { id: 2, woodFishUrl: require(''), stickUrl: require(''), ref: '' },
-      //   { id: 3, woodFishUrl: require(''), stickUrl: require(''), ref: '' },
-      // ],
+      dressUpList: [
+        { id: 0, woodFishUrl: require('@/assets/image/木鱼/小猫木鱼.png'), stickUrl: require('@/assets/image/木鱼/小猫木鱼棍.png'), ref: '' },
+        { id: 1, woodFishUrl: require('@/assets/image/木鱼/小猪木鱼.png'), stickUrl: require('@/assets/image/木鱼/小猪木鱼棍.png'), ref: '' },
+        { id: 2, woodFishUrl: require('@/assets/image/木鱼/卡皮巴拉木鱼.png'), stickUrl: require('@/assets/image/木鱼/卡皮巴拉木鱼棍.png'), ref: '' },
+        { id: 3, woodFishUrl: require('@/assets/image/木鱼/熊猫木鱼.png'), stickUrl: require('@/assets/image/木鱼/熊猫木鱼棍.png'), ref: '' },
+      ],
       charDetailList: [
         { id: 0, name: '无', ref: 'no' },
         { id: 1, name: '功德+1', ref: 'merit' },
@@ -172,6 +172,22 @@ export default {
       }, 200)
       // 敲击次数 +1
       this.time += 1
+      // 向floatingText数组中添加一个随机文字
+      const availableTexts = this.charDetailList.filter(item => item.ref !== 'no' && item.ref !== 'custom')
+      const randomIndex = availableTexts[Math.floor(Math.random() * availableTexts.length)]
+      // this.floatingText.push(randomIndex.name)
+      // console.log(this.floatingText)
+      // 创建悬浮文字元素 并添加到ul中
+      const suspendedText = this.$refs.suspendedText
+      const textElement = document.createElement('li')
+      // 给元素添加自定义属性
+      textElement.setAttribute('data-v-1bc7dcfc', '')
+      textElement.className = 'floatingText'
+      textElement.innerText = randomIndex.name
+      suspendedText.appendChild(textElement)
+      // 设置初始位置 底部随机水平位置 在水平比较中间的位置
+      textElement.style.left = `${Math.random() * (suspendedText.clientWidth - textElement.clientWidth - 40)}px`
+      textElement.style.top = `${suspendedText.clientHeight - 20}px`
     },
   },
   mounted () {
@@ -208,7 +224,7 @@ export default {
 
     // 点击其他地方取消展示文字详情/木鱼装扮
     window.addEventListener('click', (e) => {
-      // console.log(e.target)
+      console.log('123')
       if (!e.target.parentNode.classList.contains('char')) this.isCharDetail = false
       if (!e.target.parentNode.classList.contains('dressUp')) this.isDressUp = false
     })
@@ -303,8 +319,16 @@ export default {
     margin-top: 10px;
     width: 100%;
     height: 270px;
-    background-color: #fff;
+    // background-color: #fff;
+    ul {
+      position: relative;
+      margin: 0 auto;
+      width: 60%;
+      height: 100%;
+      // background-color: pink;
+    }
   }
+  // 大木鱼
   .bigWoodFish {
     .bigStick {
       position: absolute;
@@ -313,12 +337,14 @@ export default {
       width: 62px;
       // transition: all 0.1s;
     }
+    // 大木鱼位置
     img:last-child {
       position: absolute;
       left: 75px;
       bottom: 75px;
       width: 188px;
     }
+    // 敲击动画(木鱼棍)
     .strick {
       transform: rotate(-70deg);
     }
@@ -342,6 +368,18 @@ export default {
     height: 80px;
     background: #fff;
     border-radius: 10px;
+    ul {
+      padding: 12px;
+      display: flex;
+      height: 100%;
+      justify-content: space-between;
+      align-items: center;
+      li {
+        img {
+          width: 40px;
+        }
+      }
+    }
   }
 }
 .charDetail {
@@ -461,6 +499,24 @@ export default {
         background: #f9d590;
       }
     }
+  }
+}
+
+// 动态文字通用样式 + 动画
+.floatingText {
+  position: absolute;
+  white-space: nowrap;
+  animation: floatUp 3s ease-out forwards;
+}
+// 上浮动画 + 渐隐 + 放大
+@keyframes floatUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-200px) scale(1.5);
+    opacity: 0;
   }
 }
 </style>

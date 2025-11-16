@@ -64,6 +64,7 @@
 
 <script>
 import NavBar from '@/components/NavBar.vue'
+import axios from 'axios'
 export default {
     name: 'emotionalPuzzle',
     components: {
@@ -71,6 +72,7 @@ export default {
     },
     data () {
         return {
+            token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             NavBarTitle: '情绪拼图',
             progress: 0,
             totalSecond: 1,
@@ -113,7 +115,6 @@ export default {
             isSave: false
         }
     },
-    // watch () {},
     methods: {
         // 渲染页面倒计时
         render () {
@@ -218,6 +219,7 @@ export default {
                 arr.splice(this.activeIndex, 1, b)
                 arr.splice(this.activeIndex - 4, 1, a)
             }
+            this.calculateProgress()
         },
         // 不保存拼图
         doNotSave () {
@@ -230,6 +232,8 @@ export default {
             this.isSave = false
             // 将当前进度保存到本地存储当中
             localStorage.setItem('random-puzzle', JSON.stringify(this.shuffledPieces))
+            localStorage.setItem('random-puzzle-progress', this.progress)
+            localStorage.setItem('random-puzzle-time', this.totalSecond)
         },
         // 重置
         reset () {
@@ -251,16 +255,46 @@ export default {
         cancelAnswer () {
             this.shuffledPieces = this.lookBackups
             this.lookBackups = []
+        },
+        // 判断进度
+        calculateProgress () {
+            let matchedCount = 0
+            this.shuffledPieces.forEach((piece, index) => {
+                if (piece.originalIndex === this.originalPieces[index].originalIndex) {
+                    matchedCount ++
+                }
+            })
+            this.progress = (matchedCount / this.originalPieces.length) * 100
+            // console.log('progress', this.progress)
         }
     },
-    mounted () {
+    async mounted () {
+        // 开始就判断
+        this.calculateProgress()
         // this.shufflePieces ()
         if (!localStorage.getItem('random-puzzle')) return this.shufflePieces ()
+        if (!localStorage.getItem('random-puzzle-progress')) this.progress = 0
+        else this.progress = localStorage.getItem('random-puzzle-progress')
+        if (!localStorage.getItem('random-puzzle-time')) this.totalSecond = 0
+        else this.totalSecond = JSON.parse(localStorage.getItem('random-puzzle-time'))
         this.shuffledPieces = JSON.parse(localStorage.getItem('random-puzzle'))
         // 备份数组，用于重置拼图
         this.backupsPieces = JSON.stringify(this.shuffledPieces)
         // console.log(this.shuffledPieces)
-    }
+        // 获取拼图碎片
+        const res = await axios.get('http://localhost:8080/api/puzzle/image/rank/rank1/url', {
+            headers: {
+                Authorization: 'Bearer ' + this.token
+            }
+        })
+        console.log(res)
+        // this.originalPieces = res.data.parts
+        // console.log(this.originalPieces)
+    },
+    // updated () {
+    //     // 判断操作后的数组与原数组有无索引相同的,若有,则数量*6.25
+
+    // }
 }
 </script>
 
