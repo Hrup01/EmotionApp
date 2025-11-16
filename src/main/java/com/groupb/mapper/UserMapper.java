@@ -59,4 +59,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Update("UPDATE users SET points = #{points}, update_time = #{updateTime} WHERE id = #{id}")
     int updatePoints(long id, int points, LocalDateTime updateTime);
+
+    @Update("UPDATE users SET status = 'DELETED', update_time = #{updateTime} WHERE id = #{id}")
+    int deactivateUser(long id, LocalDateTime updateTime);
 }

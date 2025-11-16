@@ -186,4 +186,22 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
+
+    @Override
+    public boolean deactivateUser(long userId) {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            int result = userMapper.deactivateUser(userId, now);
+            if (result > 0) {
+                log.info("用户账号已注销(软删除): userId={}", userId);
+                return true;
+            } else {
+                log.warn("用户账号注销失败: userId={}", userId);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("用户账号注销异常: userId={}", userId, e);
+            return false;
+        }
+    }
 }

@@ -142,6 +142,9 @@ public interface CommunityService {
      * @return 是否已收藏
      */
     boolean isPostFavorited(Long userId, Long postId);
+
+    /** 获取当前用户关注的用户ID列表 */
+    java.util.List<Long> getFollowings(Long userId);
 }
 
 
