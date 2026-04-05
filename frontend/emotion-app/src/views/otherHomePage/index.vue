@@ -16,7 +16,7 @@
     </div>
     <div class="subject">
         <div class="headPic">
-            <img src="@/assets/image/用户头像.png" alt="">
+            <img :src="userUrl" alt="">
         </div>
         <div class="detail">
             <div class="attention"><p>关注</p>{{ attention }}</div>
@@ -76,7 +76,8 @@ export default {
                 { id: 3, pic: require('@/assets/image/笔记背景4.png'), text: '这里是第四段文字', likeCount: 123, commentCount: 123 }
             ],
             // 用户信息
-            username: ''
+            username: '',
+            userUrl: ''
         }
     },
     methods: {
@@ -93,7 +94,8 @@ export default {
         const query = this.$route.query
         // console.log(query)
         this.username = query.name
-        console.log(this.username)
+        this.userUrl = query.url
+        console.log(this.userUrl)
         if (query.followed === 'true') {
             this.isfollowed = true
         } else {

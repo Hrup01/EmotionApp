@@ -24,14 +24,15 @@
         <div class="recommend">
             <ul>
                 <li class="item" v-for="item in recommendList" :key="item.id">
-                    <audio :src="item.audioUrl"></audio>
+                    <audio :src="item.audioUrl" ref="audio"></audio>
                     <div class="top"><img :src="item.bgUrl" alt=""></div>
                     <div class="bottom">
-                        <img src="@/assets/image/冥想/开始.png" alt="">
+                        <img src="@/assets/image/冥想/开始.png" alt="" @click="paly">
                         <div class="text">
                             <p class="time">{{ item.time }}</p>
                             <p>{{ item.text }}</p>
                         </div>
+                        <!-- <audio src="@/assets/audio/冥想/10分钟观呼吸.mp3"></audio> -->
                     </div>
                 </li>
             </ul>
@@ -60,6 +61,12 @@ export default {
                 { id: 1, bgUrl: require('@/assets/image/冥想/推荐_黄底.png'), audioUrl: require('@/assets/audio/冥想/晨起冥想9分钟.mp3'), time: '10分钟', text: '练习与现在的样子和平相处' },
                 { id: 2, bgUrl: require('@/assets/image/冥想/推荐_绿底.png'), audioUrl: require('@/assets/audio/冥想/晨起冥想9分钟.mp3'), time: '30分钟', text: '【内观呼吸】口令引导' },
             ]
+        }
+    },
+    methods: {
+        paly () {
+            this.$refs.audio.paly()
+            console.log(this.$refs.audio)
         }
     }
 }

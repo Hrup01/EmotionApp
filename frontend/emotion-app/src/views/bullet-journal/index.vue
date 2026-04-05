@@ -14,10 +14,18 @@
             </div>
         </div>
     </div>
+
     <div class="body" ref="body">
         <!-- canvas画布 -->
         <canvas ref="canvas" width="360" height="522" @touchstart="startPainting" @touchend="finishPainting" @touchmove="painting"></canvas>
         <!-- 文本域 -- 文字 -->
+    </div>
+
+    <div class="handlerState">
+        <div class="save" @click="saveImg">保存</div>
+        <div class="undo" @click="undo">撤销</div>
+        <div class="redo" @click="redo">重做</div>
+        <div class="clear" @click="clear">清空</div>
     </div>
     <div class="option">
         <img src="@/assets/image/手账/页面选择_左.png" alt="" class="prev">
@@ -61,6 +69,7 @@
             </ul>
         </div>
     </div>
+
     <!-- 涂鸦详情 -->
     <div class="painting-detail" v-show="isDrawing">
         <div class="thickness">
@@ -76,6 +85,7 @@
             <li v-for="(item, index) in paintingList" :key="item.id"><img :src="item.url" alt="" :ref="item.ref" @click="changeColor(item.color, index, item.ref)"></li>
         </ul>
     </div>
+
     <!-- 手账模板详情 -->
     <div class="template-detail" v-show="isTemplate">
         <div class="top wrapper">
@@ -142,6 +152,10 @@ export default {
                 { id: 6, url: require('@/assets/image/手账/蜡笔_紫.png'), color: 'purple', ref: 'purple' },
                 { id: 7, url: require('@/assets/image/手账/橡皮.png'), color: '', ref: 'eraser' }
             ],
+            lineWidth: 5,
+            // 存储历史状态
+            history: [],
+            currentIndex: -1,
             // 模板
             isTemplate: false,
             templateList: [
@@ -157,19 +171,7 @@ export default {
             ],
             templateCurrentPage: 1,
             templateTotlePage: 3,
-            // 画布
-            stroke: '#000',
-            canvas: null,
-            ctx: null,
-            canvasOffesetX: 0,
-            canvasOffesetY: 0,
-            // 画笔粗细
-            lineWidth: 5,
-            // 是否开始画画
-            isPainting: false,
-            // 标记是否使用橡皮擦
-            isEraser: false,
-            timer: null,
+            
         }
     },
     methods: {
@@ -275,6 +277,11 @@ export default {
         },
         // 结束画画
         finishPainting () {
+            // 保存状态
+            this.saveState()
+            // if (this.count === 10) {
+            //     this.count = 0
+            // }
             this.isPainting = false
         },
         // 正在画画
@@ -287,7 +294,7 @@ export default {
             if (this.isEraser) {
                 this.ctx.globalCompositeOperation = 'destination-out'
                 // console.log('是橡皮', this.isEraser)
-            }else {
+            } else {
                 // 重置为默认
                 this.ctx.globalCompositeOperation = 'source-over'
                 // 画笔颜色
@@ -304,7 +311,7 @@ export default {
             this.ctx.stroke()
         },
         // 改变画笔颜色
-        changeColor (color, index, ref) {
+        changeColor (color, index) {
             // console.log(index)
             // console.log(this.isEraser)
             if (index === this.paintingList.length - 1) {
@@ -322,19 +329,25 @@ export default {
                 }
             })
             // 画笔突出
-            // console.log(this.$refs[ref][0])
-            this.$refs[ref][0].style.bottom = '-5%'
-            
+            // console.log(this.paintingList[index].ref)
+            // console.log(this.$refs[this.paintingList[index].ref][0])
+            this.$refs[this.paintingList[index].ref][0].style.bottom = '-5%'
         },
         // 改变画笔粗细
         tothin () {
             // 一直按着 -- 一直增加
+            if (this.lineWidth > 1) {
+                this.lineWidth--
+            }
             this.timer = setInterval(() => {
                 if (this.lineWidth > 1) this.lineWidth --
                 else clearInterval(this.timer)
             }, 100)
         },
         tofat () {
+            if (this.lineWidth < 20) {
+                this.lineWidth++
+            }
             this.timer = setInterval(() => {
                 if (this.lineWidth < 20) this.lineWidth ++
                 else clearInterval(this.timer)
@@ -343,8 +356,78 @@ export default {
         stopChangeThickness () {
             clearInterval(this.timer)
         },
+        // 保存图片
+        saveImg () {
+            const url = this.canvas.toDataURL('image/jpg')
+            const a = document.createElement('a')
+            a.href = url
+            a.download = '画板'
+            a.target = '_blank'
+            a.click()
+        },
+        // 将历史快照初始化为空白快照
+        initHistory () {
+            const blankImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+            this.history[0] = blankImageData
+        },
+        // 在执行任何操作前，保存当前画布状态
+        saveState () {
+            // 保存当前画布快照
+            const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height)
+            // console.log(imageData)
+            // 浅拷贝历史快照数组 -- 便于重做（回到撤销上一步）
+            this.history = this.history.slice(0, this.currentIndex + 1)
+            // 将快照存入历史数组
+            this.history.push(imageData)
+            this.currentIndex++
+
+            // 限制历史记录数量(20次)，避免内存占用过大
+            if (this.history.length > 21) {
+                // 删除最早的快照
+                this.history.shift()
+                this.currentIndex--
+            }
+            // console.log('history:', this.history, 'currentIndex:', this.currentIndex)
+        },
+        // 撤销操作
+        undo () {
+            if (!this.currentIndex || this.history.length === 0) return
+            this.currentIndex--
+
+            // 清空画布
+            this.ctx.clearRect(0, 0, this.width, this.height)
+
+            // 恢复到上一个状态
+            const previousImageData = this.history[this.currentIndex]
+            this.ctx.putImageData(previousImageData, 0, 0)
+            // console.log('撤销后历史快照：', this.history, this.currentIndex)
+        },
+        // 重做
+        redo () {
+            // 如果没有可重做的状态，直接返回
+            if (this.currentIndex >= this.history.length - 1) return
+            this.currentIndex++
+
+            // 清空画布
+            this.ctx.clearRect(0, 0, this.width, this.height)
+
+            // 恢复到下一个状态
+            const nextImageData = this.history[this.currentIndex]
+            this.ctx.putImageData(nextImageData, 0, 0)
+        },
+        // 清空画布
+        clear () {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+            // 清空历史记录
+            this.history = []
+            this.currentIndex = -1
+        }
     },
     mounted () {
+        // 初始化历史快照
+        this.$nextTick(() => {
+            this.initHistory()
+        })
         // 刚进来时手账区域为默认样式
         this.$refs.body.style.background = '#F8E294'
         this.$refs.body.style.backgroundSize = 'cover'
@@ -352,11 +435,13 @@ export default {
         // 绘画功能
         this.canvas = this.$refs.canvas
         this.ctx = this.canvas.getContext('2d')
-        const canvasRect = this.canvas.getBoundingClientRect()
-        this.canvasOffesetX = canvasRect.left
-        this.canvasOffesetY = canvasRect.top
-        // this.canvas.width = window.innerWidth - this.canvasOffesetX
-        // this.canvas.height = window.innerHeight - this.canvasOffesetY
+
+        this.$nextTick(() => {
+            const canvasRect = this.canvas.getBoundingClientRect()
+        
+            this.canvasOffesetX = canvasRect.left
+            this.canvasOffesetY = canvasRect.top
+        })
         // 默认选中铅笔
         this.changeColor('#000', 0, 'black')
     }
@@ -651,5 +736,10 @@ export default {
             font-size: 14px;
         }
     }
+}
+.handlerState {
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
 }
 </style>

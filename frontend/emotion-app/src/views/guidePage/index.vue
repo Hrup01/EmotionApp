@@ -1,7 +1,7 @@
 <template>
   <div id="guide-page">
     <img src="@/assets/image/时间.png" alt="" class="top-time" ref="topTime">
-    <div class="enter-into" @click="$router.push('/login')">进入情绪小栈</div>
+    <div class="enter-into" @click="$router.push('/home')">进入情绪小栈</div>
   </div>
 </template>
 

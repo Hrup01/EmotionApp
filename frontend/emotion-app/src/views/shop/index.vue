@@ -73,6 +73,39 @@
                         </div>
                         <div class="price">200积分</div>
                     </li>
+                    <li>
+                        <img src="@/assets/image/商店/风铃.png" alt="" class="pic">
+                        <div class="desc">
+                            <p>风铃声</p>
+                            <div class="play">
+                                <img src="@/assets/image/商店/播放.png" alt="" v-if="isPlay">
+                                <img src="@/assets/image/商店/播放键_暂停.png" alt="" v-else>
+                            </div>
+                        </div>
+                        <div class="price">200积分</div>
+                    </li>
+                    <li>
+                        <img src="@/assets/image/商店/风铃.png" alt="" class="pic">
+                        <div class="desc">
+                            <p>风铃声</p>
+                            <div class="play">
+                                <img src="@/assets/image/商店/播放.png" alt="" v-if="isPlay">
+                                <img src="@/assets/image/商店/播放键_暂停.png" alt="" v-else>
+                            </div>
+                        </div>
+                        <div class="price">200积分</div>
+                    </li>
+                    <li>
+                        <img src="@/assets/image/商店/风铃.png" alt="" class="pic">
+                        <div class="desc">
+                            <p>风铃声</p>
+                            <div class="play">
+                                <img src="@/assets/image/商店/播放.png" alt="" v-if="isPlay">
+                                <img src="@/assets/image/商店/播放键_暂停.png" alt="" v-else>
+                            </div>
+                        </div>
+                        <div class="price">200积分</div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -114,7 +147,7 @@ export default {
             token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
             title: '商店',
             marginLeft: '129px',
-            integral: 200,
+            integral: 0,
             isPlay: false,
             shopList: [],
             petList: [],
@@ -325,6 +358,7 @@ export default {
                 height: 150px;
                 .pic {
                     margin-top: 16px;
+                    width: 40px;
                 }
                 .desc {
                     margin-top: 14px;

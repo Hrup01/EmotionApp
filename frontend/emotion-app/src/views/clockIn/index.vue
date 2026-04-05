@@ -18,7 +18,7 @@
                     <p class="day">{{ item.day }}</p>
                 </li>
             </ul>
-            <div class="immediately-clock-in">立即打卡</div>
+            <div class="immediately-clock-in" ref="clockIn" @click="clockIn">立即打卡</div>
         </div>
     </div>
     <div class="footer wrapper">
@@ -72,9 +72,13 @@ export default {
     },
     methods: {
         // 每日打卡
-        // clockIn () {
-            
-        // }
+        clockIn () {
+            // console.log(this.$refs.clockIn)
+            this.$refs.clockIn.style.background = '#fff'
+            this.$refs.clockIn.style.color = '#666666'
+            this.$refs.clockIn.style.border = '2px solid #ebebeb';
+            this.integral += 1
+        },
         // 完成任务获得奖励
         toFinish (id) {
             if (this.taskList[id].isFinish) return

@@ -41,17 +41,17 @@
     <!-- 注册 -->
     <button @click="register" ref="register" v-else>注册</button>
     <!-- 登录 -->
-    <div class="loginOther" v-if="isLogin">
+    <!-- <div class="loginOther" v-if="isLogin">
         <div class="left">验证码登录</div>
         <div class="right">
             <div class="forget">忘记密码</div>
             <div class="register">立即注册</div>
         </div>
-    </div>
+    </div> -->
     <!-- 注册 -->
-     <div class="registerOther" v-else>
+     <!-- <div class="registerOther" v-else>
         <div class="toLogin">已有密码？去登录</div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -120,7 +120,7 @@ export default {
             this.password = ''
             this.$refs.cir.classList.remove('check')
             // 6.跳转页面
-            this.$router.push('/home')
+            this.$router.push('/guidePage')
         },
         // 注册
         async register () {
@@ -132,12 +132,19 @@ export default {
                 username: this.account,
                 password: this.password
             })
+            // console.log(res)
+            // const res = await axios.post('http://localhost:8080/api/auth/login', { 
+            //     username: this.account,
+            //     password: this.password
+            // })
             console.log(res)
-            // 重置表单
+            this.$store.commit('user/setUserInfo', res.data.data)
+             // 重置表单
             this.account = ''
             this.password = ''
             this.passwordAgain = ''
             this.$refs.cir.classList.remove('check')
+            this.$router.push('/guidePage')
         },
         // 改变模式样式
         switchingMode () {

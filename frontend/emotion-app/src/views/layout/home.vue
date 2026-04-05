@@ -114,7 +114,7 @@ export default {
       ],
       i: 0,
       timer: null,
-      username: '用户名'
+      username: ''
     }
   },
   methods: {
@@ -170,7 +170,7 @@ export default {
   mounted () {
     // 获取本地存储的宠物名
     this.petName = localStorage.getItem('emotion_app_petName')
-
+    this.username = JSON.parse(localStorage.getItem('emotion_app_info')).username
     // 自动轮播
     this.timer = setInterval(() => {
       this.$refs.prev.click()

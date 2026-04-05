@@ -102,24 +102,28 @@ export default {
         let ws = new WebSocket(`ws://localhost:8080/webSocket?token=${this.token}`)
         const openEvent = () => {
             console.log('连接成功')
+            heartCheck.start()
         }
         const getMessage = (event) => {
             const messageData = JSON.parse(event.data)
             console.log('收到的信息', messageData)
+            heartCheck.reset()
             this.answer = messageData.content
             this.messageList.push({ content: this.answer, sender: 'other' })
         }
         const closeEvent = () => {
             console.log('连接关闭')
+            heartCheck.reset()
             reconnect()
         }
         const errorEvent = () => {
             console.log('连接错误')
+            reconnect()
         }
-        ws.addEventListener('open', openEvent)
-        ws.addEventListener('message', getMessage)
-        ws.addEventListener('close', closeEvent)
-        ws.addEventListener('error', errorEvent)
+        ws.addEventListener('open', openEvent) // 服务器开启
+        ws.addEventListener('message', getMessage) // 接收信息
+        ws.addEventListener('close', closeEvent) // 服务器关闭
+        ws.addEventListener('error', errorEvent) // 错误
         // 发送信息
         const sendMessage = () => {
             if (this.content === '发送消息...') return
@@ -129,6 +133,7 @@ export default {
                     content: this.content.trim()
                 }
                 ws.send(JSON.stringify(message))
+                // ws.send('发送到服务器的消息')
                 this.messageList.push({ content: this.content.trim(), sender: 'me' })
             }
             setTimeout(( () => this.content = '发送消息...'),100)
@@ -153,6 +158,33 @@ export default {
                 ws.addEventListener('error', errorEvent)
                 this.$refs.send.addEventListener('click', sendMessage)
             }, 5000)
+        }
+
+        // 心跳检测对象
+        const heartCheck = {
+            // 每30秒发送一次心跳
+            timeout: 30000,
+            // 存储定时器ID，用于后续清理
+            timeoutObj: null,
+            serveTimeoutObj: null,
+            // 重置心跳定时器，清除之前的心跳和服务端超时定时器，避免定时器堆积
+            reset: () => {
+                clearTimeout(this.timeoutObj)
+                clearTimeout(this.serveTimeoutObj)
+                return this
+            },
+            start: () => {
+                // 启动心跳：30 秒后发送心跳包 ws.send("ping")，告知服务端连接正常
+                const self = this // 清除了之前定时器的对象
+                self.timeoutObj = setTimeout(() => {
+                    ws.send('ping')
+
+                    // 启动服务端超时检测：同时设置一个 30 秒的定时器，若 30 秒内未收到服务端返回的心跳响应（pong），则认为连接异常，执行 ws.close() 关闭连接，进而触发重连逻辑
+                    self.serveTimeoutObj = setTimeout(() => {
+                        ws.close()
+                    }, self.timeout)
+                }, self.timeout)
+            }
         }
     }
 }

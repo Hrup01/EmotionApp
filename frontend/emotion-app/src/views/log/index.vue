@@ -138,6 +138,7 @@ export default {
                 }
             })
             console.log('上传心情结果', moodRes)
+            this.$router.push('/home')
         },
         changeColor () {
             // const realShow = this.$refs.realShow

@@ -2,7 +2,7 @@
     <div class="messageList wrapper">
         <ul ref="messageList">
             <li v-for="item in list" :key="item.id">
-                <img :src="item.url" alt="" class="headPic" @click="$router.push(`/otherHomePage?name=${item.name}&followed=true`)">
+                <img :src="item.url" alt="" class="headPic" @click="$router.push(`/otherHomePage?name=${item.name}&followed=true&url=${item.url}`)">
                 <div class="text">
                     <div class="name">{{ item.name }} <p v-show="isComment">对我的笔记发表了评论</p></div>
                     <p>{{ item.content }}</p>

@@ -86,12 +86,12 @@ export default {
       return {
         token: JSON.parse(localStorage.getItem('emotion_app_info')).token,
         moodList: [
-          { id: 0, url: require('@/assets/image/空缺心情_笑.png'), day: '一'},
+          { id: 0, url: require('@/assets/image/1.png'), day: '一'},
           { id: 1, url: require('@/assets/image/空缺心情_笑.png'), day: '二'},
-          { id: 2, url: require('@/assets/image/空缺心情_笑.png'), day: '三'},
-          { id: 3, url: require('@/assets/image/空缺心情_笑.png'), day: '四'},
+          { id: 2, url: require('@/assets/image/10.png'), day: '三'},
+          { id: 3, url: require('@/assets/image/10.png'), day: '四'},
           { id: 4, url: require('@/assets/image/空缺心情_笑.png'), day: '五'},
-          { id: 5, url: require('@/assets/image/空缺心情_笑.png'), day: '六'},
+          { id: 5, url: require('@/assets/image/3.png'), day: '六'},
           { id: 6, url: require('@/assets/image/空缺心情_笑.png'), day: '日'}
         ],
         suggestList: [

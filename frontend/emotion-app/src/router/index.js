@@ -123,19 +123,19 @@ const router = new VueRouter({
 })
 
 // 全局前置导航守卫
-router.beforeEach((to, from, next) => {
-  // console.log(to, from)
-  // 如果访问的是引导页，直接放行
-  if (to.path === '/guidePage') {
-    return next()
-  }
-  // 获取token
-  const token = window.localStorage.getItem('emotion_app_info') ? JSON.parse(window.localStorage.getItem('emotion_app_info')).token : ''
-  // 如果没有token，强制跳转到引导页
-  if (!token && to.path !== '/guidePage' && to.path !== '/login') {
-    return next('/guidePage')
-  }
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   // console.log(to, from)
+//   // 如果访问的是引导页，直接放行
+//   if (to.path === '/guidePage') {
+//     return next()
+//   }
+//   // 获取token
+//   const token = window.localStorage.getItem('emotion_app_info') ? JSON.parse(window.localStorage.getItem('emotion_app_info')).token : ''
+//   // 如果没有token，强制跳转到引导页
+//   if (!token && to.path !== '/guidePage' && to.path !== '/login') {
+//     return next('/guidePage')
+//   }
+//   next()
+// })
 
 export default router

@@ -3,7 +3,7 @@
     <div class="contentItem">
       <div class="top">
         <div class="user">
-          <img :src="contentList[id].headPortraitUrl" alt="" @click="$router.push(`/otherHomePage/${id}`)">
+          <img :src="contentList[id].headPortraitUrl" alt="" @click="$router.push(`/otherHomePage?name=${contentList[id].authorName}&followed=true&url=${contentList[id].headPortraitUrl}`)">
           <div class="username">{{ contentList[id].authorName }}</div>
         </div>
         <div class="more"><img src="@/assets/image/更多1.png" alt=""></div>

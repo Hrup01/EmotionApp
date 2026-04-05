@@ -12,19 +12,19 @@
     <div class="subject wrapper">
         <div class="question">{{ question[progress - 1].content }}</div>
         <ul class="options">
-            <li @click="selectOption('none')">
+            <li @click="selectOption('none', 1)">
                 <img src="@/assets/image/测评/A.png" alt="">
                 <div class="A item" ref="none">几乎没有</div>
             </li>
-            <li @click="selectOption('sometimme')">
+            <li @click="selectOption('sometimme', 2)">
                 <img src="@/assets/image/测评/B.png" alt="" ref="B">
                 <div class="B item" ref="sometimme">有时有</div>
             </li>
-            <li @click="selectOption('offen')">
+            <li @click="selectOption('offen', 3)">
                 <img src="@/assets/image/测评/C.png" alt="" ref="C">
                 <div class="C item" ref="offen">经常有</div>
             </li>
-            <li @click="selectOption('all')">
+            <li @click="selectOption('all', 4)">
                 <img src="@/assets/image/测评/D.png" alt="" ref="D">
                 <div class="D item" ref="all">几乎总是有</div>
             </li>
@@ -49,13 +49,21 @@ export default {
             progress: 1,
             // percent: 10,
             question: [
-                { content: '1 . 感到紧张、焦虑或烦躁', option: '' },
-                { content: '2 . 无法停止或控制担忧', option: '' },
-                { content: '3 . 出现睡眠问题(如入睡困难、多梦、早醒)', option: '' },
+                { content: '1. 感到紧张、焦虑或烦躁', option: '' },
+                { content: '2. 无法停止或控制担忧', option: '' },
+                { content: '3. 对各种事情过度担忧', option: '' },
+                { content: '4. 难以放松下来', option: '' },
+                { content: '5. 容易感到疲倦', option: '' },
+                { content: '6. 注意力难以集中', option: '' },
+                { content: '7. 变得容易生气或易怒', option: '' },
+                { content: '8. 感到害怕，好像有可怕的事情要发生', option: '' },
+                { content: '9. 出现心跳加速、胸闷或呼吸急促（非生理疾病导致）', option: '' },
+                { content: '10. 出现睡眠问题（如入睡困难、多梦、早醒）', option: '' },
             ],
             // 当前的选择
             currentOption: '',
-            isFinish: false
+            isFinish: false,
+            score: 0
         }
     },
     methods: {
@@ -77,10 +85,10 @@ export default {
             if (this.progress === 10) return
             if (this.progress === 9) this.isFinish = true
             this.progress ++
-            this.$refs.none.style.backgroundColor = '#fff'
-            this.$refs.sometimme.style.backgroundColor = '#fff'
-            this.$refs.offen.style.backgroundColor = '#fff'
-            this.$refs.all.style.backgroundColor = '#fff'
+            this.$refs.none.style.backgroundColor = '#ffffffa8'
+            this.$refs.sometimme.style.backgroundColor = '#ffffffa8'
+            this.$refs.offen.style.backgroundColor = '#ffffffa8'
+            this.$refs.all.style.backgroundColor = '#ffffffa8'
             // 从数组中得知选择
             // const option = this.question[this.progress].option
             // this.$refs[option].style.backgroundColor = '#F3CF80'
@@ -89,18 +97,19 @@ export default {
             // console.log(this.question)
         },
         // 选择选项
-        selectOption (option) {
+        selectOption (option, score) {
             // 变颜色
             // console.log(this.$refs[options])
             // 其他颜色变为白色
             // const options = document.querySelectorAll('#psychologicalTest .options li')
             // console.log(options)
-            this.$refs.none.style.backgroundColor = '#fff'
-            this.$refs.sometimme.style.backgroundColor = '#fff'
-            this.$refs.offen.style.backgroundColor = '#fff'
-            this.$refs.all.style.backgroundColor = '#fff'
+            this.$refs.none.style.backgroundColor = '#ffffffa8'
+            this.$refs.sometimme.style.backgroundColor = '#ffffffa8'
+            this.$refs.offen.style.backgroundColor = '#ffffffa8'
+            this.$refs.all.style.backgroundColor = '#ffffffa8'
             this.$refs[option].style.backgroundColor = '#F3CF80'
             this.currentOption = option
+            this.score += score
         },
         // 提交选择
         submitSelect () {

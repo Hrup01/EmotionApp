@@ -119,7 +119,10 @@ export default {
         userSentence: '',
         haveContent: false,
         // 存储所有聊天记录
-        chatMessages: [],
+        chatMessages: [], 
+        currentAiMsgIndex: -1,
+        buffer: '', // 用于积累流试数据
+        lastProcessedIndex: 0,
         intervalId: null,
         chatId: '',
         // 历史会话的chatId
@@ -135,7 +138,8 @@ export default {
         // 本年历史会话记录
         yearHistoryRecords: [],
         // 点击了历史会话
-        isClickHistoryChat: false
+        isClickHistoryChat: false,
+        currentReader: null
       }
     },
     methods: {
@@ -144,17 +148,16 @@ export default {
         const res = await axios.get('http://localhost:8080/ai/chat', {
           params: {
             prompt: this.userSentence,
-            chatId: this.chatId
-          },
-          responseType: 'text',
-          headers: {
-              Authorization: 'Bearer ' + this.token
+            chatId: this.chatId,
+            // token: this.token
           }
         })
+        console.log(res)
         // 先推送一个空的ai回答占位符
         this.chatMessages.push({ role: 'assistant', content: '' })
         // console.log(JSON.parse(res.data))
-        const aiAnswer = JSON.parse(res.data)
+        // const aiAnswer = JSON.parse(res.data)
+        const aiAnswer = res.data
         aiAnswer.forEach(item => {
             this.answer += item.data
         })
@@ -178,43 +181,102 @@ export default {
             }
         }, 50)
 
-        // try {
-        //   await axios.get('http://localhost:8080/ai/chat', {
-        //     params: {
-        //       prompt: this.userSentence,
-        //       chatId: this.chatId
-        //     },
-        //     responseType: 'text',
-        //     headers: {
-        //         Authorization: 'Bearer ' + this.token
-        //     },
-        //     onDownloadProgress: (progressEvent) => {
-        //       console.log(progressEvent.currentTarget)
-        //       const chunk = progressEvent.currentTarget.responseText
-        //       const regex = /\{[^}]+\}/g
-        //       const chunks = chunk.match(regex) || []
-        //       chunks.forEach((chunk) => {
-        //         if (chunk.trim()) {
-        //           const { data } = JSON.parse(chunk)
-        //           // console.log(data)
-        //           // this.answer += data
-        //           const lastMsg = this.chatMessages.findLast(item => item.role === 'ai')
-        //           console.log(lastMsg)
-        //           if (lastMsg) {
-        //             lastMsg.content += data
-        //             this.$set(lastMsg, 'content', lastMsg.content)
-        //           }
-        //         }
-        //       })
-        //       this.$nextTick(() => {
-        //           const box = this.$refs.haveContent
-        //           box[box.length - 1].scrollIntoView({ behavior: 'smooth' })
-        //       })
-        //     }
-        //   })
-        // } catch (error) {
-        //   console.log('请求失败')
+        // // 记录当前AI消息的索引（最后一个元素）
+        // this.currentAiMsgIndex = this.chatMessages.length - 1
+        // const params = {
+        //   prompt: this.userSentence,
+        //   chatId: this.chatId,
         // }
+        // const query = new URLSearchParams(params).toString()
+        // const eventSource = new EventSource(`http://localhost:8080/ai/chat?${query}`)
+        // eventSource.onmessage = (e) => {
+        //   const data = JSON.parse(e.data);
+        //   // 拼接流式返回的内容
+        //   console.log(data.content);
+        // }
+
+        // 先推送一个空的ai回答占位符
+        // this.chatMessages.push({ role: 'assistant', content: '' })
+
+        // this.buffer = ''
+        // const response = await fetch(`http://localhost:8080/ai/chat?prompt=${encodeURIComponent(this.userSentence)}&chatId=${this.chatId}`, {
+        //     method: "GET",
+        //     headers: {
+        //       'Accept': 'application/json', // 明确告诉后端你接受JSON格式
+        //       'Content-Type': 'application/json' // 按需添加
+        //     },
+        //   })
+        //   if (!response.ok) {
+        //     throw new Error('请求失败')
+        //   }
+        //   // const data = await response.json()
+        //   // console.log(data)
+        //   const render = response.body.getReader() 
+        //   // console.log(render)
+        //   const decoder = new TextDecoder()
+        //   // console.log('decoder:', decoder)
+        //   // eslint-disable-next-line no-constant-condition
+        //   while (true) {
+        //     const { done, value } = await render.read()
+        //     if (done) {
+        //       // 最后收尾
+        //       const finalStr = this.buffer.trim()
+        //       if (finalStr.startsWith('[') && finalStr.endsWith(']')) {
+        //         try {
+        //           const list = JSON.parse(finalStr)
+        //           this.answer = list.map(i => i.data).join('')
+        //         } catch(e) {
+        //           console.error('收尾解析失败:', e, 'buffer:', finalStr)
+        //         }
+        //       }
+        //       break
+        //     }
+        //     // console.log(value) 得到的都是二进制编码
+        //     const chunkValue = decoder.decode(value, { stream: true })
+        //     this.buffer += chunkValue
+        //     // console.log('chunkValue:', chunkValue)
+        //     // const dataList = JSON.parse(chunkValue)
+        //     // // console.log('dataList:', dataList)
+        //     // dataList.map((item) => {
+        //     //   // const str = line.trim()
+        //     //   // console.log('item:', item.data)
+        //     //   this.answer += item.data
+        //     // })
+        //     console.log('buffer:', this.buffer)
+        //     // 尝试解析当前缓冲区中可闭合的 JSON 数组
+        //     const tempStr = this.buffer.trim()
+        //     if (tempStr.startsWith('[') && tempStr.endsWith(']')) {
+        //       console.log('解析了当前缓冲区中可闭合的 JSON 数组')
+        //       try {
+        //         const dataList = JSON.parse(tempStr)
+        //         console.log(dataList)
+        //         // 只拼接新增的 data 片段
+        //         // const newText = dataList.slice(this.lastProcessedIndex).map(item => item.data).join('')
+        //         // dataList.slice(this.lastProcessedIndex).map(item => {
+        //         //   console.log('item.data:', item.data)
+        //         //   this.answer += item.data
+        //         //   console.log('answer:', this.answer)
+        //         //   // this.$forceUpdate()
+        //         // })
+        //         for (let i = this.lastProcessedIndex; i < dataList.length; i++) {
+        //           const text = dataList[i].data
+
+        //           // 🔥 强制让浏览器渲染
+        //           await new Promise(resolve => {
+        //             this.answer += text
+        //             requestAnimationFrame(resolve)
+        //           })
+        //         }
+        //         // console.log('newText:', newText)
+        //         // this.answer += newText
+        //         this.lastProcessedIndex = dataList.length
+        //         this.buffer = '' // 清空已解析部分
+        //       } catch (e) {
+        //         // 解析失败说明数据仍不完整，继续等待
+        //         console.dir(e)
+        //       }
+        //     }
+        //   }
       },
       // 发送消息
       sendMessage () {
@@ -317,6 +379,7 @@ export default {
       }
     },
     created () {
+      console.log(this.token)
       // 创建组件时就生成chatId
       this.initChatId()
     },
